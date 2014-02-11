@@ -1,12 +1,9 @@
 #ifndef UTIL_VARIANT_HPP
 #define UTIL_VARIANT_HPP
 
-#include <iostream>
 #include <utility>
 #include <typeinfo>
 #include <type_traits>
-#include <string>
-
 
 namespace util {
 
@@ -193,7 +190,6 @@ public:
     variant(variant<Types...>&& old) noexcept
         : type_id(old.type_id)
     {
-        //std::cerr << "MOVE ctor called\n";
         helper_t::move(old.type_id, &old.data, &data);
     }
 
