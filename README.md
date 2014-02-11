@@ -11,17 +11,16 @@ An alternative to boost::variant for C++11.
 
 To build set your boost includes and libs locations and run `make`:
 
-
-```sh
-export LDFLAGS='-L/opt/boost/lib'
-export CXXFLAGS='-I/opt/boost/include'
-make
-```
+    export LDFLAGS='-L/opt/boost/lib'
+    export CXXFLAGS='-I/opt/boost/include'
+    make
 
 # Benchmark
 
 Run the benchmark like:
 
-```sh
-make test
-```
+    make test
+
+# Check object sizes
+
+    make sizes /path/to/boost/variant.hpp
