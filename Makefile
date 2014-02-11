@@ -30,7 +30,7 @@ sizes: Makefile variant.hpp
 	@$(CXX) -o ./test/boost-variant ./test/boost-variant.cpp -I./ $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./test/boost-variant
 
 test: test-variant
-	./test-variant 1000000
+	./test-variant 5000000
 
 clean:
 	rm -f ./test-variant

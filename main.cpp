@@ -69,6 +69,48 @@ struct dummy2
     V & v_;
 };
 
+void run_boost_test(std::size_t runs)
+{
+    std::cerr << "boost variant:  ";
+    boost::timer::auto_cpu_timer t;
+    test::Holder<boost::variant<int,double,std::string>> h;
+    h.data.reserve(runs);
+    for (std::size_t i=0; i< runs;++i)
+    {
+        h.append_move(std::string(TEXT));
+        h.append_move(123);
+        h.append_move(3.14159);
+    }
+
+    boost::variant<int,double,std::string> v;
+    for (auto const& v2 : h.data)
+    {
+        dummy<boost::variant<int,double,std::string> > d(v);
+        boost::apply_visitor(d, v2);
+    }
+}
+
+void run_variant_test(std::size_t runs)
+{
+    std::cerr << "custom variant: ";
+    boost::timer::auto_cpu_timer t;
+    test::Holder<util::variant<int,double,std::string> > h;
+    h.data.reserve(runs);
+    for (std::size_t i=0; i< runs;++i)
+    {
+        h.append_move(std::string(TEXT));
+        h.append_move(123);
+        h.append_move(3.14159);
+    }
+
+    util::variant<int,double,std::string> v;
+    for (auto const& v2 : h.data)
+    {
+        dummy2<util::variant<int,double,std::string> > d(v);
+        util::apply_visitor(v2, d);
+    }
+}
+
 int main (int argc, char** argv)
 {
     if (argc!=2)
@@ -78,51 +120,13 @@ int main (int argc, char** argv)
     }
     const std::size_t NUM_RUNS = static_cast<std::size_t>(std::stol(argv[1]));
 
-#if 1
-    {
-        boost::timer::auto_cpu_timer t;
-        test::Holder<boost::variant<int,double,std::string>> h;
-        h.data.reserve(NUM_RUNS);
-        for (std::size_t i=0; i< NUM_RUNS;++i)
-        {
-            h.append_move(std::string(TEXT));
-            h.append_move(123);
-            h.append_move(3.14159);
-        }
-
-        std::cerr << h.data.size() << std::endl;
-        boost::variant<int,double,std::string> v;
-        for (auto const& v2 : h.data)
-        {
-            dummy<boost::variant<int,double,std::string> > d(v);
-            boost::apply_visitor(d, v2);
-        }
-    }
-#endif
-
-#if 1
-    {
-        boost::timer::auto_cpu_timer t;
-        test::Holder<util::variant<int,double,std::string> > h;
-        h.data.reserve(NUM_RUNS);
-        for (std::size_t i=0; i< NUM_RUNS;++i)
-        {
-            h.append_move(std::string(TEXT));
-            h.append_move(123);
-            h.append_move(3.14159);
-
-        }
-        std::cerr << h.data.size() << std::endl;
-        util::variant<int,double,std::string> v;
-        for (auto const& v2 : h.data)
-        {
-            dummy2<util::variant<int,double,std::string> > d(v);
-            util::apply_visitor(v2, d);
-        }
-    }
-#endif
-
-#if 1
+    run_variant_test(NUM_RUNS);
+    run_boost_test(NUM_RUNS);
+    run_variant_test(NUM_RUNS);
+    run_boost_test(NUM_RUNS);
+    run_variant_test(NUM_RUNS);
+    run_boost_test(NUM_RUNS);
+#if 0
 
     std::cerr << util::detail::type_traits<bool, bool, int, double, std::string>::id << std::endl;
     std::cerr << util::detail::type_traits<int, bool, int, double, std::string>::id << std::endl;
