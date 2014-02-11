@@ -1,5 +1,5 @@
 CXX := $(CXX)
-CXXFLAGS := $(CXXFLAGS) -O3 -std=c++11
+CXXFLAGS := $(CXXFLAGS) -O3 -DNDEBUG -Wall -finline-functions -fvisibility-inlines-hidden -std=c++11
 LDFLAGS := $(LDFLAGS) -lboost_timer -lboost_system -lboost_chrono
 
 OS:=$(shell uname -s)
@@ -10,8 +10,11 @@ endif
 
 all: test-variant
 
-test-variant: Makefile main.cpp timer.hpp variant.hpp
+test-variant: Makefile main.cpp variant.hpp
 	$(CXX) -o test-variant main.cpp $(CXXFLAGS) $(LDFLAGS) $(COMMON_FLAGS)
 
 test:
 	./test-variant 1000000
+
+clean:
+	rm -f ./test-variant
