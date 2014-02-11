@@ -4,7 +4,10 @@
 #include <utility>
 #include <typeinfo>
 #include <type_traits>
-#include <stdexcept>
+#include <algorithm> // std::move/swap
+#include <stdexcept> // runtime_error
+#include <new> // operator new
+#include <cstddef> // size_t
 
 namespace util {
 
@@ -22,7 +25,7 @@ struct type_traits<T, First, Types...>
 template <typename T>
 struct type_traits<T>
 {
-    static constexpr std::size_t id = size_t(-1); // invalid
+    static constexpr std::size_t id = std::size_t(-1); // invalid
 };
 
 template <typename T, typename...Types>
@@ -40,19 +43,19 @@ struct is_valid_type<T> : std::false_type {};
 
 }
 
-template <size_t arg1, size_t ... others>
+template <std::size_t arg1, std::size_t ... others>
 struct static_max;
 
-template <size_t arg>
+template <std::size_t arg>
 struct static_max<arg>
 {
-    static const size_t value = arg;
+    static const std::size_t value = arg;
 };
 
-template <size_t arg1, size_t arg2, size_t ... others>
+template <std::size_t arg1, std::size_t arg2, std::size_t ... others>
 struct static_max<arg1, arg2, others...>
 {
-    static const size_t value = arg1 >= arg2 ? static_max<arg1, others...>::value :
+    static const std::size_t value = arg1 >= arg2 ? static_max<arg1, others...>::value :
         static_max<arg2, others...>::value;
 };
 
@@ -62,7 +65,7 @@ struct variant_helper;
 template<typename T, typename... Types>
 struct variant_helper<T, Types...>
 {
-    inline static void destroy(size_t id, void * data)
+    inline static void destroy(std::size_t id, void * data)
     {
         if (id == sizeof...(Types))
         {
@@ -74,7 +77,7 @@ struct variant_helper<T, Types...>
         }
     }
 
-    inline static void move(size_t old_t, void * old_v, void * new_v)
+    inline static void move(std::size_t old_t, void * old_v, void * new_v)
     {
         if (old_t == sizeof...(Types))
         {
@@ -86,7 +89,7 @@ struct variant_helper<T, Types...>
         }
     }
 
-    inline static void copy(size_t old_t, const void * old_v, void * new_v)
+    inline static void copy(std::size_t old_t, const void * old_v, void * new_v)
     {
         if (old_t == sizeof...(Types))
         {
@@ -101,9 +104,9 @@ struct variant_helper<T, Types...>
 
 template<> struct variant_helper<>
 {
-    inline static void destroy(size_t, void *) {}
-    inline static void move(size_t, void *, void *) {}
-    inline static void copy(size_t, const void *, void *) {}
+    inline static void destroy(std::size_t, void *) {}
+    inline static void move(std::size_t, void *, void *) {}
+    inline static void copy(std::size_t, const void *, void *) {}
 };
 
 namespace detail {
@@ -146,19 +149,19 @@ struct variant
 {
 private:
 
-    static const size_t data_size = static_max<sizeof(Types)...>::value;
-    static const size_t data_align = static_max<alignof(Types)...>::value;
+    static const std::size_t data_size = static_max<sizeof(Types)...>::value;
+    static const std::size_t data_align = static_max<alignof(Types)...>::value;
 
     using data_t = typename std::aligned_storage<data_size, data_align>::type;
 
     using helper_t = variant_helper<Types...>;
 
-    static inline size_t invalid_type()
+    static inline std::size_t invalid_type()
     {
-        return size_t(-1);
+        return std::size_t(-1);
     }
 
-    size_t type_id;
+    std::size_t type_id;
     data_t data;
 
 public:
