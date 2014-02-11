@@ -4,6 +4,7 @@
 #include <utility>
 #include <typeinfo>
 #include <type_traits>
+#include <stdexcept>
 
 namespace util {
 
