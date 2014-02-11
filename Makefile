@@ -1,5 +1,5 @@
 CXX := $(CXX)
-CXXFLAGS := $(CXXFLAGS) -O3 -DNDEBUG -Wall -Wsign-conversion -Wshadow -Wunused-parameter -Wshorten-64-to-32 -pedantic -finline-functions -fvisibility-inlines-hidden -std=c++11
+CXXFLAGS := $(CXXFLAGS) -O3 -DNDEBUG -Wall -Wsign-compare -Wsign-conversion -Wshadow -Wunused-parameter -Wshorten-64-to-32 -pedantic -finline-functions -fvisibility-inlines-hidden -std=c++11
 LDFLAGS := $(LDFLAGS) -lboost_timer -lboost_system -lboost_chrono
 
 OS:=$(shell uname -s)

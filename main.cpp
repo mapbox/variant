@@ -76,14 +76,14 @@ int main (int argc, char** argv)
         std::cerr << "Usage:" << argv[0] << " <num-runs>" << std::endl;
         return 1;
     }
-    const size_t NUM_RUNS = static_cast<size_t>(std::stol(argv[1]));
+    const std::size_t NUM_RUNS = static_cast<std::size_t>(std::stol(argv[1]));
 
 #if 1
     {
         boost::timer::auto_cpu_timer t;
         test::Holder<boost::variant<int,double,std::string>> h;
         h.data.reserve(NUM_RUNS);
-        for (int i=0; i< NUM_RUNS;++i)
+        for (std::size_t i=0; i< NUM_RUNS;++i)
         {
             h.append_move(std::string(TEXT));
             h.append_move(123);
@@ -105,7 +105,7 @@ int main (int argc, char** argv)
         boost::timer::auto_cpu_timer t;
         test::Holder<util::variant<int,double,std::string> > h;
         h.data.reserve(NUM_RUNS);
-        for (int i=0; i< NUM_RUNS;++i)
+        for (std::size_t i=0; i< NUM_RUNS;++i)
         {
             h.append_move(std::string(TEXT));
             h.append_move(123);
