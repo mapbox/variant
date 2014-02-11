@@ -76,9 +76,7 @@ int main (int argc, char** argv)
         std::cerr << "Usage:" << argv[0] << " <num-runs>" << std::endl;
         return 1;
     }
-    const int NUM_RUNS=std::stol(argv[1]);
-
-
+    const size_t NUM_RUNS = static_cast<size_t>(std::stol(argv[1]));
 
 #if 1
     {

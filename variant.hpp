@@ -24,7 +24,7 @@ struct type_traits<T, First, Types...>
 template <typename T>
 struct type_traits<T>
 {
-    static constexpr std::size_t id = -1; // invalid
+    static constexpr std::size_t id = size_t(-1); // invalid
 };
 
 template <typename T, typename...Types>
@@ -103,9 +103,9 @@ struct variant_helper<T, Types...>
 
 template<> struct variant_helper<>
 {
-    inline static void destroy(size_t id, void * data) {}
-    inline static void move(size_t old_t, void * old_v, void * new_v) {}
-    inline static void copy(size_t old_t, const void * old_v, void * new_v) {}
+    inline static void destroy(size_t, void *) {}
+    inline static void move(size_t, void *, void *) {}
+    inline static void copy(size_t, const void *, void *) {}
 };
 
 namespace detail {
@@ -134,7 +134,7 @@ template<typename F,typename V>
 struct dispatcher<F,V>
 {
     typedef typename std::result_of<F(V const&)>::type result_type;
-    static result_type apply(V const& v, F f)
+    static result_type apply(V const&, F)
     {
         throw std::runtime_error("dispatch: FAIL");
     }
@@ -157,7 +157,7 @@ private:
 
     static inline size_t invalid_type()
     {
-        return -1;
+        return size_t(-1);
     }
 
     size_t type_id;
