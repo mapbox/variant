@@ -56,7 +56,7 @@ struct dummy : boost::static_visitor<>
 };
 
 template <typename V>
-struct dummy2 : boost::static_visitor<>
+struct dummy2
 {
     dummy2(V & v)
         : v_(v) {}
