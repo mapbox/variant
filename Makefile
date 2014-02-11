@@ -34,5 +34,7 @@ test: test-variant
 
 clean:
 	rm -f ./test-variant
+	rm -f ./test/variant
+	rm -f ./test/boost-variant
 
 .PHONY: sizes
