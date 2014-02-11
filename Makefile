@@ -1,12 +1,14 @@
 CXX := $(CXX)
 BOOST_LIBS = -lboost_timer -lboost_system -lboost_chrono
-CXXFLAGS := $(CXXFLAGS) -O3 -Wall -Wsign-compare -DNDEBUG -Wsign-conversion -Wshadow -Wunused-parameter -Wshorten-64-to-32 -pedantic -finline-functions -fvisibility-inlines-hidden -std=c++11
+CXXFLAGS := $(CXXFLAGS) -O3 -Wall -Wsign-compare -DNDEBUG -Wsign-conversion -Wshadow -Wunused-parameter -pedantic -finline-functions -fvisibility-inlines-hidden -std=c++11
 LDFLAGS := $(LDFLAGS)
 
 OS:=$(shell uname -s)
 ifeq ($(OS),Darwin)
 	CXXFLAGS += -stdlib=libc++
 	LDFLAGS += -stdlib=libc++
+else
+    BOOST_LIBS += -lrt
 endif
 
 ifeq (sizes,$(firstword $(MAKECMDGOALS)))
