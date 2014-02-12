@@ -74,7 +74,7 @@ struct variant_helper;
 template<typename T, typename... Types>
 struct variant_helper<T, Types...>
 {
-    VARIANT_INLINE static void destroy(std::size_t id, void * data)
+    VARIANT_INLINE static void destroy(const std::size_t id, void * data)
     {
         if (id == sizeof...(Types))
         {
