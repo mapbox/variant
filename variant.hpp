@@ -8,6 +8,7 @@
 #include <stdexcept> // runtime_error
 #include <new> // operator new
 #include <cstddef> // size_t
+#include <iosfwd>
 
 #ifdef NDEBUG
  #define VARIANT_INLINE inline __attribute__((always_inline))
@@ -90,6 +91,9 @@ struct variant_helper<T, Types...>
         if (old_t == sizeof...(Types))
         {
             new (new_v) T(std::move(*reinterpret_cast<T*>(old_v)));
+            //std::memcpy(new_v, old_v, sizeof(T));
+            // ^^  DANGER: this should only be considered for relocatable types e.g built-in types
+            // Also, I don't see any measurable performance benefit just yet
         }
         else
         {
@@ -149,8 +153,63 @@ struct dispatcher<F,V>
     }
 };
 
-} // detail
+// comparator functors
+struct equal_comp
+{
+    template <typename T>
+    bool operator()(T const& lhs, T const& rhs) const
+    {
+        return lhs == rhs;
+    }
+};
 
+struct less_comp
+{
+    template <typename T>
+    bool operator()(const T& lhs, const T& rhs) const
+    {
+        return lhs < rhs;
+    }
+};
+
+template <typename Variant, typename Comp>
+struct comparer
+{
+public:
+    explicit comparer(Variant const& lhs) noexcept
+        : lhs_(lhs) {}
+    comparer& operator=(const comparer&) = delete;
+    // visitor
+    template<typename T>
+    bool operator()(T const& rhs_content) const
+    {
+        T const& lhs_content = lhs_.template get<T>();
+        return Comp()(lhs_content, rhs_content);
+    }
+private:
+    Variant const& lhs_;
+};
+
+// operator<< helper
+template <typename Out>
+struct printer
+{
+public:
+    explicit printer(Out & out)
+        : out_(out) {}
+    printer& operator=(const printer&) = delete;
+
+// visitor
+    template <typename T>
+    void operator()(const T& operand) const
+    {
+        out_ << operand;
+    }
+private:
+    Out & out_;
+};
+
+} // detail
 
 template<typename... Types>
 struct variant
@@ -200,7 +259,7 @@ public:
         helper_t::move(old.type_id, &old.data, &data);
     }
 
-    friend void swap(variant<Types...> & first, variant<Types...> & second) 
+    friend void swap(variant<Types...> & first, variant<Types...> & second)
     {
         using std::swap; //enable ADL
         swap(first.type_id, second.type_id);
@@ -276,6 +335,26 @@ public:
         helper_t::destroy(type_id, &data);
     }
 
+    // comparison operators
+    // equality
+    VARIANT_INLINE bool operator==(variant const& rhs) const
+    {
+        if (this->get_type_id() != rhs.get_type_id())
+            return false;
+        detail::comparer<variant, detail::equal_comp> visitor(*this);
+        return visit(rhs, visitor);
+    }
+    // less than
+    VARIANT_INLINE bool operator<(variant const& rhs) const
+    {
+        if (this->get_type_id() != rhs.get_type_id())
+        {
+            return this->get_type_id() < rhs.get_type_id();
+            // ^^ borrowed from boost::variant
+        }
+        detail::comparer<variant, detail::less_comp> visitor(*this);
+        return visit(rhs, visitor);
+    }
 };
 
 // unary visitor interface
@@ -284,6 +363,16 @@ typename std::result_of<F(V const&)>::type
 VARIANT_INLINE static apply_visitor(V const& v, F f)
 {
     return V::visit(v,f);
+}
+
+// operator<<
+template <typename charT, typename traits, typename Variant>
+VARIANT_INLINE std::basic_ostream<charT,traits>&
+operator<< (std::basic_ostream<charT,traits>& out, Variant const& rhs)
+{
+    detail::printer<std::basic_ostream<charT,traits> > visitor(out);
+    apply_visitor(rhs, visitor);
+    return out;
 }
 
 }
