@@ -19,6 +19,8 @@ namespace util {
 
 namespace detail {
 
+static constexpr std::size_t invalid_value = std::size_t(-1);
+
 template <typename T, typename...Types>
 struct type_traits;
 
@@ -31,7 +33,7 @@ struct type_traits<T, First, Types...>
 template <typename T>
 struct type_traits<T>
 {
-    static constexpr std::size_t id = std::size_t(-1); // invalid
+    static constexpr std::size_t id = invalid_value;
 };
 
 template <typename T, typename...Types>
@@ -162,18 +164,13 @@ private:
 
     using helper_t = variant_helper<Types...>;
 
-    VARIANT_INLINE static std::size_t invalid_type()
-    {
-        return std::size_t(-1);
-    }
-
     std::size_t type_id;
     data_t data;
 
 public:
 
     VARIANT_INLINE variant()
-        : type_id(invalid_type()) {}
+        : type_id(detail::invalid_value) {}
 
     template <typename T>
     VARIANT_INLINE explicit variant(T const& val) noexcept
@@ -218,7 +215,7 @@ public:
 
     VARIANT_INLINE void valid()
     {
-        return (type_id != invalid_type());
+        return (type_id != detail::invalid_value);
     }
 
     template<typename T, typename... Args>
