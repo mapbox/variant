@@ -2,6 +2,7 @@
 #include <vector>
 #include <thread>
 #include <string>
+#include <utility>
 #include <boost/variant.hpp>
 #include <boost/timer/timer.hpp>
 #include "variant.hpp"
@@ -19,7 +20,7 @@ struct Holder
     template <typename T>
     void append_move( T && obj)
     {
-        data.emplace_back(std::move(obj));
+        data.emplace_back(std::forward<T>(obj));
     }
 
     template <typename T>
@@ -115,7 +116,10 @@ int main (int argc, char** argv)
         std::cerr << "Usage:" << argv[0] << " <num-runs>" << std::endl;
         return 1;
     }
+#ifndef SINGLE_THREADED
     const std::size_t THREADS = 10;
+#endif
+    
     const std::size_t NUM_RUNS = static_cast<std::size_t>(std::stol(argv[1]));
 
 #ifdef SINGLE_THREADED
