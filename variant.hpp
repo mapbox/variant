@@ -9,6 +9,12 @@
 #include <new> // operator new
 #include <cstddef> // size_t
 
+#ifdef NDEBUG
+ #define VARIANT_INLINE inline __attribute__((always_inline))
+#else
+ #define VARIANT_INLINE __attribute__((noinline))
+#endif
+
 namespace util {
 
 namespace detail {
@@ -65,7 +71,7 @@ struct variant_helper;
 template<typename T, typename... Types>
 struct variant_helper<T, Types...>
 {
-    inline static void destroy(std::size_t id, void * data)
+    VARIANT_INLINE static void destroy(std::size_t id, void * data)
     {
         if (id == sizeof...(Types))
         {
@@ -77,7 +83,7 @@ struct variant_helper<T, Types...>
         }
     }
 
-    inline static void move(std::size_t old_t, void * old_v, void * new_v)
+    VARIANT_INLINE static void move(std::size_t old_t, void * old_v, void * new_v)
     {
         if (old_t == sizeof...(Types))
         {
@@ -89,7 +95,7 @@ struct variant_helper<T, Types...>
         }
     }
 
-    inline static void copy(std::size_t old_t, const void * old_v, void * new_v)
+    VARIANT_INLINE static void copy(std::size_t old_t, const void * old_v, void * new_v)
     {
         if (old_t == sizeof...(Types))
         {
@@ -104,9 +110,9 @@ struct variant_helper<T, Types...>
 
 template<> struct variant_helper<>
 {
-    inline static void destroy(std::size_t, void *) {}
-    inline static void move(std::size_t, void *, void *) {}
-    inline static void copy(std::size_t, const void *, void *) {}
+    VARIANT_INLINE static void destroy(std::size_t, void *) {}
+    VARIANT_INLINE static void move(std::size_t, void *, void *) {}
+    VARIANT_INLINE static void copy(std::size_t, const void *, void *) {}
 };
 
 namespace detail {
@@ -118,7 +124,7 @@ template <typename F, typename V, typename T, typename...Types>
 struct dispatcher<F,V,T,Types...>
 {
     typedef typename std::result_of<F(V const&)>::type result_type;
-    static result_type apply(V const& v, F f)
+    VARIANT_INLINE static result_type apply(V const& v, F f)
     {
         if (v.get_type_id() == sizeof...(Types))
         {
@@ -135,7 +141,7 @@ template<typename F,typename V>
 struct dispatcher<F,V>
 {
     typedef typename std::result_of<F(V const&)>::type result_type;
-    static result_type apply(V const&, F)
+    VARIANT_INLINE static result_type apply(V const&, F)
     {
         throw std::runtime_error("dispatch: FAIL");
     }
@@ -156,7 +162,7 @@ private:
 
     using helper_t = variant_helper<Types...>;
 
-    static inline std::size_t invalid_type()
+    VARIANT_INLINE static std::size_t invalid_type()
     {
         return std::size_t(-1);
     }
@@ -166,11 +172,11 @@ private:
 
 public:
 
-    variant()
+    VARIANT_INLINE variant()
         : type_id(invalid_type()) {}
 
     template <typename T>
-    explicit variant(T const& val) noexcept
+    VARIANT_INLINE explicit variant(T const& val) noexcept
         : type_id(detail::type_traits<T, Types...>::id)
     {
         static_assert(detail::is_valid_type<T,Types...>::value, "Not a valid type for this variant");
@@ -178,26 +184,26 @@ public:
     }
 
     template <typename T>
-    variant(T && val) noexcept
+    VARIANT_INLINE variant(T && val) noexcept
         : type_id(detail::type_traits<T,Types...>::id)
     {
         static_assert(detail::is_valid_type<T,Types...>::value, "Not a valid type for this variant");
         new (&data) T(std::forward<T>(val)); // nothrow
     }
 
-    variant(variant<Types...> const& old)
+    VARIANT_INLINE variant(variant<Types...> const& old)
         : type_id(old.type_id)
     {
         helper_t::copy(old.type_id, &old.data, &data);
     }
 
-    variant(variant<Types...>&& old) noexcept
+    VARIANT_INLINE variant(variant<Types...>&& old) noexcept
         : type_id(old.type_id)
     {
         helper_t::move(old.type_id, &old.data, &data);
     }
 
-    variant<Types...>& operator= (variant<Types...> old)
+    VARIANT_INLINE variant<Types...>& operator= (variant<Types...> old)
     {
         std::swap(type_id, old.type_id);
         std::swap(data, old.data);
@@ -205,18 +211,18 @@ public:
     }
 
     template<typename T>
-    void is()
+    VARIANT_INLINE void is()
     {
         return (type_id == detail::type_traits<T, Types...>::id);
     }
 
-    void valid()
+    VARIANT_INLINE void valid()
     {
         return (type_id != invalid_type());
     }
 
     template<typename T, typename... Args>
-    void set(Args&&... args)
+    VARIANT_INLINE void set(Args&&... args)
     {
         helper_t::destroy(type_id, &data);
         new (&data) T(std::forward<Args>(args)...);
@@ -224,7 +230,7 @@ public:
     }
 
     template<typename T>
-    T& get()
+    VARIANT_INLINE T& get()
     {
         if (type_id == detail::type_traits<T,Types...>::id)
         {
@@ -237,7 +243,7 @@ public:
     }
 
     template<typename T>
-    T const& get() const
+    VARIANT_INLINE T const& get() const
     {
         if (type_id == detail::type_traits<T,Types...>::id)
         {
@@ -249,7 +255,7 @@ public:
         }
     }
 
-    std::size_t get_type_id() const
+    VARIANT_INLINE std::size_t get_type_id() const
     {
         return type_id;
     }
@@ -257,7 +263,7 @@ public:
     // visitor
     template <typename F, typename V>
     typename std::result_of<F(V const&)>::type
-    static visit(V const& v, F f)
+    VARIANT_INLINE static visit(V const& v, F f)
     {
         return detail::dispatcher<F, V, Types...>::apply(v, f);
     }
@@ -271,7 +277,7 @@ public:
 // unary visitor interface
 template <typename V, typename F>
 typename std::result_of<F(V const&)>::type
-static apply_visitor(V const& v, F f)
+VARIANT_INLINE static apply_visitor(V const& v, F f)
 {
     return V::visit(v,f);
 }
