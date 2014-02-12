@@ -40,12 +40,12 @@ sizes: Makefile variant.hpp
 	@$(CXX) -o ./test/boost-variant ./test/boost-variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./test/boost-variant
 
 test: test-variant
-	./test-variant 5000000
+	./test-variant 500000
 
 profile: test-variant-debug
 	mkdir -p profiling/
 	rm -rf profiling/*
-	iprofiler -timeprofiler -d profiling/ ./test-variant-debug 5000000
+	iprofiler -timeprofiler -d profiling/ ./test-variant-debug 500000
 
 clean:
 	rm -f ./test-variant
