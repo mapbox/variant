@@ -12,4 +12,5 @@ exe variant-test
     .//chrono
     :
     <include>$(BOOST_DIR)/include
+    <define>VARIANT_LOGICAL_TESTS
     ;

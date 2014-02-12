@@ -32,7 +32,6 @@ struct Holder
 
 }
 
-
 struct print
 {
     template <typename T>
@@ -116,10 +115,10 @@ int main (int argc, char** argv)
         std::cerr << "Usage:" << argv[0] << " <num-runs>" << std::endl;
         return 1;
     }
+
 #ifndef SINGLE_THREADED
-    const std::size_t THREADS = 10;
+    const std::size_t THREADS = 4;
 #endif
-    
     const std::size_t NUM_RUNS = static_cast<std::size_t>(std::stol(argv[1]));
 
 #ifdef SINGLE_THREADED
@@ -197,7 +196,7 @@ int main (int argc, char** argv)
     }
 #endif
 
-#if 0
+#ifdef VARIANT_LOGICAL_TESTS
 
     std::cerr << util::detail::type_traits<bool, bool, int, double, std::string>::id << std::endl;
     std::cerr << util::detail::type_traits<int, bool, int, double, std::string>::id << std::endl;
@@ -220,7 +219,6 @@ int main (int argc, char** argv)
         util::apply_visitor(e, print());
     }
 
-
     v=std::string("test");
     util::apply_visitor(v, print());
     v=123.345;
@@ -234,7 +232,25 @@ int main (int argc, char** argv)
     std::cerr << sizeof(v2) << std::endl;
     std::cerr << sizeof(v3) << std::endl;
     std::cerr << sizeof(boost::variant<bool,int, double, std::string>) << std::endl;
-#endif
-    return EXIT_SUCCESS;
 
+
+    {
+        std::cerr << "---------- comparison test" << std::endl;
+        std::cerr << (variant_type(123) == variant_type(123)) << std::endl;
+        std::cerr << (variant_type(123) == variant_type(456)) << std::endl;
+        std::cerr << (variant_type(123) == variant_type(123.0)) << std::endl;
+        std::cerr << (variant_type(std::string("ABC")) == variant_type(std::string("ABC"))) << std::endl;
+    }
+
+    {
+        std::cerr << "---------- variant operator<<" << std::endl;
+        std::cerr << variant_type(123) << std::endl;
+        std::cerr << variant_type(true) << std::endl;
+        std::cerr << variant_type(3.14159) << std::endl;
+        std::cerr << variant_type(std::string("c++11 rock!")) << std::endl;
+    }
+
+#endif
+
+    return EXIT_SUCCESS;
 }
