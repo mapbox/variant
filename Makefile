@@ -1,12 +1,15 @@
 CXX := $(CXX)
 BOOST_LIBS = -lboost_timer -lboost_system -lboost_chrono
-CXXFLAGS := $(CXXFLAGS) -O3 -Wall -Wsign-compare -DNDEBUG -Wsign-conversion -Wshadow -Wunused-parameter -pedantic -finline-functions -fvisibility-inlines-hidden -std=c++11
+RELEASE_FLAGS = -O3 -DNDEBUG -finline-functions
+DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions
+COMMON_FLAGS = -Wall -Wsign-compare -Wsign-conversion -Wshadow -Wunused-parameter -pedantic -fvisibility-inlines-hidden -std=c++11
+CXXFLAGS := $(CXXFLAGS)
 LDFLAGS := $(LDFLAGS)
 
 OS:=$(shell uname -s)
 ifeq ($(OS),Darwin)
 	CXXFLAGS += -stdlib=libc++
-	LDFLAGS += -stdlib=libc++
+	LDFLAGS += -stdlib=libc++ -F/ -framework CoreFoundation
 else
     BOOST_LIBS += -lrt
 endif
@@ -22,8 +25,13 @@ endif
 
 all: test-variant
 
+test-variant-debug: Makefile main.cpp variant.hpp
+	$(CXX) -o test-variant-debug main.cpp -I./ $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
+
+debug: test-variant-debug
+
 test-variant: Makefile main.cpp variant.hpp
-	$(CXX) -o test-variant main.cpp -I./ $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
+	$(CXX) -o test-variant main.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
 sizes: Makefile variant.hpp
 	@$(CXX) -o /tmp/variant.out variant.hpp $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h /tmp/variant.out
@@ -34,9 +42,16 @@ sizes: Makefile variant.hpp
 test: test-variant
 	./test-variant 5000000
 
+profile: test-variant-debug
+	mkdir -p profiling/
+	rm -rf profiling/*
+	iprofiler -timeprofiler -d profiling/ ./test-variant-debug 5000000
+
 clean:
 	rm -f ./test-variant
+	rm -f ./test-variant-debug
 	rm -f ./test/variant
 	rm -f ./test/boost-variant
+	rm -rf *.dSYM
 
 .PHONY: sizes
