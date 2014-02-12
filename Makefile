@@ -34,10 +34,10 @@ test-variant: Makefile main.cpp variant.hpp
 	$(CXX) -o test-variant main.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
 sizes: Makefile variant.hpp
-	@$(CXX) -o /tmp/variant.out variant.hpp $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h /tmp/variant.out
-	@$(CXX) -o /tmp/boost-variant.out $(RUN_ARGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h /tmp/boost-variant.out
-	@$(CXX) -o ./test/variant ./test/variant.cpp -I./ $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./test/variant
-	@$(CXX) -o ./test/boost-variant ./test/boost-variant.cpp -I./ $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./test/boost-variant
+	@$(CXX) -o /tmp/variant.out variant.hpp $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h /tmp/variant.out
+	@$(CXX) -o /tmp/boost-variant.out $(RUN_ARGS) $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h /tmp/boost-variant.out
+	@$(CXX) -o ./test/variant ./test/variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./test/variant
+	@$(CXX) -o ./test/boost-variant ./test/boost-variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./test/boost-variant
 
 test: test-variant
 	./test-variant 5000000
