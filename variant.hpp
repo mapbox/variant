@@ -86,30 +86,30 @@ struct variant_helper<T, Types...>
         }
     }
 
-    VARIANT_INLINE static void move(const std::size_t old_t, void * old_v, void * new_v)
+    VARIANT_INLINE static void move(const std::size_t old_id, void * old_value, void * new_value)
     {
-        if (old_t == sizeof...(Types))
+        if (old_id == sizeof...(Types))
         {
-            new (new_v) T(std::move(*reinterpret_cast<T*>(old_v)));
+            new (new_v) T(std::move(*reinterpret_cast<T*>(old_value)));
             //std::memcpy(new_v, old_v, sizeof(T));
             // ^^  DANGER: this should only be considered for relocatable types e.g built-in types
             // Also, I don't see any measurable performance benefit just yet
         }
         else
         {
-            variant_helper<Types...>::move(old_t, old_v, new_v);
+            variant_helper<Types...>::move(old_id, old_value, new_value);
         }
     }
 
-    VARIANT_INLINE static void copy(const std::size_t old_t, const void * old_v, void * new_v)
+    VARIANT_INLINE static void copy(const std::size_t old_id, const void * old_value, void * new_value)
     {
-        if (old_t == sizeof...(Types))
+        if (old_id == sizeof...(Types))
         {
-            new (new_v) T(*reinterpret_cast<const T*>(old_v));
+            new (new_v) T(*reinterpret_cast<const T*>(old_value));
         }
         else
         {
-            variant_helper<Types...>::copy(old_t, old_v, new_v);
+            variant_helper<Types...>::copy(old_id, old_value, new_value);
         }
     }
 };
