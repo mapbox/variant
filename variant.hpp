@@ -85,7 +85,7 @@ struct variant_helper<T, Types...>
         }
     }
 
-    VARIANT_INLINE static void move(std::size_t old_t, void * old_v, void * new_v)
+    VARIANT_INLINE static void move(const std::size_t old_t, void * old_v, void * new_v)
     {
         if (old_t == sizeof...(Types))
         {
@@ -97,7 +97,7 @@ struct variant_helper<T, Types...>
         }
     }
 
-    VARIANT_INLINE static void copy(std::size_t old_t, const void * old_v, void * new_v)
+    VARIANT_INLINE static void copy(const std::size_t old_t, const void * old_v, void * new_v)
     {
         if (old_t == sizeof...(Types))
         {
@@ -112,9 +112,9 @@ struct variant_helper<T, Types...>
 
 template<> struct variant_helper<>
 {
-    VARIANT_INLINE static void destroy(std::size_t, void *) {}
-    VARIANT_INLINE static void move(std::size_t, void *, void *) {}
-    VARIANT_INLINE static void copy(std::size_t, const void *, void *) {}
+    VARIANT_INLINE static void destroy(const std::size_t, void *) {}
+    VARIANT_INLINE static void move(const std::size_t, void *, void *) {}
+    VARIANT_INLINE static void copy(const std::size_t, const void *, void *) {}
 };
 
 namespace detail {
@@ -200,20 +200,26 @@ public:
         helper_t::move(old.type_id, &old.data, &data);
     }
 
-    VARIANT_INLINE variant<Types...>& operator= (variant<Types...> old)
+    friend void swap(variant<Types...> & first, variant<Types...> & second) 
     {
-        std::swap(type_id, old.type_id);
-        std::swap(data, old.data);
+        using std::swap; //enable ADL
+        swap(first.type_id, second.type_id);
+        swap(first.data, second.data);
+    }
+
+    VARIANT_INLINE variant<Types...>& operator= (variant<Types...> other)
+    {
+        swap(*this, other);
         return *this;
     }
 
     template<typename T>
-    VARIANT_INLINE void is()
+    VARIANT_INLINE void is() const
     {
         return (type_id == detail::type_traits<T, Types...>::id);
     }
 
-    VARIANT_INLINE void valid()
+    VARIANT_INLINE void valid() const
     {
         return (type_id != detail::invalid_value);
     }
@@ -269,6 +275,7 @@ public:
     {
         helper_t::destroy(type_id, &data);
     }
+
 };
 
 // unary visitor interface
