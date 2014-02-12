@@ -115,7 +115,7 @@ int main (int argc, char** argv)
         std::cerr << "Usage:" << argv[0] << " <num-runs>" << std::endl;
         return 1;
     }
-    const std::size_t THREADS = 15;
+    const std::size_t THREADS = 10;
     const std::size_t NUM_RUNS = static_cast<std::size_t>(std::stol(argv[1]));
 
 #ifdef SINGLE_THREADED
