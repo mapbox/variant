@@ -197,11 +197,11 @@ struct printer
 public:
     explicit printer(Out & out)
         : out_(out) {}
-    printer& operator=(const printer&) = delete;
+    printer& operator=(printer const &) = delete;
 
 // visitor
     template <typename T>
-    void operator()(const T& operand) const
+    void operator()( T const & operand) const
     {
         out_ << operand;
     }
