@@ -91,7 +91,7 @@ struct variant_helper<T, Types...>
         if (old_id == sizeof...(Types))
         {
             new (new_value) T(std::move(*reinterpret_cast<T*>(old_value)));
-            //std::memcpy(new_v, old_v, sizeof(T));
+            //std::memcpy(new_value, old_value, sizeof(T));
             // ^^  DANGER: this should only be considered for relocatable types e.g built-in types
             // Also, I don't see any measurable performance benefit just yet
         }
