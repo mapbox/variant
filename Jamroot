@@ -13,4 +13,5 @@ exe variant-test
     :
     <include>$(BOOST_DIR)/include
     <define>VARIANT_LOGICAL_TESTS
+    <variant>release:<cxxflags>-march=native
     ;
