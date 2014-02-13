@@ -219,12 +219,12 @@ private:
     static const std::size_t data_size = static_max<sizeof(Types)...>::value;
     static const std::size_t data_align = static_max<alignof(Types)...>::value;
 
-    using data_t = typename std::aligned_storage<data_size, data_align>::type;
+    using data_type = typename std::aligned_storage<data_size, data_align>::type;
 
-    using helper_t = variant_helper<Types...>;
+    using helper_type = variant_helper<Types...>;
 
     std::size_t type_id;
-    data_t data;
+    data_type data;
 
 public:
 
@@ -250,13 +250,13 @@ public:
     VARIANT_INLINE variant(variant<Types...> const& old)
         : type_id(old.type_id)
     {
-        helper_t::copy(old.type_id, &old.data, &data);
+        helper_type::copy(old.type_id, &old.data, &data);
     }
 
     VARIANT_INLINE variant(variant<Types...>&& old) noexcept
         : type_id(old.type_id)
     {
-        helper_t::move(old.type_id, &old.data, &data);
+        helper_type::move(old.type_id, &old.data, &data);
     }
 
     friend void swap(variant<Types...> & first, variant<Types...> & second)
@@ -286,7 +286,7 @@ public:
     template<typename T, typename... Args>
     VARIANT_INLINE void set(Args&&... args)
     {
-        helper_t::destroy(type_id, &data);
+        helper_type::destroy(type_id, &data);
         new (&data) T(std::forward<Args>(args)...);
         type_id = detail::type_traits<T,Types...>::id;
     }
@@ -332,7 +332,7 @@ public:
 
     ~variant() noexcept
     {
-        helper_t::destroy(type_id, &data);
+        helper_type::destroy(type_id, &data);
     }
 
     // comparison operators
