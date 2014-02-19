@@ -173,7 +173,7 @@ struct less_comp
 };
 
 template <typename Variant, typename Comp>
-struct comparer
+class comparer
 {
 public:
     explicit comparer(Variant const& lhs) noexcept
@@ -192,7 +192,7 @@ private:
 
 // operator<< helper
 template <typename Out>
-struct printer
+class printer
 {
 public:
     explicit printer(Out & out)
@@ -212,7 +212,7 @@ private:
 } // detail
 
 template<typename... Types>
-struct variant
+class variant
 {
 private:
 
