@@ -1,6 +1,6 @@
 CXX := $(CXX)
 BOOST_LIBS = -lboost_timer -lboost_system -lboost_chrono
-RELEASE_FLAGS = -O3 -DNDEBUG -finline-functions -march=native
+RELEASE_FLAGS = -O3 -DNDEBUG -finline-functions -march=native -DSINGLE_THREADED
 DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions
 COMMON_FLAGS = -Wall -Wsign-compare -Wsign-conversion -Wshadow -Wunused-parameter -pedantic -fvisibility-inlines-hidden -std=c++11
 CXXFLAGS := $(CXXFLAGS)
@@ -53,5 +53,10 @@ clean:
 	rm -f ./test/variant
 	rm -f ./test/boost-variant
 	rm -rf *.dSYM
+
+pgo:
+	$(CXX) -o test-variant main.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -pg -fprofile-generate
+	./test-variant 500000 >/dev/null 2>/dev/null
+	$(CXX) -o test-variant main.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -fprofile-use
 
 .PHONY: sizes
