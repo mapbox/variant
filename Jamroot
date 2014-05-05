@@ -15,3 +15,16 @@ exe variant-test
     <define>VARIANT_LOGICAL_TESTS
     <variant>release:<cxxflags>-march=native
     ;
+
+
+exe binary-visitor-test
+    :
+    binary_visitor_test.cpp
+    .//system
+    .//timer
+    .//chrono
+    :
+    <include>$(BOOST_DIR)/include
+    <define>VARIANT_LOGICAL_TESTS
+    <variant>release:<cxxflags>-march=native
+    ;

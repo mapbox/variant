@@ -11,9 +11,9 @@
 #include <iosfwd>
 
 #ifdef NDEBUG
- #define VARIANT_INLINE inline __attribute__((always_inline))
+#define VARIANT_INLINE inline __attribute__((always_inline))
 #else
- #define VARIANT_INLINE __attribute__((noinline))
+#define VARIANT_INLINE __attribute__((noinline))
 #endif
 
 namespace util {
@@ -130,6 +130,7 @@ template <typename F, typename V, typename T, typename...Types>
 struct dispatcher<F,V,T,Types...>
 {
     typedef typename std::result_of<F(V const&)>::type result_type;
+
     VARIANT_INLINE static result_type apply(V const& v, F f)
     {
         if (v.get_type_id() == sizeof...(Types))
@@ -147,9 +148,115 @@ template<typename F,typename V>
 struct dispatcher<F,V>
 {
     typedef typename std::result_of<F(V const&)>::type result_type;
+
     VARIANT_INLINE static result_type apply(V const&, F)
     {
-        throw std::runtime_error("dispatch: FAIL");
+        throw std::runtime_error("unary dispatch: FAIL");
+    }
+
+};
+
+
+template <typename F, typename V, typename T, typename...Types>
+struct binary_dispatcher_rhs;
+
+template <typename F, typename V, typename T0, typename T1, typename...Types>
+struct binary_dispatcher_rhs<F,V,T0,T1,Types...>
+{
+    typedef typename std::result_of<F(V const&, V const&)>::type result_type;
+    VARIANT_INLINE static result_type apply(V const& lhs, V const& rhs, F f)
+    {
+        if (rhs.get_type_id() == sizeof...(Types)) // call binary functor
+        {
+            return f(lhs. template get<T0>(), rhs. template get<T1>());
+        }
+        else
+        {
+            return binary_dispatcher_rhs<F,V,T0,Types...>::apply(lhs, rhs, f);
+        }
+    }
+};
+
+template<typename F,typename V, typename T>
+struct binary_dispatcher_rhs<F,V,T>
+{
+    typedef typename std::result_of<F(V const&, V const&)>::type result_type;
+
+    VARIANT_INLINE static result_type apply(V const&, V const&, F)
+    {
+        throw std::runtime_error("binary dispatch: FAIL");
+    }
+};
+
+
+template <typename F, typename V, typename T, typename...Types>
+struct binary_dispatcher_lhs;
+
+template <typename F, typename V, typename T0, typename T1, typename...Types>
+struct binary_dispatcher_lhs<F,V,T0,T1,Types...>
+{
+    typedef typename std::result_of<F(V const&, V const&)>::type binary_result_type;
+    VARIANT_INLINE static binary_result_type apply(V const& lhs, V const& rhs, F f)
+    {
+        if (lhs.get_type_id() == sizeof...(Types)) // call binary functor
+        {
+            return f(lhs. template get<T1>(), rhs. template get<T0>());
+        }
+        else
+        {
+            return binary_dispatcher_lhs<F,V,T0,Types...>::apply(lhs, rhs, f);
+        }
+    }
+};
+
+template<typename F,typename V, typename T>
+struct binary_dispatcher_lhs<F,V,T>
+{
+    typedef typename std::result_of<F(V const&, V const&)>::type result_type;
+
+    VARIANT_INLINE static result_type apply(V const&, V const&, F)
+    {
+        throw std::runtime_error("binary dispatch: FAIL");
+    }
+};
+
+template <typename F, typename V, typename...Types>
+struct binary_dispatcher;
+
+template <typename F, typename V, typename T, typename...Types>
+struct binary_dispatcher<F,V,T,Types...>
+{
+    typedef typename std::result_of<F(V const&, V const&)>::type binary_result_type;
+
+    VARIANT_INLINE static binary_result_type apply(V const& v0, V const& v1, F f)
+    {
+        if (v0.get_type_id() == sizeof...(Types))
+        {
+            if (v0.get_type_id() == v1.get_type_id())
+            {
+                return f(v0. template get<T>(), v1. template get<T>()); // call binary functor
+            }
+            else
+            {
+                return binary_dispatcher_rhs<F,V,T,Types...>::apply(v0, v1, f);
+            }
+        }
+        else if (v1.get_type_id() == sizeof...(Types))
+        {
+            return binary_dispatcher_lhs<F,V,T,Types...>::apply(v0, v1, f);
+        }
+        return binary_dispatcher<F,V,Types...>::apply(v0, v1, f);
+    }
+};
+
+template<typename F,typename V>
+struct binary_dispatcher<F,V>
+{
+    typedef typename std::result_of<F(V const&, V const&)>::type binary_result_type;
+
+    VARIANT_INLINE static binary_result_type apply(V const&, V const&, F)
+    {
+        throw std::runtime_error("binary dispatch: FAIL");
     }
 };
 
@@ -323,11 +430,19 @@ public:
     }
 
     // visitor
+    // unary
     template <typename F, typename V>
     typename std::result_of<F(V const&)>::type
     VARIANT_INLINE static visit(V const& v, F f)
     {
         return detail::dispatcher<F, V, Types...>::apply(v, f);
+    }
+    // binary
+    template <typename F, typename V>
+    typename std::result_of<F(V const&, V const& )>::type
+    VARIANT_INLINE static binary_visit(V const& v0, V const& v1, F f)
+    {
+        return detail::binary_dispatcher<F, V, Types...>::apply(v0, v1, f);
     }
 
     ~variant() noexcept
@@ -364,6 +479,15 @@ VARIANT_INLINE static apply_visitor(V const& v, F f)
 {
     return V::visit(v,f);
 }
+
+// binary visitor interface
+template <typename V, typename F>
+typename std::result_of<F(V const&, V const&)>::type
+VARIANT_INLINE static apply_visitor(V const& v0, V const& v1, F f)
+{
+    return V::binary_visit(v0, v1, f);
+}
+
 
 // operator<<
 template <typename charT, typename traits, typename Variant>
