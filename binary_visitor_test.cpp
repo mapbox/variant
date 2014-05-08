@@ -35,7 +35,7 @@ struct string_to_number<int64_t>
 template <>
 struct string_to_number<uint64_t>
 {
-    int64_t operator() (std::string const& str) const
+    uint64_t operator() (std::string const& str) const
     {
         return std::stoull(str);
     }
