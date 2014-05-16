@@ -61,6 +61,13 @@ public:
         return value;
     }
 
+    int operator()(binary_op<add> const& binary) const
+    {
+        std::cerr << "gotcha!" << std::endl;
+        return util::apply_visitor( binary.left, calculator())
+            + util::apply_visitor( binary.right, calculator());
+    }
+
     int operator()(util::recursive_wrapper<binary_op<add> > const& binary) const
     {
         return util::apply_visitor( binary.get().left, calculator())
@@ -75,19 +82,41 @@ public:
 
 };
 
+struct to_string : public util::static_visitor<std::string>
+{
+public:
+
+    std::string operator()(int value) const
+    {
+        return std::to_string(value);
+    }
+
+    std::string operator()(util::recursive_wrapper<binary_op<add> > const& binary) const
+    {
+        return util::apply_visitor( binary.get().left, to_string()) + std::string("+")
+            + util::apply_visitor( binary.get().right, to_string());
+    }
+
+    std::string operator()(util::recursive_wrapper<binary_op<sub>> const& binary) const
+    {
+        return util::apply_visitor( binary.get().left, to_string() ) + std::string("-")
+            + util::apply_visitor( binary.get().right, to_string() );
+    }
+
+};
+
 }
 
 int main (int argc, char** argv)
 {
-    test::expression a(123);
-    test::expression b(456);
-    test::expression c(1000);
-    test::expression sum(util::recursive_wrapper<test::binary_op<test::add> >(test::binary_op<test::add>(a,b)));
-    test::expression result(util::recursive_wrapper<test::binary_op<test::sub> >(test::binary_op<test::sub>(sum,c)));
+    test::expression result(util::recursive_wrapper<test::binary_op<test::sub> >(
+                                test::binary_op<test::sub>(
+                                    util::recursive_wrapper<test::binary_op<test::add> >(
+                                        test::binary_op<test::add>(10,5)),7)));
 
     std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(result, test::test()) << std::endl;
 
-    std::cerr << "EVAL->" << util::apply_visitor(result, test::calculator()) << std::endl;
+    std::cerr << util::apply_visitor(result, test::to_string()) << "=" << util::apply_visitor(result, test::calculator()) << std::endl;
 
 
     return EXIT_SUCCESS;
