@@ -26,7 +26,7 @@ struct binary_op
     expression left;  // variant instantiated here...
     expression right;
 
-    binary_op( const expression & lhs, const expression & rhs )
+    binary_op( expression const& lhs, expression const& rhs )
         : left(lhs), right(rhs)
     {
     }

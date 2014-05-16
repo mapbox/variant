@@ -40,3 +40,15 @@ exe recursive-wrapper-test
     <define>VARIANT_LOGICAL_TESTS
     <variant>release:<cxxflags>-march=native
     ;
+
+exe unique-ptr-test
+    :
+    unique_ptr_test.cpp
+    .//system
+    .//timer
+    .//chrono
+    :
+    <include>$(BOOST_DIR)/include
+    <define>VARIANT_LOGICAL_TESTS
+    <variant>release:<cxxflags>-march=native
+    ;
