@@ -135,6 +135,26 @@ template<> struct variant_helper<>
 
 namespace detail {
 
+template <typename T>
+struct unwrapper
+{
+    T const& operator() (T const& obj) const
+    {
+        return obj;
+    }
+};
+
+
+template <typename T>
+struct unwrapper<recursive_wrapper<T>>
+{
+    auto operator() (recursive_wrapper<T> const& obj) -> typename recursive_wrapper<T>::type
+    {
+        return obj.get();
+    }
+};
+
+
 template <typename F, typename V, typename...Types>
 struct dispatcher;
 
@@ -146,7 +166,7 @@ struct dispatcher<F,V,T,Types...>
     {
         if (v.get_type_id() == sizeof...(Types))
         {
-            return f(v. template get<T>());
+            return f(unwrapper<T>()(v. template get<T>()));
         }
         else
         {
@@ -163,7 +183,6 @@ struct dispatcher<F,V>
     {
         throw std::runtime_error("unary dispatch: FAIL");
     }
-
 };
 
 
@@ -178,7 +197,8 @@ struct binary_dispatcher_rhs<F,V,T0,T1,Types...>
     {
         if (rhs.get_type_id() == sizeof...(Types)) // call binary functor
         {
-            return f(lhs. template get<T0>(), rhs. template get<T1>());
+            return f(unwrapper<T0>()(lhs. template get<T0>()),
+                     unwrapper<T1>()(rhs. template get<T1>()));
         }
         else
         {

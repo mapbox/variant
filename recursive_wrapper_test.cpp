@@ -8,7 +8,6 @@
 #include <boost/variant.hpp>
 #include <boost/timer/timer.hpp>
 #include "variant.hpp"
-//#include "recursive_wrapper.hpp"
 
 namespace test {
 
@@ -63,23 +62,15 @@ public:
 
     int operator()(binary_op<add> const& binary) const
     {
-        std::cerr << "gotcha!" << std::endl;
         return util::apply_visitor( binary.left, calculator())
             + util::apply_visitor( binary.right, calculator());
     }
 
-    int operator()(util::recursive_wrapper<binary_op<add> > const& binary) const
+    int operator()(binary_op<sub> const& binary) const
     {
-        return util::apply_visitor( binary.get().left, calculator())
-            + util::apply_visitor( binary.get().right, calculator());
+        return util::apply_visitor( binary.left, calculator())
+            - util::apply_visitor( binary.right, calculator());
     }
-
-    int operator()(util::recursive_wrapper<binary_op<sub>> const& binary) const
-    {
-        return util::apply_visitor( binary.get().left, calculator() )
-            - util::apply_visitor( binary.get().right, calculator() );
-    }
-
 };
 
 struct to_string : public util::static_visitor<std::string>
@@ -91,16 +82,16 @@ public:
         return std::to_string(value);
     }
 
-    std::string operator()(util::recursive_wrapper<binary_op<add> > const& binary) const
+    std::string operator()(binary_op<add> const& binary) const
     {
-        return util::apply_visitor( binary.get().left, to_string()) + std::string("+")
-            + util::apply_visitor( binary.get().right, to_string());
+        return util::apply_visitor( binary.left, to_string()) + std::string("+")
+            + util::apply_visitor( binary.right, to_string());
     }
 
-    std::string operator()(util::recursive_wrapper<binary_op<sub>> const& binary) const
+    std::string operator()(binary_op<sub> const& binary) const
     {
-        return util::apply_visitor( binary.get().left, to_string() ) + std::string("-")
-            + util::apply_visitor( binary.get().right, to_string() );
+        return util::apply_visitor( binary.left, to_string() ) + std::string("-")
+            + util::apply_visitor( binary.right, to_string() );
     }
 
 };
