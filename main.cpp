@@ -32,7 +32,7 @@ struct Holder
 
 }
 
-struct print
+struct print : util::static_visitor<>
 {
     template <typename T>
     void operator() (T const& val) const
@@ -57,7 +57,7 @@ struct dummy : boost::static_visitor<>
 };
 
 template <typename V>
-struct dummy2
+struct dummy2 : util::static_visitor<>
 {
     dummy2(V & v)
         : v_(v) {}
