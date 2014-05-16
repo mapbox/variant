@@ -148,7 +148,8 @@ struct unwrapper
 template <typename T>
 struct unwrapper<recursive_wrapper<T>>
 {
-    auto operator() (recursive_wrapper<T> const& obj) -> typename recursive_wrapper<T>::type
+    auto operator() (recursive_wrapper<T> const& obj) const
+        -> typename recursive_wrapper<T>::type
     {
         return obj.get();
     }
