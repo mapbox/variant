@@ -10,6 +10,7 @@
 #include <cstddef> // size_t
 #include <iosfwd>
 
+#include "recursive_wrapper.hpp"
 #ifdef NDEBUG
 #define VARIANT_INLINE inline __attribute__((always_inline))
 #else
