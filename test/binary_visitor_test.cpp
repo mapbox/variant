@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <iostream>
 #include <vector>
 #include <thread>
@@ -24,18 +25,18 @@ struct string_to_number<double>
 };
 
 template <>
-struct string_to_number<int64_t>
+struct string_to_number<std::int64_t>
 {
-    int64_t operator() (std::string const& str) const
+    std::int64_t operator() (std::string const& str) const
     {
         return std::stoll(str);
     }
 };
 
 template <>
-struct string_to_number<uint64_t>
+struct string_to_number<std::uint64_t>
 {
-    uint64_t operator() (std::string const& str) const
+    std::uint64_t operator() (std::string const& str) const
     {
         return std::stoull(str);
     }
@@ -96,8 +97,7 @@ struct javascript_equal
 
 int main (/*int argc, char** argv*/)
 {
-    //typedef util::variant<int, std::string> variant_type;
-    typedef util::variant<bool, int64_t, uint64_t, double, std::string> variant_type;
+    typedef util::variant<bool, std::uint64_t, double, std::string> variant_type;
     variant_type v0(3.14159);
     variant_type v1(std::string("3.14159"));
     variant_type v2(1ULL);
