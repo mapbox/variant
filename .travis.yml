@@ -6,11 +6,13 @@ compiler:
 
 before_install:
  - sudo add-apt-repository -y ppa:boost-latest/ppa
- # TODO - upgrade compilers
+ # we need at least g++-4.7 for c++11 features
+ - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
  - sudo apt-get update -qq
 
 install:
- - sudo apt-get -qq install boost1.55 g++ gcc
+ - sudo apt-get -qq install boost1.55 gcc-4.8 g++-4.8
+ - if [ "${CXX}" = 'g++' ]; then export CXX="g++-4.8" && export CC="gcc-4.8"; fi;
 
 before_script:
  - make test
