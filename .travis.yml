@@ -14,7 +14,7 @@ install:
  - sudo apt-get -qq install boost1.55 gcc-4.8 g++-4.8 gcc-4.7 g++-4.7
 
 before_script:
- - if [ "${CXX}" = 'g++' ]; then export CXX="g++-4.7"; export CC="gcc-4.7"; make test; make clean; export CXX="g++-4.8"; export CC="gcc-4.8"; make test; else make test; fi;
+ - if [ "${CXX}" = 'g++' ]; then export CXX="g++-4.7"; export CC="gcc-4.7"; make test bench; make clean; export CXX="g++-4.8"; export CC="gcc-4.8"; make test bench; else make test bench; fi;
 
 script:
  - make sizes /usr/include/boost/variant.hpp

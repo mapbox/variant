@@ -45,11 +45,18 @@ out/binary_visitor_test: Makefile test/binary_visitor_test.cpp variant.hpp
 	mkdir -p ./out
 	$(CXX) -o out/binary_visitor_test test/binary_visitor_test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
-test: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_wrapper_test out/binary_visitor_test
-	./out/bench-variant 5000000
+bench: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_wrapper_test out/binary_visitor_test
+	./out/bench-variant 100000
 	./out/unique_ptr_test 100000
 	./out/recursive_wrapper_test 100000
 	./out/binary_visitor_test 100000
+
+out/unit: Makefile test/unit.cpp variant.hpp
+	mkdir -p ./out
+	$(CXX) -o out/unit test/unit.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
+
+test: out/unit
+	./out/unit
 
 sizes: Makefile variant.hpp
 	mkdir -p ./out
