@@ -23,40 +23,40 @@ ifeq (sizes,$(firstword $(MAKECMDGOALS)))
   .PHONY: $(RUN_ARGS)
 endif
 
-all: test-variant
+all: out/bench-variant
 
-test-variant-debug: Makefile main.cpp variant.hpp
-	$(CXX) -o test-variant-debug main.cpp -I./ $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
+out:
+	mkdir -p ./out
 
-debug: test-variant-debug
+out/bench-variant-debug: out Makefile benchmark/test.cpp variant.hpp
+	$(CXX) -o out/bench-variant-debug benchmark/test.cpp -I./ $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
-test-variant: Makefile main.cpp variant.hpp
-	$(CXX) -o test-variant main.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
+debug: out/bench-variant-debug
 
-sizes: Makefile variant.hpp
-	@$(CXX) -o /tmp/variant.out variant.hpp $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h /tmp/variant.out
-	@$(CXX) -o /tmp/boost-variant.out $(RUN_ARGS) $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h /tmp/boost-variant.out
-	@$(CXX) -o ./test/variant ./test/variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./test/variant
-	@$(CXX) -o ./test/boost-variant ./test/boost-variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./test/boost-variant
+out/bench-variant: out Makefile benchmark/test.cpp variant.hpp
+	$(CXX) -o out/bench-variant benchmark/test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
-bench: test-variant
-	./test-variant 5000000
+sizes: out Makefile variant.hpp
+	@$(CXX) -o ./out/variant_hello_world.out variant.hpp $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./out/variant_hello_world.out
+	@$(CXX) -o ./out/boost_variant_hello_world.out $(RUN_ARGS) $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./out/boost_variant_hello_world.out
+	@$(CXX) -o ./out/variant_hello_world ./test/variant_hello_world.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./out/variant_hello_world
+	@$(CXX) -o ./out/boost_variant_hello_world ./test/boost_variant_hello_world.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./out/boost_variant_hello_world
 
-profile: test-variant-debug
+bench: out/bench-variant
+	./out/bench-variant 5000000
+
+profile: out/bench-variant-debug
 	mkdir -p profiling/
 	rm -rf profiling/*
-	iprofiler -timeprofiler -d profiling/ ./test-variant-debug 500000
+	iprofiler -timeprofiler -d profiling/ ./out/bench-variant-debug 500000
 
 clean:
-	rm -f ./test-variant
-	rm -f ./test-variant-debug
-	rm -f ./test/variant
-	rm -f ./test/boost-variant
+	rm -rf ./out
 	rm -rf *.dSYM
 
-pgo:
-	$(CXX) -o test-variant main.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -pg -fprofile-generate
+pgo: out Makefile variant.hpp
+	$(CXX) -o out/bench-variant benchmark/test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -pg -fprofile-generate
 	./test-variant 500000 >/dev/null 2>/dev/null
-	$(CXX) -o test-variant main.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -fprofile-use
+	$(CXX) -o out/bench-variant benchmark/test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -fprofile-use
 
 .PHONY: sizes

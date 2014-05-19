@@ -1,5 +1,3 @@
 .DS_Store
-test-variant
-test/boost-variant
-test/variant
+out
 profiling
