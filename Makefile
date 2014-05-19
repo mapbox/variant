@@ -39,8 +39,8 @@ sizes: Makefile variant.hpp
 	@$(CXX) -o ./test/variant ./test/variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./test/variant
 	@$(CXX) -o ./test/boost-variant ./test/boost-variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./test/boost-variant
 
-test: test-variant
-	./test-variant 500000
+bench: test-variant
+	./test-variant 5000000
 
 profile: test-variant-debug
 	mkdir -p profiling/

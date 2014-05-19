@@ -19,7 +19,7 @@ To build set your boost includes and libs locations and run `make`:
 
 Run the benchmark like:
 
-    make test
+    make bench
 
 # Check object sizes
 
