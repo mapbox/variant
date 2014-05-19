@@ -26,8 +26,8 @@ struct binary_op
     expression left;  // variant instantiated here...
     expression right;
 
-    binary_op( expression const& lhs, expression const& rhs )
-        : left(lhs), right(rhs)
+    binary_op( expression && lhs, expression && rhs )
+        : left(std::move(lhs)), right(std::move(rhs))
     {
     }
 };
@@ -100,12 +100,31 @@ public:
 
 int main (int argc, char** argv)
 {
+
+    if (argc != 2)
+    {
+        std::cerr << "Usage" << argv[0] << " <num-iter>" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    std::size_t const NUM_ITER = std::stoll(argv[1]);
+
     test::expression result(util::recursive_wrapper<test::binary_op<test::sub> >(
                                 test::binary_op<test::sub>(
                                     util::recursive_wrapper<test::binary_op<test::add> >(
-                                        test::binary_op<test::add>(10,5)),7)));
+                                        test::binary_op<test::add>(2,3)),10)));
 
     std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(result, test::test()) << std::endl;
+
+    {
+        boost::timer::auto_cpu_timer t;
+        std::size_t total = 0;
+        for (int i = 0; i < NUM_ITER; ++i)
+        {
+            total +=util::apply_visitor(result, test::calculator());
+        }
+        std::cerr << "total=" << total << std::endl;
+    }
 
     std::cerr << util::apply_visitor(result, test::to_string()) << "=" << util::apply_visitor(result, test::calculator()) << std::endl;
 

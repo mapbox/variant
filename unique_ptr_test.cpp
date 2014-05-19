@@ -98,12 +98,29 @@ public:
 
 int main (int argc, char** argv)
 {
+    if (argc != 2)
+    {
+        std::cerr << "Usage" << argv[0] << " <num-iter>" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    std::size_t const NUM_ITER = std::stoll(argv[1]);
+
     test::expression sum(std::unique_ptr<test::binary_op<test::add>>(new test::binary_op<test::add>(2,3)));
     test::expression result(std::unique_ptr<test::binary_op<test::sub>>(new test::binary_op<test::sub>(std::move(sum),10)));
     std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(result, test::test()) << std::endl;
-    for (int i=0; i<10;++i)
+
     {
-        std::cerr << util::apply_visitor(result, test::to_string()) << "=" << util::apply_visitor(result, test::calculator()) << std::endl;
+        boost::timer::auto_cpu_timer t;
+        std::size_t total = 0;
+        for (int i = 0; i < NUM_ITER; ++i)
+        {
+            total +=util::apply_visitor(result, test::calculator());
+        }
+        std::cerr << "total=" << total << std::endl;
     }
+
+    std::cerr << util::apply_visitor(result, test::to_string()) << "=" << util::apply_visitor(result, test::calculator()) << std::endl;
+
     return EXIT_SUCCESS;
 }
