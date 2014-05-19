@@ -100,7 +100,7 @@ int main (/*int argc, char** argv*/)
     typedef util::variant<bool, int64_t, uint64_t, double, std::string> variant_type;
     variant_type v0(3.14159);
     variant_type v1(std::string("3.14159"));
-    variant_type v2(1LL);
+    variant_type v2(1ULL);
 
     std::cerr << v0 << " == " << v1 << " -> "
               << std::boolalpha << util::apply_visitor(v0, v1, test::javascript_equal_visitor()) << std::endl;
@@ -109,8 +109,8 @@ int main (/*int argc, char** argv*/)
     std::vector<variant_type> vec;
 
     vec.emplace_back(std::string("1"));
-    vec.push_back(variant_type(2LL));
-    vec.push_back(variant_type(3LL));
+    vec.push_back(variant_type(2ULL));
+    vec.push_back(variant_type(3ULL));
     vec.push_back(std::string("3.14159"));
     vec.emplace_back(3.14159);
 
