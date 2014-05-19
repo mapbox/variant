@@ -25,25 +25,38 @@ endif
 
 all: out/bench-variant
 
-out:
+out/bench-variant-debug: Makefile test/bench_variant.cpp variant.hpp
 	mkdir -p ./out
+	$(CXX) -o out/bench-variant-debug test/bench_variant.cpp -I./ $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
-out/bench-variant-debug: out Makefile benchmark/test.cpp variant.hpp
-	$(CXX) -o out/bench-variant-debug benchmark/test.cpp -I./ $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
+out/bench-variant: Makefile test/bench_variant.cpp variant.hpp
+	mkdir -p ./out
+	$(CXX) -o out/bench-variant test/bench_variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
-debug: out/bench-variant-debug
+out/unique_ptr_test: Makefile test/unique_ptr_test.cpp variant.hpp
+	mkdir -p ./out
+	$(CXX) -o out/unique_ptr_test test/unique_ptr_test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
-out/bench-variant: out Makefile benchmark/test.cpp variant.hpp
-	$(CXX) -o out/bench-variant benchmark/test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
+out/recursive_wrapper_test: Makefile test/recursive_wrapper_test.cpp variant.hpp
+	mkdir -p ./out
+	$(CXX) -o out/recursive_wrapper_test test/recursive_wrapper_test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
-sizes: out Makefile variant.hpp
+out/binary_visitor_test: Makefile test/binary_visitor_test.cpp variant.hpp
+	mkdir -p ./out
+	$(CXX) -o out/binary_visitor_test test/binary_visitor_test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
+
+test: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_wrapper_test out/binary_visitor_test
+	./out/bench-variant 5000000
+	./out/unique_ptr_test 100000
+	./out/recursive_wrapper_test 100000
+	./out/binary_visitor_test 100000
+
+sizes: Makefile variant.hpp
+	mkdir -p ./out
 	@$(CXX) -o ./out/variant_hello_world.out variant.hpp $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./out/variant_hello_world.out
 	@$(CXX) -o ./out/boost_variant_hello_world.out $(RUN_ARGS) $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./out/boost_variant_hello_world.out
 	@$(CXX) -o ./out/variant_hello_world ./test/variant_hello_world.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./out/variant_hello_world
 	@$(CXX) -o ./out/boost_variant_hello_world ./test/boost_variant_hello_world.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./out/boost_variant_hello_world
-
-bench: out/bench-variant
-	./out/bench-variant 5000000
 
 profile: out/bench-variant-debug
 	mkdir -p profiling/
@@ -55,8 +68,8 @@ clean:
 	rm -rf *.dSYM
 
 pgo: out Makefile variant.hpp
-	$(CXX) -o out/bench-variant benchmark/test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -pg -fprofile-generate
+	$(CXX) -o out/bench-variant test/bench_variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -pg -fprofile-generate
 	./test-variant 500000 >/dev/null 2>/dev/null
-	$(CXX) -o out/bench-variant benchmark/test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -fprofile-use
+	$(CXX) -o out/bench-variant test/bench_variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -fprofile-use
 
-.PHONY: sizes
+.PHONY: sizes test
