@@ -83,13 +83,13 @@ template <typename T>
 struct javascript_equal
 {
     javascript_equal(T const& lhs)
-        : lhs(lhs) {}
+        : lhs_(lhs) {}
 
     bool operator() (T const& rhs) const
     {
-        return util::apply_visitor(lhs, rhs, test::javascript_equal_visitor());
+        return util::apply_visitor(lhs_, rhs, test::javascript_equal_visitor());
     }
-    T const& lhs;
+    T const& lhs_;
 };
 
 }
