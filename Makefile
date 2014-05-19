@@ -23,7 +23,7 @@ ifeq (sizes,$(firstword $(MAKECMDGOALS)))
   .PHONY: $(RUN_ARGS)
 endif
 
-all: out/bench-variant
+all: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_wrapper_test out/binary_visitor_test
 
 out/bench-variant-debug: Makefile test/bench_variant.cpp variant.hpp
 	mkdir -p ./out

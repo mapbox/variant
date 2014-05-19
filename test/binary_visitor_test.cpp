@@ -94,7 +94,7 @@ struct javascript_equal
 
 }
 
-int main (int argc, char** argv)
+int main (/*int argc, char** argv*/)
 {
     //typedef util::variant<int, std::string> variant_type;
     typedef util::variant<bool, int64_t, uint64_t, double, std::string> variant_type;
