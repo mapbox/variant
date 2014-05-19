@@ -1,6 +1,7 @@
 #ifndef UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
 #define UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
 
+#include <boost/checked_delete.hpp>
 
 namespace util {
 
