@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <stdexcept>
 
-struct check
+struct check : util::static_visitor<>
 {
     template <typename T>
     void operator() (T const& val) const
@@ -10,6 +10,7 @@ struct check
         if (val != 0) throw std::runtime_error("invalid");
     }
 };
+
 
 int main() {
     typedef util::variant<bool,int, double> variant_type;
