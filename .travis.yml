@@ -13,8 +13,7 @@ install:
  - sudo apt-get -qq install boost1.55 g++ gcc
 
 before_script:
- - make
+ - make test
 
 script:
- - make bench
  - make sizes /usr/include/boost/variant.hpp
