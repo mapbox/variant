@@ -8,6 +8,16 @@
 #include <ostream>
 #include <memory>
 
+TEST_CASE( "variant version", "[variant]" ) {
+    unsigned int version = VARIANT_VERSION;
+    REQUIRE(version == 100);
+    #if VARIANT_VERSION == 100
+        REQUIRE(true);
+    #else
+        REQUIRE(false);
+    #endif
+}
+
 TEST_CASE( "variant type traits", "[variant]" ) {
     REQUIRE((util::detail::type_traits<bool, bool, int, double, std::string>::id == 3));
     REQUIRE((util::detail::type_traits<int, bool, int, double, std::string>::id == 2));
@@ -62,7 +72,8 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(value_type("hello"));
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(sizeof(v) == 32);
+        // implementation dependent
+        //REQUIRE(sizeof(v) == 32);
         REQUIRE(v.get<value_type>() == value_type("hello"));
         v.set<value_type>(value_type("there"));
         REQUIRE(v.get<value_type>() == value_type("there"));

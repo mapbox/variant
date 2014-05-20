@@ -17,6 +17,13 @@
 #define VARIANT_INLINE __attribute__((noinline))
 #endif
 
+#define VARIANT_MAJOR_VERSION 0
+#define VARIANT_MINOR_VERSION 1
+#define VARIANT_PATCH_VERSION 0
+
+// translates to 100
+#define VARIANT_VERSION (VARIANT_MAJOR_VERSION*100000) + (VARIANT_MINOR_VERSION*100) + (VARIANT_PATCH_VERSION)
+
 namespace util {
 
 namespace detail {
