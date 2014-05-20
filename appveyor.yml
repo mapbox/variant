@@ -1,13 +1,12 @@
 
 platform:
   - x64
-  - x86
 
 install:
   - SET PATH=c:\python27;%PATH%
   - git clone --depth 1 https://chromium.googlesource.com/external/gyp.git gyp
   - python gyp/gyp_main.py variant.gyp --depth=. -f msvs -G msvs_version=2013
-  - msbuild variant.sln
+  - msbuild variant.sln /p:Configuration=Release;Platform=x64
 
 build: OFF
 
