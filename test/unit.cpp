@@ -8,12 +8,30 @@
 #include <ostream>
 #include <memory>
 
+TEST_CASE( "variant type traits", "[variant]" ) {
+    REQUIRE((util::detail::type_traits<bool, bool, int, double, std::string>::id == 3));
+    REQUIRE((util::detail::type_traits<int, bool, int, double, std::string>::id == 2));
+    REQUIRE((util::detail::type_traits<double, bool, int, double, std::string>::id == 1));
+    REQUIRE((util::detail::type_traits<std::string, bool, int, double, std::string>::id == 0));
+    REQUIRE((util::detail::type_traits<long, bool, int, double, std::string>::id == util::detail::invalid_value));
+    REQUIRE((util::detail::type_traits<std::vector<int>, bool, int, double, std::string>::id == util::detail::invalid_value));
+}
+
+TEST_CASE( "variant can be moved into vector", "[variant]" ) {
+    typedef util::variant<bool,std::string> variant_type;
+    variant_type v(std::string("test"));
+    std::vector<variant_type> vec;
+    vec.emplace_back(std::move(v));
+    REQUIRE(v.get<std::string>() != std::string("test"));
+    REQUIRE(vec.at(0).get<std::string>() == std::string("test"));
+}
 
 TEST_CASE( "variant should support built-in types", "[variant]" ) {
     SECTION( "bool" ) {
         util::variant<bool> v(true);
         REQUIRE(v.valid());
         REQUIRE(v.is<bool>());
+        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<bool>() == true);
         v.set<bool>(false);
         REQUIRE(v.get<bool>() == false);
@@ -25,6 +43,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(nullptr);
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
+        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == nullptr);
         // FIXME: does not compile: ./variant.hpp:340:14: error: use of overloaded operator '<<' is ambiguous (with operand types 'std::__1::basic_ostream<char>' and 'const nullptr_t')
         // https://github.com/mapbox/variant/issues/14
@@ -35,6 +54,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(value_type(new std::string("hello")));
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
+        REQUIRE(sizeof(v) == 16);
         REQUIRE(*v.get<value_type>().get() == *value_type(new std::string("hello")).get());
     }
     SECTION( "string" ) {
@@ -42,6 +62,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(value_type("hello"));
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
+        REQUIRE(sizeof(v) == 32);
         REQUIRE(v.get<value_type>() == value_type("hello"));
         v.set<value_type>(value_type("there"));
         REQUIRE(v.get<value_type>() == value_type("there"));
@@ -53,6 +74,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
+        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(value_type(0));
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -64,6 +86,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
+        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -75,6 +98,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
+        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -86,6 +110,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
+        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -97,6 +122,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
+        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -136,6 +162,7 @@ TEST_CASE( "variant should support custom types", "[variant]" ) {
     util::variant<MissionInteger> v(MissionInteger(34838300));
     REQUIRE(v.valid());
     REQUIRE(v.is<MissionInteger>());
+    REQUIRE(sizeof(v) == 16);
     REQUIRE(v.get<MissionInteger>() == MissionInteger(34838300));
     REQUIRE(v.get<MissionInteger>().get() == MissionInteger::value_type(34838300));
     // TODO: should both of the set usages below compile?

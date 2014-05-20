@@ -15,7 +15,6 @@ exe variant-test
     :
     <include>$(BOOST_DIR)/include
     <include>./
-    <define>VARIANT_LOGICAL_TESTS
     <cxxflags>-std=c++11
     <variant>release:<cxxflags>-march=native
     ;
@@ -30,7 +29,6 @@ exe binary-visitor-test
     :
     <include>$(BOOST_DIR)/include
     <include>./
-    <define>VARIANT_LOGICAL_TESTS
     <cxxflags>-std=c++11
     <variant>release:<cxxflags>-march=native
     ;
@@ -44,7 +42,6 @@ exe recursive-wrapper-test
     :
     <include>$(BOOST_DIR)/include
     <include>./
-    <define>VARIANT_LOGICAL_TESTS
     <cxxflags>-std=c++11
     <variant>release:<cxxflags>-march=native
     ;
@@ -58,7 +55,6 @@ exe unique-ptr-test
     :
     <include>$(BOOST_DIR)/include
     <include>./
-    <define>VARIANT_LOGICAL_TESTS
     <cxxflags>-std=c++11
     <variant>release:<cxxflags>-march=native
     ;

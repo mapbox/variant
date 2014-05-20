@@ -196,61 +196,6 @@ int main (int argc, char** argv)
     }
 #endif
 
-#ifdef VARIANT_LOGICAL_TESTS
-
-    std::cerr << util::detail::type_traits<bool, bool, int, double, std::string>::id << std::endl;
-    std::cerr << util::detail::type_traits<int, bool, int, double, std::string>::id << std::endl;
-    std::cerr << util::detail::type_traits<double, bool, int, double, std::string>::id << std::endl;
-    std::cerr << util::detail::type_traits<std::string, bool, int, double, std::string>::id << std::endl;
-    std::cerr << util::detail::type_traits<long, bool, int, double, std::string>::id << std::endl;
-    std::cerr << util::detail::type_traits<std::vector<int>, bool, int, double, std::string>::id << std::endl;
-
-    typedef util::variant<bool,int, double, std::string> variant_type;
-    variant_type v(std::string("test"));
-    util::apply_visitor(v, print());
-
-    v = std::string("ABC");
-    util::apply_visitor(v, print());
-
-    std::vector<variant_type> vec;
-    vec.emplace_back(std::move(v));
-    for (auto const& e : vec)
-    {
-        util::apply_visitor(e, print());
-    }
-
-    v=std::string("test");
-    util::apply_visitor(v, print());
-    v=123.345;
-    util::apply_visitor(v, print());
-    variant_type v2(std::string("testing a bit more"));
-    util::apply_visitor(v2, print());
-    variant_type v3(444);
-    util::apply_visitor(v3, print());
-
-    std::cerr << sizeof(v) << std::endl;
-    std::cerr << sizeof(v2) << std::endl;
-    std::cerr << sizeof(v3) << std::endl;
-    std::cerr << sizeof(boost::variant<bool,int, double, std::string>) << std::endl;
-
-
-    {
-        std::cerr << "---------- comparison test" << std::endl;
-        std::cerr << (variant_type(123) == variant_type(123)) << std::endl;
-        std::cerr << (variant_type(123) == variant_type(456)) << std::endl;
-        std::cerr << (variant_type(123) == variant_type(123.0)) << std::endl;
-        std::cerr << (variant_type(std::string("ABC")) == variant_type(std::string("ABC"))) << std::endl;
-    }
-
-    {
-        std::cerr << "---------- variant operator<<" << std::endl;
-        std::cerr << variant_type(123) << std::endl;
-        std::cerr << variant_type(true) << std::endl;
-        std::cerr << variant_type(3.14159) << std::endl;
-        std::cerr << variant_type(std::string("c++11 rock!")) << std::endl;
-    }
-
-#endif
 
     return EXIT_SUCCESS;
 }
