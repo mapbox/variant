@@ -5,7 +5,7 @@ An alternative to `boost::variant` for C++11.
 # Depends
 
  - Compiler supporting `-std=c++11`
- - Tested with g++-4.7, g++-4.8, and clang++ 5.x
+ - Tested with g++-4.7, g++-4.8, and clang++ 3.4
 
 # Usage
 
