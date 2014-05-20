@@ -25,6 +25,14 @@ endif
 
 all: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_wrapper_test out/binary_visitor_test
 
+./deps/gyp:
+	git clone --depth 1 https://chromium.googlesource.com/external/gyp.git ./deps/gyp
+
+gyp: ./deps/gyp
+	deps/gyp/gyp --depth=. -Goutput_dir=./ --generator-output=./out -f make
+	make V=1 -C ./out tests
+	./out/Release/tests
+
 out/bench-variant-debug: Makefile test/bench_variant.cpp variant.hpp
 	mkdir -p ./out
 	$(CXX) -o out/bench-variant-debug test/bench_variant.cpp -I./ $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)

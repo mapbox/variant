@@ -18,3 +18,4 @@ before_script:
 
 script:
  - make sizes /usr/include/boost/variant.hpp
+ - make gyp
