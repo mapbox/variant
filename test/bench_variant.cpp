@@ -104,7 +104,7 @@ void run_variant_test(std::size_t runs)
     for (auto const& v2 : h.data)
     {
         dummy2<util::variant<int,double,std::string> > d(v);
-        util::apply_visitor(v2, d);
+        util::apply_visitor (d, v2);
     }
 }
 

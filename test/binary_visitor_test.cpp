@@ -88,7 +88,7 @@ struct javascript_equal
 
     bool operator() (T const& rhs) const
     {
-        return util::apply_visitor(lhs_, rhs, test::javascript_equal_visitor());
+        return util::apply_visitor( test::javascript_equal_visitor(), lhs_, rhs);
     }
     T const& lhs_;
 };
@@ -103,7 +103,7 @@ int main (/*int argc, char** argv*/)
     variant_type v2(std::uint64_t(1));
 
     std::cerr << v0 << " == " << v1 << " -> "
-              << std::boolalpha << util::apply_visitor(v0, v1, test::javascript_equal_visitor()) << std::endl;
+              << std::boolalpha << util::apply_visitor(test::javascript_equal_visitor(), v0, v1) << std::endl;
 
 
     std::vector<variant_type> vec;
@@ -115,7 +115,7 @@ int main (/*int argc, char** argv*/)
     vec.emplace_back(3.14159);
 
     //auto itr = std::find_if(vec.begin(), vec.end(), [&v0](variant_type const& val) {
-    //        return util::apply_visitor(v0, val, test::javascript_equal_visitor());
+    //        return util::apply_visitor(test::javascript_equal_visitor(), v0, val);
     //    });
 
     auto itr = std::find_if(vec.begin(), vec.end(),test::javascript_equal<variant_type>(v2));

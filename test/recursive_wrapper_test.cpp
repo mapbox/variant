@@ -62,14 +62,14 @@ public:
 
     int operator()(binary_op<add> const& binary) const
     {
-        return util::apply_visitor( binary.left, calculator())
-            + util::apply_visitor( binary.right, calculator());
+        return util::apply_visitor( calculator(), binary.left)
+            + util::apply_visitor( calculator(), binary.right);
     }
 
     int operator()(binary_op<sub> const& binary) const
     {
-        return util::apply_visitor( binary.left, calculator())
-            - util::apply_visitor( binary.right, calculator());
+        return util::apply_visitor( calculator(), binary.left )
+            - util::apply_visitor( calculator(), binary.right);
     }
 };
 
@@ -84,14 +84,14 @@ public:
 
     std::string operator()(binary_op<add> const& binary) const
     {
-        return util::apply_visitor( binary.left, to_string()) + std::string("+")
-            + util::apply_visitor( binary.right, to_string());
+        return util::apply_visitor(to_string(), binary.left) + std::string("+")
+            + util::apply_visitor( to_string(), binary.right);
     }
 
     std::string operator()(binary_op<sub> const& binary) const
     {
-        return util::apply_visitor( binary.left, to_string() ) + std::string("-")
-            + util::apply_visitor( binary.right, to_string() );
+        return util::apply_visitor( to_string(), binary.left ) + std::string("-")
+            + util::apply_visitor( to_string(), binary.right );
     }
 
 };
@@ -114,19 +114,19 @@ int main (int argc, char** argv)
                                     util::recursive_wrapper<test::binary_op<test::add> >(
                                         test::binary_op<test::add>(2,3)),10)));
 
-    std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(result, test::test()) << std::endl;
+    std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(test::test(), result) << std::endl;
 
     {
         boost::timer::auto_cpu_timer t;
         std::size_t total = 0;
         for (std::size_t i = 0; i < NUM_ITER; ++i)
         {
-            total += static_cast<std::size_t>(util::apply_visitor(result, test::calculator()));
+            total += static_cast<std::size_t>(util::apply_visitor(test::calculator(),result));
         }
         std::cerr << "total=" << total << std::endl;
     }
 
-    std::cerr << util::apply_visitor(result, test::to_string()) << "=" << util::apply_visitor(result, test::calculator()) << std::endl;
+    std::cerr << util::apply_visitor(test::to_string(), result) << "=" << util::apply_visitor(test::calculator(),result) << std::endl;
 
 
     return EXIT_SUCCESS;

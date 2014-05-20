@@ -511,14 +511,14 @@ public:
 
 // unary visitor interface
 template <typename V, typename F>
-auto VARIANT_INLINE static apply_visitor(V const& v, F f) -> decltype(V::visit(v,f))
+auto VARIANT_INLINE static apply_visitor(F f, V const& v) -> decltype(V::visit(v,f))
 {
     return V::visit(v,f);
 }
 
 // binary visitor interface
 template <typename V, typename F>
-auto VARIANT_INLINE static apply_visitor(V const& v0, V const& v1, F f) -> decltype(V::binary_visit(v0, v1, f))
+auto VARIANT_INLINE static apply_visitor( F f, V const& v0, V const& v1) -> decltype(V::binary_visit(v0, v1, f))
 {
     return V::binary_visit(v0, v1, f);
 }
@@ -530,7 +530,7 @@ VARIANT_INLINE std::basic_ostream<charT,traits>&
 operator<< (std::basic_ostream<charT,traits>& out, Variant const& rhs)
 {
     detail::printer<std::basic_ostream<charT,traits> > visitor(out);
-    apply_visitor(rhs, visitor);
+    apply_visitor(visitor, rhs);
     return out;
 }
 
