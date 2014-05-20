@@ -1,6 +1,6 @@
 local BOOST_DIR = "/opt/boost" ;
 
-using clang : : ;
+#using clang : : ;
 
 lib system : : <name>boost_system <search>$(BOOST_DIR)/lib ;
 lib timer : chrono : <name>boost_timer <search>$(BOOST_DIR)/lib ;
