@@ -1,6 +1,6 @@
 
 platform:
-  - x64
+  - x86
 
 install:
   - SET PATH=c:\python27;%PATH%
@@ -8,7 +8,7 @@ install:
   - git clone --depth 1 https://chromium.googlesource.com/external/gyp.git gyp
   # note windows requires --generator-output to be absolute
   - python gyp/gyp_main.py variant.gyp --depth=. -f msvs -G msvs_version=2013
-  - msbuild variant.sln /p:Configuration=Release /p:Platform="Any CPU"
+  - msbuild variant.sln /clp:Verbosity=minimal /nologo /p:Configuration=Release;Platform=x86
 
 build: OFF
 
