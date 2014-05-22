@@ -1,8 +1,6 @@
 #ifndef UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
 #define UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
 
-#include <boost/checked_delete.hpp>
-
 namespace util {
 
 template <typename T>
@@ -78,7 +76,7 @@ public:
 template <typename T>
 recursive_wrapper<T>::~recursive_wrapper()
 {
-    boost::checked_delete(p_);
+    delete p_;
 }
 
 template <typename T>

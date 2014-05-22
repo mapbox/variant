@@ -11,10 +11,20 @@
 #include <iosfwd>
 
 #include "recursive_wrapper.hpp"
-#ifdef NDEBUG
-#define VARIANT_INLINE inline __attribute__((always_inline))
+
+#ifdef _MSC_VER
+ // http://msdn.microsoft.com/en-us/library/z8y1yy88.aspx
+ #ifdef NDEBUG
+  #define VARIANT_INLINE __forceinline
+ #else
+  #define VARIANT_INLINE __declspec(noinline)
+ #endif
 #else
-#define VARIANT_INLINE __attribute__((noinline))
+ #ifdef NDEBUG
+  #define VARIANT_INLINE inline __attribute__((always_inline))
+ #else
+  #define VARIANT_INLINE __attribute__((noinline))
+ #endif
 #endif
 
 #define VARIANT_MAJOR_VERSION 0

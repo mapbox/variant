@@ -1,14 +1,22 @@
 
 platform:
+  - x64
   - x86
+
+configuration:
+  - Debug
+  - Release
 
 install:
   - SET PATH=c:\python27;%PATH%
   - SET PATH=C:\Program Files (x86)\MSBuild\12.0\bin\;%PATH%
-  - git clone --depth 1 https://chromium.googlesource.com/external/gyp.git gyp
+  - git clone --quiet --depth 1 https://chromium.googlesource.com/external/gyp.git gyp
   # note windows requires --generator-output to be absolute
   - python gyp/gyp_main.py variant.gyp --depth=. -f msvs -G msvs_version=2013
-  - msbuild variant.sln /clp:Verbosity=minimal /nologo /p:Configuration=Release;Platform=x86
+  - set MSBUILD_PLATFORM=%platform%
+  - if "%MSBUILD_PLATFORM%" == "x86" set MSBUILD_PLATFORM=Win32
+  - msbuild variant.sln /clp:Verbosity=minimal /nologo /p:Configuration=%configuration%;Platform=%MSBUILD_PLATFORM%
+  - .\"%configuration%"\tests.exe
 
 build: OFF
 
