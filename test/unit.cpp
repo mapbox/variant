@@ -41,7 +41,6 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<bool> v(true);
         REQUIRE(v.valid());
         REQUIRE(v.is<bool>());
-        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<bool>() == true);
         v.set<bool>(false);
         REQUIRE(v.get<bool>() == false);
@@ -53,7 +52,6 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(nullptr);
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == nullptr);
         // FIXME: does not compile: ./variant.hpp:340:14: error: use of overloaded operator '<<' is ambiguous (with operand types 'std::__1::basic_ostream<char>' and 'const nullptr_t')
         // https://github.com/mapbox/variant/issues/14
@@ -64,7 +62,6 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(value_type(new std::string("hello")));
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(sizeof(v) == 16);
         REQUIRE(*v.get<value_type>().get() == *value_type(new std::string("hello")).get());
     }
     SECTION( "string" ) {
@@ -72,8 +69,6 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(value_type("hello"));
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        // implementation dependent
-        //REQUIRE(sizeof(v) == 32);
         REQUIRE(v.get<value_type>() == value_type("hello"));
         v.set<value_type>(value_type("there"));
         REQUIRE(v.get<value_type>() == value_type("there"));
@@ -85,7 +80,6 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(value_type(0));
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -97,7 +91,6 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -109,7 +102,6 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -121,7 +113,6 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -133,7 +124,6 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(sizeof(v) == 16);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -173,7 +163,6 @@ TEST_CASE( "variant should support custom types", "[variant]" ) {
     util::variant<MissionInteger> v(MissionInteger(34838300));
     REQUIRE(v.valid());
     REQUIRE(v.is<MissionInteger>());
-    REQUIRE(sizeof(v) == 16);
     REQUIRE(v.get<MissionInteger>() == MissionInteger(34838300));
     REQUIRE(v.get<MissionInteger>().get() == MissionInteger::value_type(34838300));
     // TODO: should both of the set usages below compile?
