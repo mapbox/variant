@@ -3,7 +3,7 @@
     ["OS=='win'", {
           "target_defaults": {
             "default_configuration": "Release_x64",
-            "msbuild_toolset%":"CTP_Nov2013",
+            "msbuild_toolset":"CTP_Nov2013",
             "configurations": {
               "Debug_Win32": {
                 "msvs_configuration_platform": "Win32",
