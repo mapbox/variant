@@ -1,6 +1,8 @@
 #ifndef UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
 #define UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
 
+#include <utility>
+
 namespace util {
 
 template <typename T>
