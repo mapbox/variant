@@ -165,7 +165,7 @@ TEST_CASE( "variant should support custom types", "[variant]" ) {
     REQUIRE(v == util::variant<MissionInteger>(MissionInteger(1)));
 }
 
-// Test detail code (internal api not mean for public use)
+// Test detail code (internal api not meant for public use)
 TEST_CASE( "variant type traits", "[variant::detail]" ) {
     // users should not create variants with duplicated types
     // however our type indexing should still work
