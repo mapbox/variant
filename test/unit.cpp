@@ -18,15 +18,6 @@ TEST_CASE( "variant version", "[variant]" ) {
     #endif
 }
 
-TEST_CASE( "variant type traits", "[variant]" ) {
-    REQUIRE((util::detail::type_traits<bool, bool, int, double, std::string>::id == 3));
-    REQUIRE((util::detail::type_traits<int, bool, int, double, std::string>::id == 2));
-    REQUIRE((util::detail::type_traits<double, bool, int, double, std::string>::id == 1));
-    REQUIRE((util::detail::type_traits<std::string, bool, int, double, std::string>::id == 0));
-    REQUIRE((util::detail::type_traits<long, bool, int, double, std::string>::id == util::detail::invalid_value));
-    REQUIRE((util::detail::type_traits<std::vector<int>, bool, int, double, std::string>::id == util::detail::invalid_value));
-}
-
 TEST_CASE( "variant can be moved into vector", "[variant]" ) {
     typedef util::variant<bool,std::string> variant_type;
     variant_type v(std::string("test"));
@@ -173,6 +164,20 @@ TEST_CASE( "variant should support custom types", "[variant]" ) {
     v = MissionInteger(1);
     REQUIRE(v == util::variant<MissionInteger>(MissionInteger(1)));
 }
+
+// Test detail code (internal api not mean for public use)
+TEST_CASE( "variant type traits", "[variant::detail]" ) {
+    // users should not create variants with duplicated types
+    // however our type indexing should still work
+    // Note index for types in reverse order
+    REQUIRE((util::detail::type_traits<bool, bool, int, double, std::string>::id == 3));
+    REQUIRE((util::detail::type_traits<int, bool, int, double, std::string>::id == 2));
+    REQUIRE((util::detail::type_traits<double, bool, int, double, std::string>::id == 1));
+    REQUIRE((util::detail::type_traits<std::string, bool, int, double, std::string>::id == 0));
+    REQUIRE((util::detail::type_traits<long, bool, int, double, std::string>::id == util::detail::invalid_value));
+    REQUIRE((util::detail::type_traits<std::vector<int>, bool, int, double, std::string>::id == util::detail::invalid_value));
+}
+
 
 int main (int argc, char* const argv[])
 {
