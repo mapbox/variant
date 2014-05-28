@@ -61,7 +61,7 @@ bench: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_w
 
 out/unit: Makefile test/unit.cpp variant.hpp
 	mkdir -p ./out
-	$(CXX) -o out/unit test/unit.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
+	$(CXX) -o out/unit test/unit.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS)
 
 test: out/unit
 	./out/unit
