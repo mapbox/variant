@@ -112,22 +112,21 @@ int main (int argc, char** argv)
     test::expression result(util::recursive_wrapper<test::binary_op<test::sub> >(
                                 test::binary_op<test::sub>(
                                     util::recursive_wrapper<test::binary_op<test::add> >(
-                                        test::binary_op<test::add>(2,3)),10)));
+                                        test::binary_op<test::add>(2,3)),4)));
 
     std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(test::test(), result) << std::endl;
 
     {
         boost::timer::auto_cpu_timer t;
-        std::size_t total = 0;
+        int total = 0;
         for (std::size_t i = 0; i < NUM_ITER; ++i)
         {
-            total += static_cast<std::size_t>(util::apply_visitor(test::calculator(),result));
+            total += util::apply_visitor(test::calculator(),result);
         }
         std::cerr << "total=" << total << std::endl;
     }
 
     std::cerr << util::apply_visitor(test::to_string(), result) << "=" << util::apply_visitor(test::calculator(),result) << std::endl;
-
 
     return EXIT_SUCCESS;
 }
