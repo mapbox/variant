@@ -182,7 +182,7 @@ struct dispatcher<F,V,T,Types...>
     typedef typename F::result_type result_type;
     VARIANT_INLINE static result_type apply(V const& v, F f)
     {
-        if (v.get_type_id() == sizeof...(Types))
+        if (v.get_type_index() == sizeof...(Types))
         {
             return f(unwrapper<T>()(v. template get<T>()));
         }
@@ -213,7 +213,7 @@ struct binary_dispatcher_rhs<F,V,T0,T1,Types...>
     typedef typename F::result_type result_type;
     VARIANT_INLINE static result_type apply(V const& lhs, V const& rhs, F f)
     {
-        if (rhs.get_type_id() == sizeof...(Types)) // call binary functor
+        if (rhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
             return f(unwrapper<T0>()(lhs. template get<T0>()),
                      unwrapper<T1>()(rhs. template get<T1>()));
@@ -245,7 +245,7 @@ struct binary_dispatcher_lhs<F,V,T0,T1,Types...>
     typedef typename F::result_type result_type;
     VARIANT_INLINE static result_type apply(V const& lhs, V const& rhs, F f)
     {
-        if (lhs.get_type_id() == sizeof...(Types)) // call binary functor
+        if (lhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
             return f(lhs. template get<T1>(), rhs. template get<T0>());
         }
@@ -275,9 +275,9 @@ struct binary_dispatcher<F,V,T,Types...>
     typedef typename F::result_type result_type;
     VARIANT_INLINE static result_type apply(V const& v0, V const& v1, F f)
     {
-        if (v0.get_type_id() == sizeof...(Types))
+        if (v0.get_type_index() == sizeof...(Types))
         {
-            if (v0.get_type_id() == v1.get_type_id())
+            if (v0.get_type_index() == v1.get_type_index())
             {
                 return f(v0. template get<T>(), v1. template get<T>()); // call binary functor
             }
@@ -286,7 +286,7 @@ struct binary_dispatcher<F,V,T,Types...>
                 return binary_dispatcher_rhs<F,V,T,Types...>::apply(v0, v1, f);
             }
         }
-        else if (v1.get_type_id() == sizeof...(Types))
+        else if (v1.get_type_index() == sizeof...(Types))
         {
             return binary_dispatcher_lhs<F,V,T,Types...>::apply(v0, v1, f);
         }
@@ -374,17 +374,17 @@ private:
 
     using helper_type = variant_helper<Types...>;
 
-    std::size_t type_id;
+    std::size_t type_index;
     data_type data;
 
 public:
 
     VARIANT_INLINE variant()
-        : type_id(detail::invalid_value) {}
+        : type_index(detail::invalid_value) {}
 
     template <typename T>
     VARIANT_INLINE explicit variant(T const& val) noexcept
-        : type_id(detail::type_traits<T, Types...>::id)
+        : type_index(detail::type_traits<T, Types...>::id)
     {
         static_assert(detail::is_valid_type<T,Types...>::value, "Not a valid type for this variant");
         new (&data) T(val);
@@ -392,28 +392,28 @@ public:
 
     template <typename T>
     VARIANT_INLINE variant(T && val) noexcept
-        : type_id(detail::type_traits<T,Types...>::id)
+        : type_index(detail::type_traits<T,Types...>::id)
     {
         static_assert(detail::is_valid_type<T,Types...>::value, "Not a valid type for this variant");
         new (&data) T(std::forward<T>(val)); // nothrow
     }
 
     VARIANT_INLINE variant(variant<Types...> const& old)
-        : type_id(old.type_id)
+        : type_index(old.type_index)
     {
-        helper_type::copy(old.type_id, &old.data, &data);
+        helper_type::copy(old.type_index, &old.data, &data);
     }
 
     VARIANT_INLINE variant(variant<Types...>&& old) noexcept
-        : type_id(old.type_id)
+        : type_index(old.type_index)
     {
-        helper_type::move(old.type_id, &old.data, &data);
+        helper_type::move(old.type_index, &old.data, &data);
     }
 
     friend void swap(variant<Types...> & first, variant<Types...> & second)
     {
         using std::swap; //enable ADL
-        swap(first.type_id, second.type_id);
+        swap(first.type_index, second.type_index);
         swap(first.data, second.data);
     }
 
@@ -426,26 +426,26 @@ public:
     template<typename T>
     VARIANT_INLINE bool is() const
     {
-        return (type_id == detail::type_traits<T, Types...>::id);
+        return (type_index == detail::type_traits<T, Types...>::id);
     }
 
     VARIANT_INLINE bool valid() const
     {
-        return (type_id != detail::invalid_value);
+        return (type_index != detail::invalid_value);
     }
 
     template<typename T, typename... Args>
     VARIANT_INLINE void set(Args&&... args)
     {
-        helper_type::destroy(type_id, &data);
+        helper_type::destroy(type_index, &data);
         new (&data) T(std::forward<Args>(args)...);
-        type_id = detail::type_traits<T,Types...>::id;
+        type_index = detail::type_traits<T,Types...>::id;
     }
 
     template<typename T>
     VARIANT_INLINE T& get()
     {
-        if (type_id == detail::type_traits<T,Types...>::id)
+        if (type_index == detail::type_traits<T,Types...>::id)
         {
             return *reinterpret_cast<T*>(&data);
         }
@@ -458,7 +458,7 @@ public:
     template<typename T>
     VARIANT_INLINE T const& get() const
     {
-        if (type_id == detail::type_traits<T,Types...>::id)
+        if (type_index == detail::type_traits<T,Types...>::id)
         {
             return *reinterpret_cast<T const*>(&data);
         }
@@ -468,9 +468,9 @@ public:
         }
     }
 
-    VARIANT_INLINE std::size_t get_type_id() const
+    VARIANT_INLINE std::size_t get_type_index() const
     {
-        return type_id;
+        return type_index;
     }
 
     // visitor
@@ -494,14 +494,14 @@ public:
 
     ~variant() noexcept
     {
-        helper_type::destroy(type_id, &data);
+        helper_type::destroy(type_index, &data);
     }
 
     // comparison operators
     // equality
     VARIANT_INLINE bool operator==(variant const& rhs) const
     {
-        if (this->get_type_id() != rhs.get_type_id())
+        if (this->get_type_index() != rhs.get_type_index())
             return false;
         detail::comparer<variant, detail::equal_comp> visitor(*this);
         return visit(rhs, visitor);
@@ -509,9 +509,9 @@ public:
     // less than
     VARIANT_INLINE bool operator<(variant const& rhs) const
     {
-        if (this->get_type_id() != rhs.get_type_id())
+        if (this->get_type_index() != rhs.get_type_index())
         {
-            return this->get_type_id() < rhs.get_type_id();
+            return this->get_type_index() < rhs.get_type_index();
             // ^^ borrowed from boost::variant
         }
         detail::comparer<variant, detail::less_comp> visitor(*this);
