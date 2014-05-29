@@ -382,19 +382,20 @@ public:
     VARIANT_INLINE variant()
         : type_index(detail::invalid_value) {}
 
-    template <typename T>
+
+    template <typename T,class = typename std::enable_if<
+                         detail::is_valid_type<T,Types...>::value>::type>
     VARIANT_INLINE explicit variant(T const& val) noexcept
         : type_index(detail::type_traits<T, Types...>::id)
     {
-        static_assert(detail::is_valid_type<T,Types...>::value, "Not a valid type for this variant");
         new (&data) T(val);
     }
 
-    template <typename T>
+    template <typename T, class = typename std::enable_if<
+                          detail::is_valid_type<T,Types...>::value>::type>
     VARIANT_INLINE variant(T && val) noexcept
         : type_index(detail::type_traits<T,Types...>::id)
     {
-        static_assert(detail::is_valid_type<T,Types...>::value, "Not a valid type for this variant");
         new (&data) T(std::forward<T>(val)); // nothrow
     }
 
