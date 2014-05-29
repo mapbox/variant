@@ -1,21 +1,22 @@
 language: cpp
 
+# http://docs.travis-ci.com/user/multi-os/
+os:
+  - linux
+  - osx
+
 compiler:
  - clang
  - gcc
 
 before_install:
- - sudo add-apt-repository -y ppa:boost-latest/ppa
- # we need at least g++-4.7 for c++11 features
- - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
- - sudo apt-get update -qq
+ - true
 
 install:
- - sudo apt-get -qq install boost1.55 gcc-4.8 g++-4.8 gcc-4.7 g++-4.7
+ - true
 
 before_script:
- - if [ "${CXX}" = 'g++' ]; then export CXX="g++-4.7"; export CC="gcc-4.7"; make test bench; make clean; export CXX="g++-4.8"; export CC="gcc-4.8"; make test bench; else make test bench; fi;
+ - true
 
 script:
- - make sizes /usr/include/boost/variant.hpp
- - make gyp
+ - source "scripts/${TRAVIS_OS_NAME}.sh"
