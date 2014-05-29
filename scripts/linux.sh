@@ -25,7 +25,7 @@ make bench
 make clean
 
 # compare object sizes against boost::variant
-make sizes `brew --prefix`/include/boost/variant.hpp
+make sizes /usr/include/boost/variant.hpp
 make clean
 
 # test building with gyp
