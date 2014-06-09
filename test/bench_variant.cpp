@@ -9,6 +9,9 @@
 
 #define TEXT "Testing various variant implementations with a longish string ........................................."
 //#define BOOST_VARIANT_MINIMIZE_SIZE
+
+using namespace mapbox;
+
 namespace test {
 
 template <typename V>

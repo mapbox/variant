@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <stdexcept>
 
+using mapbox;
+
 struct check : util::static_visitor<>
 {
     template <typename T>

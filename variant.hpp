@@ -1,5 +1,5 @@
-#ifndef UTIL_VARIANT_HPP
-#define UTIL_VARIANT_HPP
+#ifndef MAPBOX_UTIL_VARIANT_HPP
+#define MAPBOX_UTIL_VARIANT_HPP
 
 #include <utility>
 #include <typeinfo>
@@ -34,9 +34,7 @@
 // translates to 100
 #define VARIANT_VERSION (VARIANT_MAJOR_VERSION*100000) + (VARIANT_MINOR_VERSION*100) + (VARIANT_PATCH_VERSION)
 
-namespace util {
-
-namespace detail {
+namespace mapbox { namespace util { namespace detail {
 
 static constexpr std::size_t invalid_value = std::size_t(-1);
 
@@ -545,6 +543,6 @@ operator<< (std::basic_ostream<charT,traits>& out, Variant const& rhs)
     return out;
 }
 
-}
+}}
 
-#endif  // UTIL_VARIANT_HPP
+#endif  // MAPBOX_UTIL_VARIANT_HPP

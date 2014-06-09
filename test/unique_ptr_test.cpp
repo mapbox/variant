@@ -9,6 +9,8 @@
 #include <boost/timer/timer.hpp>
 #include "variant.hpp"
 
+using namespace mapbox;
+
 namespace test {
 
 struct add;

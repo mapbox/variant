@@ -1,9 +1,9 @@
-#ifndef UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
-#define UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
+#ifndef MAPBOX_UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
+#define MAPBOX_UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
 
 #include <utility>
 
-namespace util {
+namespace mapbox { namespace util {
 
 template <typename T>
 class recursive_wrapper
@@ -123,6 +123,6 @@ inline void swap(recursive_wrapper<T>& lhs, recursive_wrapper<T>& rhs) noexcept
     lhs.swap(rhs);
 }
 
-}
+}}
 
-#endif // UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
+#endif // MAPBOX_UTIL_VARIANT_RECURSIVE_WRAPPER_HPP

@@ -8,6 +8,8 @@
 #include <ostream>
 #include <memory>
 
+using namespace mapbox;
+
 TEST_CASE( "variant version", "[variant]" ) {
     unsigned int version = VARIANT_VERSION;
     REQUIRE(version == 100);
@@ -50,7 +52,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         // FIXME: does not compile: ./variant.hpp:340:14: error: use of overloaded operator '<<' is ambiguous (with operand types 'std::__1::basic_ostream<char>' and 'const nullptr_t')
         // https://github.com/mapbox/variant/issues/14
         //REQUIRE(v == util::variant<value_type>(nullptr));
-    }    
+    }
     SECTION( "unique_ptr" ) {
         typedef std::unique_ptr<std::string> value_type;
         util::variant<value_type> v(value_type(new std::string("hello")));
