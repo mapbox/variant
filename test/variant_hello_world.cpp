@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <stdexcept>
 
-using mapbox;
+using namespace mapbox;
 
 struct check : util::static_visitor<>
 {
