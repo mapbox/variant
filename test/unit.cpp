@@ -202,6 +202,12 @@ TEST_CASE( "variant type traits", "[variant::detail]" ) {
 }
 
 
+TEST_CASE( "variant default constructor", "variant()" ) {
+    // By default variant is initilised with (default constructed) first type in template parameters pack
+    // As a reusult first type in Types... must be defaul constructable
+    REQUIRE((util::variant<int, double, std::string>().get_type_index() == 0));
+}
+
 int main (int argc, char* const argv[])
 {
     int result = Catch::Session().run( argc, argv );
