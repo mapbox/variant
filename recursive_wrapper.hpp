@@ -9,9 +9,7 @@ template <typename T>
 class recursive_wrapper
 {
 public:
-
-    typedef T type;
-
+    using type = T;
 private:
 
     T* p_;
