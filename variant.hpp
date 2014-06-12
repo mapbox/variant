@@ -44,7 +44,8 @@ struct type_traits;
 template <typename T, typename First, typename...Types>
 struct type_traits<T, First, Types...>
 {
-    static constexpr std::size_t id = std::is_same<T, First>::value ? sizeof...(Types) : type_traits<T, Types...>::id;
+    static constexpr std::size_t id = std::is_same<T, First>::value
+        ? sizeof...(Types) : type_traits<T, Types...>::id;
 };
 
 template <typename T>
@@ -59,12 +60,31 @@ struct is_valid_type;
 template <typename T, typename First, typename... Types>
 struct is_valid_type<T,First,Types...>
 {
-    static constexpr bool value = std::is_same<T,First>::value
+    static constexpr bool value = std::is_same<T, First>::value
         || is_valid_type<T,Types...>::value;
 };
 
 template <typename T>
 struct is_valid_type<T> : std::false_type {};
+
+template <std::size_t N, typename ... Types>
+struct select_type
+{
+    static_assert(N < sizeof...(Types), "index out of bounds");
+};
+
+template <std::size_t N, typename T, typename ... Types>
+struct select_type<N,T,Types...>
+{
+    typedef typename select_type<N - 1, Types...>::type type;
+};
+
+template <typename T, typename ... Types>
+struct select_type<0, T, Types...>
+{
+
+    typedef T type;
+};
 
 }
 
@@ -197,7 +217,7 @@ struct dispatcher<F,V>
     typedef typename F::result_type result_type;
     VARIANT_INLINE static result_type apply(V const&, F)
     {
-        throw std::runtime_error("unary dispatch: FAIL");
+        throw std::runtime_error(std::string("unary dispatch: FAIL ") + typeid(V).name());
     }
 };
 
@@ -378,8 +398,10 @@ private:
 public:
 
     VARIANT_INLINE variant()
-        : type_index(detail::invalid_value) {}
-
+        : type_index(0)
+    {
+        new (&data) typename detail::select_type<0,Types...>::type();
+    }
 
     template <typename T,class = typename std::enable_if<
                          detail::is_valid_type<T,Types...>::value>::type>
@@ -421,6 +443,25 @@ public:
         swap(*this, other);
         return *this;
     }
+
+    // conversions
+    // move-assign
+    //template <typename T>
+    //VARIANT_INLINE variant<Types...>& operator= (T && rhs) noexcept
+    //{
+    //    variant<Types...> temp(std::move(rhs));
+    //    swap(*this, temp);
+    //    return *this;
+    //}
+
+    // copy-assign
+    //template <typename T>
+    //VARIANT_INLINE variant<Types...>& operator= (T const& rhs)
+    //{
+    //    variant<Types...> temp(rhs);
+    //    swap(*this, temp);
+    //    return *this;
+    //}
 
     template<typename T>
     VARIANT_INLINE bool is() const
