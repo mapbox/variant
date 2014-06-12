@@ -44,7 +44,7 @@ public:
         return *this;
     }
 
-    void swap(recursive_wrapper& operand) noexcept
+    inline void swap(recursive_wrapper& operand) noexcept
     {
         T* temp = operand.p_;
         operand.p_ = p_;
@@ -67,11 +67,11 @@ public:
 
 public:
 
-    T& get() { return *get_pointer(); }
-    const T& get() const { return *get_pointer(); }
+    inline T& get() { return *get_pointer(); }
+    inline const T& get() const { return *get_pointer(); }
 
-    T* get_pointer() { return p_; }
-    const T* get_pointer() const { return p_; }
+    inline T* get_pointer() { return p_; }
+    inline const T* get_pointer() const { return p_; }
 
 };
 
