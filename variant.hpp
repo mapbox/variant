@@ -444,22 +444,22 @@ public:
 
     // conversions
     // move-assign
-    //template <typename T>
-    //VARIANT_INLINE variant<Types...>& operator= (T && rhs) noexcept
-    //{
-    //    variant<Types...> temp(std::move(rhs));
-    //    swap(*this, temp);
-    //    return *this;
-    //}
+    template <typename T>
+    VARIANT_INLINE variant<Types...>& operator= (T && rhs) noexcept
+    {
+        variant<Types...> temp(std::move(rhs));
+        swap(*this, temp);
+        return *this;
+    }
 
     // copy-assign
-    //template <typename T>
-    //VARIANT_INLINE variant<Types...>& operator= (T const& rhs)
-    //{
-    //    variant<Types...> temp(rhs);
-    //    swap(*this, temp);
-    //    return *this;
-    //}
+    template <typename T>
+    VARIANT_INLINE variant<Types...>& operator= (T const& rhs)
+    {
+        variant<Types...> temp(rhs);
+        swap(*this, temp);
+        return *this;
+    }
 
     template<typename T>
     VARIANT_INLINE bool is() const
