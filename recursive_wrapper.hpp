@@ -30,13 +30,13 @@ private:
 
 public:
 
-    recursive_wrapper& operator=(const recursive_wrapper& rhs)
+    inline recursive_wrapper& operator=(recursive_wrapper const& rhs)
     {
         assign( rhs.get() );
         return *this;
     }
 
-    recursive_wrapper& operator=(const T& rhs)
+    inline recursive_wrapper& operator=(T const& rhs)
     {
         assign( rhs );
         return *this;
@@ -65,12 +65,12 @@ public:
 
 public:
 
-    inline T& get() { return *get_pointer(); }
-    inline const T& get() const { return *get_pointer(); }
-
-    inline T* get_pointer() { return p_; }
-    inline const T* get_pointer() const { return p_; }
-
+    T& get() { return *get_pointer(); }
+    const T& get() const { return *get_pointer(); }
+    T* get_pointer() { return p_; }
+    const T* get_pointer() const { return p_; }
+    operator T const&() const { return this->get(); }
+    operator T&() { return this->get(); }
 };
 
 template <typename T>
@@ -99,8 +99,9 @@ recursive_wrapper<T>::recursive_wrapper(T const& operand)
 
 template <typename T>
 recursive_wrapper<T>::recursive_wrapper(recursive_wrapper&& operand)
-    : p_(new T( std::move(operand.get()) ))
+    : p_(operand.p_)
 {
+    operand.p_ = nullptr;
 }
 
 template <typename T>
