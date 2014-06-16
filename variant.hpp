@@ -9,6 +9,7 @@
 #include <new> // operator new
 #include <cstddef> // size_t
 #include <iosfwd>
+#include <string>
 
 #include "recursive_wrapper.hpp"
 
