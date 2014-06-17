@@ -75,7 +75,7 @@ struct select_type
 };
 
 template <std::size_t N, typename T, typename ... Types>
-struct select_type<N,T,Types...>
+struct select_type<N, T, Types...>
 {
     using type = typename select_type<N - 1, Types...>::type;
 };
@@ -397,7 +397,7 @@ private:
 public:
 
     VARIANT_INLINE variant()
-        : type_index(0)
+        : type_index(sizeof...(Types) - 1)
     {
         new (&data) typename detail::select_type<0,Types...>::type();
     }
