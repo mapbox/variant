@@ -201,11 +201,11 @@ TEST_CASE( "variant type traits", "[variant::detail]" ) {
     REQUIRE((util::detail::type_traits<std::vector<int>, bool, int, double, std::string>::id == util::detail::invalid_value));
 }
 
-
 TEST_CASE( "variant default constructor", "variant()" ) {
     // By default variant is initilised with (default constructed) first type in template parameters pack
     // As a reusult first type in Types... must be defaul constructable
-    REQUIRE((util::variant<int, double, std::string>().get_type_index() == 0));
+    // NOTE: index in reverse order -> index = N - 1
+    REQUIRE((util::variant<int, double, std::string>().get_type_index() == 2));
 }
 
 int main (int argc, char* const argv[])
