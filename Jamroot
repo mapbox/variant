@@ -16,6 +16,7 @@ exe variant-test
     <include>$(BOOST_DIR)/include
     <include>./
     <cxxflags>-std=c++11
+    #<define>SINGLE_THREADED
     <variant>release:<cxxflags>-march=native
     ;
 
