@@ -15,11 +15,11 @@
               },
               "Release_Win32": {
                 "msvs_configuration_platform": "Win32",
-                "defines": [ "DNEBUG"]
+                "defines": [ "NDEBUG"]
               },
               "Release_x64": {
                 "msvs_configuration_platform": "x64",
-                "defines": [ "DNEBUG"]
+                "defines": [ "NDEBUG"]
               }
             }
           }
