@@ -10,6 +10,25 @@
 
 using namespace mapbox;
 
+template <typename T>
+struct mutating_visitor : util::static_visitor<>
+{
+    mutating_visitor(T & val)
+        : val_(val) {}
+
+    void operator() (T & val) const
+    {
+        val = val_;
+    }
+
+    template <typename T1>
+    void operator() (T1& ) const {} // no-op
+
+    T & val_;
+};
+
+
+
 TEST_CASE( "variant version", "[variant]" ) {
     unsigned int version = VARIANT_VERSION;
     REQUIRE(version == 100);
@@ -206,6 +225,17 @@ TEST_CASE( "variant default constructor", "variant()" ) {
     // As a reusult first type in Types... must be defaul constructable
     // NOTE: index in reverse order -> index = N - 1
     REQUIRE((util::variant<int, double, std::string>().get_type_index() == 2));
+}
+
+
+TEST_CASE( "variant visitation", "unary visitor" )
+{
+    util::variant<int, double, std::string> var(123);
+    REQUIRE(var.get<int>() == 123);
+    int val = 456;
+    mutating_visitor<int> visitor(val);
+    util::apply_visitor(visitor,var);
+    REQUIRE(var.get<int>() == 456);
 }
 
 int main (int argc, char* const argv[])
