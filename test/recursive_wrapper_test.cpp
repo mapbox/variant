@@ -110,10 +110,9 @@ int main (int argc, char** argv)
 
     const std::size_t NUM_ITER = static_cast<std::size_t>(std::stol(argv[1]));
 
-    test::expression result(util::recursive_wrapper<test::binary_op<test::sub> >(
-                                test::binary_op<test::sub>(
-                                    util::recursive_wrapper<test::binary_op<test::add> >(
-                                        test::binary_op<test::add>(2,3)),4)));
+    test::expression result(
+        test::binary_op<test::sub>(
+            test::binary_op<test::add>(2,3),4));
 
     std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(test::test(), result) << std::endl;
 
