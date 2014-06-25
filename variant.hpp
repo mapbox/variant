@@ -40,19 +40,43 @@ namespace mapbox { namespace util { namespace detail {
 static constexpr std::size_t invalid_value = std::size_t(-1);
 
 template <typename T, typename...Types>
-struct type_traits;
+struct direct_type;
 
 template <typename T, typename First, typename...Types>
-struct type_traits<T, First, Types...>
+struct direct_type<T, First, Types...>
 {
-    static constexpr std::size_t id = std::is_same<T, First>::value
-        ? sizeof...(Types) : type_traits<T, Types...>::id;
+    static constexpr std::size_t index = std::is_same<T, First>::value
+        ? sizeof...(Types) : direct_type<T, Types...>::index;
 };
 
 template <typename T>
-struct type_traits<T>
+struct direct_type<T>
 {
-    static constexpr std::size_t id = invalid_value;
+    static constexpr std::size_t index = invalid_value;
+};
+
+template <typename T, typename...Types>
+struct convertible_type;
+
+template <typename T, typename First, typename...Types>
+struct convertible_type<T, First, Types...>
+{
+    static constexpr std::size_t index = std::is_convertible<T,First>::value
+        ? sizeof...(Types) : convertible_type<T, Types...>::index;
+};
+
+template <typename T>
+struct convertible_type<T>
+{
+    static constexpr std::size_t index = invalid_value;
+};
+
+template <typename T, typename...Types>
+struct value_traits
+{
+    static constexpr std::size_t direct_index = direct_type<T,Types...>::index;
+    static constexpr std::size_t index =
+        (direct_index == invalid_value) ? convertible_type<T,Types...>::index : direct_index;
 };
 
 template <typename T, typename...Types>
@@ -61,7 +85,7 @@ struct is_valid_type;
 template <typename T, typename First, typename... Types>
 struct is_valid_type<T,First,Types...>
 {
-    static constexpr bool value = std::is_same<T, First>::value
+    static constexpr bool value = std::is_convertible<T, First>::value
         || is_valid_type<T,Types...>::value;
 };
 
@@ -488,17 +512,21 @@ public:
     template <typename T,class = typename std::enable_if<
                          detail::is_valid_type<T,Types...>::value>::type>
     VARIANT_INLINE explicit variant(T const& val) noexcept
-        : type_index(detail::type_traits<T, Types...>::id)
+        : type_index(detail::value_traits<T, Types...>::index)
     {
-        new (&data) T(val);
+        constexpr std::size_t index = sizeof...(Types) - detail::value_traits<T, Types...>::index - 1;
+        using target_type = typename detail::select_type<index, Types...>::type;
+        new (&data) target_type(val);
     }
 
     template <typename T, class = typename std::enable_if<
                           detail::is_valid_type<T,Types...>::value>::type>
     VARIANT_INLINE variant(T && val) noexcept
-        : type_index(detail::type_traits<T,Types...>::id)
+        : type_index(detail::value_traits<T,Types...>::index)
     {
-        new (&data) T(std::forward<T>(val)); // nothrow
+        constexpr std::size_t index = sizeof...(Types) - detail::value_traits<T, Types...>::index - 1;
+        using target_type = typename detail::select_type<index, Types...>::type;
+        new (&data) target_type(std::forward<T>(val)); // nothrow
     }
 
     VARIANT_INLINE variant(variant<Types...> const& old)
@@ -548,7 +576,7 @@ public:
     template<typename T>
     VARIANT_INLINE bool is() const
     {
-        return (type_index == detail::type_traits<T, Types...>::id);
+        return (type_index == detail::direct_type<T, Types...>::index);
     }
 
     VARIANT_INLINE bool valid() const
@@ -561,13 +589,13 @@ public:
     {
         helper_type::destroy(type_index, &data);
         new (&data) T(std::forward<Args>(args)...);
-        type_index = detail::type_traits<T,Types...>::id;
+        type_index = detail::direct_type<T,Types...>::index;
     }
 
     template<typename T>
     VARIANT_INLINE T& get()
     {
-        if (type_index == detail::type_traits<T,Types...>::id)
+        if (type_index == detail::direct_type<T,Types...>::index)
         {
             return *reinterpret_cast<T*>(&data);
         }
@@ -580,7 +608,7 @@ public:
     template<typename T>
     VARIANT_INLINE T const& get() const
     {
-        if (type_index == detail::type_traits<T,Types...>::id)
+        if (type_index == detail::direct_type<T,Types...>::index)
         {
             return *reinterpret_cast<T const*>(&data);
         }
