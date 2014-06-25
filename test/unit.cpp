@@ -208,16 +208,18 @@ TEST_CASE( "variant should correctly index types", "[variant]" ) {
     REQUIRE(variant_type(float(0.0)).get_type_index() == 0);
 }
 
-TEST_CASE( "variant type traits", "[variant::detail]" ) {
+struct dummy {};
+
+TEST_CASE( "variant value traits", "[variant::detail]" ) {
     // Users should not create variants with duplicated types
     // however our type indexing should still work
     // Index is in reverse order
-    REQUIRE((util::detail::type_traits<bool, bool, int, double, std::string>::id == 3));
-    REQUIRE((util::detail::type_traits<int, bool, int, double, std::string>::id == 2));
-    REQUIRE((util::detail::type_traits<double, bool, int, double, std::string>::id == 1));
-    REQUIRE((util::detail::type_traits<std::string, bool, int, double, std::string>::id == 0));
-    REQUIRE((util::detail::type_traits<long, bool, int, double, std::string>::id == util::detail::invalid_value));
-    REQUIRE((util::detail::type_traits<std::vector<int>, bool, int, double, std::string>::id == util::detail::invalid_value));
+    REQUIRE((util::detail::value_traits<bool, bool, int, double, std::string>::index == 3));
+    REQUIRE((util::detail::value_traits<int, bool, int, double, std::string>::index == 2));
+    REQUIRE((util::detail::value_traits<double, bool, int, double, std::string>::index == 1));
+    REQUIRE((util::detail::value_traits<std::string, bool, int, double, std::string>::index == 0));
+    REQUIRE((util::detail::value_traits<dummy, bool, int, double, std::string>::index == util::detail::invalid_value));
+    REQUIRE((util::detail::value_traits<std::vector<int>, bool, int, double, std::string>::index == util::detail::invalid_value));
 }
 
 TEST_CASE( "variant default constructor", "variant()" ) {
