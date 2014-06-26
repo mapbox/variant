@@ -2,11 +2,15 @@
 #include "catch.hpp"
 
 #include "variant.hpp"
+
+#include <algorithm>
 #include <cstdint>
+#include <iterator>
 #include <limits>
-#include <string>
-#include <ostream>
 #include <memory>
+#include <ostream>
+#include <sstream>
+#include <string>
 
 using namespace mapbox;
 
@@ -280,9 +284,7 @@ TEST_CASE( "variant default constructor", "[variant][default constructor]" ) {
     REQUIRE((util::variant<int, double, std::string>().get_type_index() == 2));
 }
 
-
-TEST_CASE( "variant visitation", "[visitor][unary visitor]" )
-{
+TEST_CASE( "variant visitation", "[visitor][unary visitor]" ) {
     util::variant<int, double, std::string> var(123);
     REQUIRE(var.get<int>() == 123);
     int val = 456;
@@ -290,6 +292,16 @@ TEST_CASE( "variant visitation", "[visitor][unary visitor]" )
     util::apply_visitor(visitor, var);
     REQUIRE(var.get<int>() == 456);
 }
+
+TEST_CASE( "variant printer", "[visitor][unary visitor][printer]" ) {
+    typedef util::variant<int, double, std::string> variant_type;
+    std::vector<variant_type> var = {2.1, 123, "foo", 456};
+    std::stringstream out;
+    std::copy(var.begin(), var.end(), std::ostream_iterator<variant_type>(out, ","));
+    out << var[2];
+    REQUIRE(out.str() == "2.1,123,foo,456,foo");
+}
+
 
 int main (int argc, char* const argv[])
 {
