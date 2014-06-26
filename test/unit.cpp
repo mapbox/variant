@@ -208,7 +208,58 @@ TEST_CASE( "variant should correctly index types", "[variant]" ) {
     REQUIRE(variant_type(float(0.0)).get_type_index() == 0);
 }
 
+TEST_CASE( "get with type not in variant type list should throw", "[variant]" ) {
+    typedef util::variant<int> variant_type;
+    variant_type var = 5;
+    REQUIRE(var.get<int>() == 5);
+    REQUIRE_THROWS(var.get<double>()); // XXX shouldn't this be a compile time error? See https://github.com/mapbox/variant/issues/24
+}
+
+TEST_CASE( "get with wrong type (here: double) should throw", "[variant]" ) {
+    typedef util::variant<int, double> variant_type;
+    variant_type var = 5;
+    REQUIRE(var.get<int>() == 5);
+    REQUIRE_THROWS(var.get<double>());
+}
+
+TEST_CASE( "get with wrong type (here: int) should throw", "[variant]" ) {
+    typedef util::variant<int, double> variant_type;
+    variant_type var = 5.0;
+    REQUIRE(var.get<double>() == 5.0);
+    REQUIRE_THROWS(var.get<int>());
+}
+
+TEST_CASE( "implicit conversion", "[variant][implicit conversion]" ) {
+    typedef util::variant<int> variant_type;
+    variant_type var(5.0); // converted to int
+    REQUIRE(var.get<int>() == 5);
+    REQUIRE_THROWS(var.get<double>());
+    var = 6.0; // works for operator=, too
+    REQUIRE(var.get<int>() == 6);
+}
+
+TEST_CASE( "implicit conversion to first type in variant type list", "[variant][implicit conversion]" ) {
+    typedef util::variant<long, char> variant_type;
+    variant_type var = 5.0; // converted to long
+    REQUIRE(var.get<long>() == 5);
+    REQUIRE_THROWS(var.get<char>());
+    REQUIRE_THROWS(var.get<double>());
+}
+
 struct dummy {};
+
+TEST_CASE( "implicit conversion to first type it can convert to even if it doesn't fit", "[variant][implicit conversion]" ) {
+    typedef util::variant<dummy, unsigned char, long> variant_type;
+    variant_type var = 500.0; // converted to unsigned char, even if it doesn't fit
+    REQUIRE(var.get<unsigned char>() == static_cast<unsigned char>(500.0));
+    REQUIRE_THROWS(var.get<long>());
+    var = 500; // int converted to unsigned char, even if it doesn't fit
+    REQUIRE(var.get<unsigned char>() == static_cast<unsigned char>(500));
+    REQUIRE_THROWS(var.get<long>());
+    var = 500L; // explicit long is okay
+    REQUIRE(var.get<long>() == 500L);
+    REQUIRE_THROWS(var.get<char>());
+}
 
 TEST_CASE( "variant value traits", "[variant::detail]" ) {
     // Users should not create variants with duplicated types
