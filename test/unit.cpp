@@ -15,7 +15,7 @@
 using namespace mapbox;
 
 template <typename T>
-struct mutating_visitor : util::static_visitor<>
+struct mutating_visitor
 {
     mutating_visitor(T & val)
         : val_(val) {}

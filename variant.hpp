@@ -112,16 +112,6 @@ struct select_type<0, T, Types...>
 
 } // namespace detail
 
-// static visitor
-template <typename R = void>
-struct static_visitor
-{
-    using result_type = R;
-protected:
-    static_visitor() {}
-    ~static_visitor() {}
-};
-
 
 template <std::size_t arg1, std::size_t ... others>
 struct static_max;
@@ -226,7 +216,7 @@ struct dispatcher;
 template <typename F, typename V, typename T, typename...Types>
 struct dispatcher<F, V, T, Types...>
 {
-    using result_type = typename F::result_type;
+    using result_type = typename std::result_of<F(V&)>::type;
     VARIANT_INLINE static result_type apply_const(V const& v, F f)
     {
         if (v.get_type_index() == sizeof...(Types))
@@ -255,7 +245,7 @@ struct dispatcher<F, V, T, Types...>
 template<typename F, typename V>
 struct dispatcher<F, V>
 {
-    using result_type = typename F::result_type;
+    using result_type = typename std::result_of<F(V&)>::type;
     VARIANT_INLINE static result_type apply_const(V const&, F)
     {
         throw std::runtime_error(std::string("unary dispatch: FAIL ") + typeid(V).name());
@@ -274,7 +264,7 @@ struct binary_dispatcher_rhs;
 template <typename F, typename V, typename T0, typename T1, typename...Types>
 struct binary_dispatcher_rhs<F, V, T0, T1, Types...>
 {
-    using result_type = typename F::result_type;
+    using result_type = typename std::result_of<F(V&, V&)>::type;
     VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F f)
     {
         if (rhs.get_type_index() == sizeof...(Types)) // call binary functor
@@ -306,7 +296,7 @@ struct binary_dispatcher_rhs<F, V, T0, T1, Types...>
 template<typename F, typename V, typename T>
 struct binary_dispatcher_rhs<F, V, T>
 {
-    using result_type = typename F::result_type;
+    using result_type = typename std::result_of<F(V&, V&)>::type;
     VARIANT_INLINE static result_type apply_const(V const&, V const&, F)
     {
         throw std::runtime_error("binary dispatch: FAIL");
@@ -324,7 +314,7 @@ struct binary_dispatcher_lhs;
 template <typename F, typename V, typename T0, typename T1, typename...Types>
 struct binary_dispatcher_lhs<F, V, T0, T1, Types...>
 {
-    using result_type = typename F::result_type;
+    using result_type = typename std::result_of<F(V&, V&)>::type;
     VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F f)
     {
         if (lhs.get_type_index() == sizeof...(Types)) // call binary functor
@@ -354,7 +344,7 @@ struct binary_dispatcher_lhs<F, V, T0, T1, Types...>
 template<typename F, typename V, typename T>
 struct binary_dispatcher_lhs<F, V, T>
 {
-    using result_type = typename F::result_type;
+    using result_type = typename std::result_of<F(V&, V&)>::type;
     VARIANT_INLINE static result_type apply_const(V const&, V const&, F)
     {
         throw std::runtime_error("binary dispatch: FAIL");
@@ -372,7 +362,7 @@ struct binary_dispatcher;
 template <typename F, typename V, typename T, typename...Types>
 struct binary_dispatcher<F, V, T, Types...>
 {
-    using result_type = typename F::result_type;
+    using result_type = typename std::result_of<F(V&, V&)>::type;
     VARIANT_INLINE static result_type apply_const(V const& v0, V const& v1, F f)
     {
         if (v0.get_type_index() == sizeof...(Types))
@@ -417,7 +407,7 @@ struct binary_dispatcher<F, V, T, Types...>
 template<typename F, typename V>
 struct binary_dispatcher<F, V>
 {
-    using result_type = typename F::result_type;
+    using result_type = typename std::result_of<F(V&, V&)>::type;
     VARIANT_INLINE static result_type apply_const(V const&, V const&, F)
     {
         throw std::runtime_error("binary dispatch: FAIL");
@@ -449,7 +439,7 @@ struct less_comp
 };
 
 template <typename Variant, typename Comp>
-class comparer : public static_visitor<bool>
+class comparer
 {
 public:
     explicit comparer(Variant const& lhs) noexcept
@@ -468,7 +458,7 @@ private:
 
 // operator<< helper
 template <typename Out>
-class printer : public static_visitor<>
+class printer
 {
 public:
     explicit printer(Out & out)
