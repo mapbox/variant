@@ -33,7 +33,7 @@ struct Holder
     }
 };
 
-}
+} // namespace test
 
 struct print : util::static_visitor<>
 {

@@ -110,7 +110,7 @@ struct select_type<0, T, Types...>
     using type = T;
 };
 
-}
+} // namespace detail
 
 // static visitor
 template <typename R = void>
@@ -485,7 +485,7 @@ private:
     Out & out_;
 };
 
-} // detail
+} // namespace detail
 
 template<typename... Types>
 class variant

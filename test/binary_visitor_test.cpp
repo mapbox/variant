@@ -95,7 +95,7 @@ struct javascript_equal
     T const& lhs_;
 };
 
-}
+} // namespace test
 
 int main (/*int argc, char** argv*/)
 {
