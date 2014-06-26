@@ -442,7 +442,7 @@ struct equal_comp
 struct less_comp
 {
     template <typename T>
-    bool operator()(const T& lhs, const T& rhs) const
+    bool operator()(T const& lhs, T const& rhs) const
     {
         return lhs < rhs;
     }
@@ -454,7 +454,7 @@ class comparer : public static_visitor<bool>
 public:
     explicit comparer(Variant const& lhs) noexcept
         : lhs_(lhs) {}
-    comparer& operator=(const comparer&) = delete;
+    comparer& operator=(comparer const&) = delete;
     // visitor
     template<typename T>
     bool operator()(T const& rhs_content) const
@@ -473,11 +473,11 @@ class printer : public static_visitor<>
 public:
     explicit printer(Out & out)
         : out_(out) {}
-    printer& operator=(printer const &) = delete;
+    printer& operator=(printer const&) = delete;
 
 // visitor
     template <typename T>
-    void operator()(T const & operand) const
+    void operator()(T const& operand) const
     {
         out_ << operand;
     }
