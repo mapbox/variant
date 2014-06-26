@@ -7,11 +7,11 @@
             "configurations": {
               "Debug_Win32": {
                 "msvs_configuration_platform": "Win32",
-                "defines": [ "DEBUG"]
+                "defines": [ "DEBUG","_DEBUG"]
               },
               "Debug_x64": {
                 "msvs_configuration_platform": "x64",
-                "defines": [ "DEBUG"]
+                "defines": [ "DEBUG","_DEBUG"]
               },
               "Release_Win32": {
                 "msvs_configuration_platform": "Win32",
