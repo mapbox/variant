@@ -4,6 +4,12 @@
           "target_defaults": {
             "default_configuration": "Release_x64",
             "msbuild_toolset":"CTP_Nov2013",
+            "msvs_settings": {
+              "VCCLCompilerTool": {
+                "ExceptionHandling": 1, # /EHsc
+                "RuntimeTypeInfo": "true" # /GR
+              }
+            },
             "configurations": {
               "Debug_Win32": {
                 "msvs_configuration_platform": "Win32",
@@ -14,7 +20,7 @@
                     "Optimization": 0, # /Od, no optimization
                     "MinimalRebuild": "false",
                     "OmitFramePointers": "false",
-                    "BasicRuntimeChecks": 3, # /RTC1
+                    "BasicRuntimeChecks": 3 # /RTC1
                   }
                 }
               },
@@ -27,7 +33,7 @@
                     "Optimization": 0, # /Od, no optimization
                     "MinimalRebuild": "false",
                     "OmitFramePointers": "false",
-                    "BasicRuntimeChecks": 3, # /RTC1
+                    "BasicRuntimeChecks": 3 # /RTC1
                   }
                 }
               },
@@ -44,22 +50,20 @@
                     "OmitFramePointers": "true",
                     "EnableFunctionLevelLinking": "true",
                     "EnableIntrinsicFunctions": "true",
-                    "RuntimeTypeInfo": "false",
-                    "ExceptionHandling": "0",
                     "AdditionalOptions": [
                       "/MP", # compile across multiple CPUs
-                    ],
+                    ]
                   },
                   "VCLibrarianTool": {
                     "AdditionalOptions": [
-                      "/LTCG", # link time code generation
+                      "/LTCG" # link time code generation
                     ],
                   },
                   "VCLinkerTool": {
                     "LinkTimeCodeGeneration": 1, # link-time code generation
                     "OptimizeReferences": 2, # /OPT:REF
                     "EnableCOMDATFolding": 2, # /OPT:ICF
-                    "LinkIncremental": 1, # disable incremental linking
+                    "LinkIncremental": 1 # disable incremental linking
                   }
                 }
               },
@@ -76,22 +80,20 @@
                     "OmitFramePointers": "true",
                     "EnableFunctionLevelLinking": "true",
                     "EnableIntrinsicFunctions": "true",
-                    "RuntimeTypeInfo": "false",
-                    "ExceptionHandling": "0",
                     "AdditionalOptions": [
                       "/MP", # compile across multiple CPUs
-                    ],
+                    ]
                   },
                   "VCLibrarianTool": {
                     "AdditionalOptions": [
-                      "/LTCG", # link time code generation
+                      "/LTCG" # link time code generation
                     ],
                   },
                   "VCLinkerTool": {
                     "LinkTimeCodeGeneration": 1, # link-time code generation
                     "OptimizeReferences": 2, # /OPT:REF
                     "EnableCOMDATFolding": 2, # /OPT:ICF
-                    "LinkIncremental": 1, # disable incremental linking
+                    "LinkIncremental": 1 # disable incremental linking
                   }
                 }
               }
