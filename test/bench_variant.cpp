@@ -21,7 +21,7 @@ struct Holder
     std::vector<value_type> data;
 
     template <typename T>
-    void append_move( T && obj)
+    void append_move(T && obj)
     {
         data.emplace_back(std::forward<T>(obj));
     }
@@ -33,14 +33,14 @@ struct Holder
     }
 };
 
-}
+} // namespace test
 
 struct print : util::static_visitor<>
 {
     template <typename T>
     void operator() (T const& val) const
     {
-        std::cerr << val << ":" << typeid(T).name() <<  std::endl;
+        std::cerr << val << ":" << typeid(T).name() << std::endl;
     }
 };
 
@@ -75,38 +75,38 @@ struct dummy2 : util::static_visitor<>
 
 void run_boost_test(std::size_t runs)
 {
-    test::Holder<boost::variant<int,double,std::string>> h;
+    test::Holder<boost::variant<int, double, std::string>> h;
     h.data.reserve(runs);
-    for (std::size_t i=0; i< runs;++i)
+    for (std::size_t i=0; i< runs; ++i)
     {
         h.append_move(std::string(TEXT));
         h.append_move(123);
         h.append_move(3.14159);
     }
 
-    boost::variant<int,double,std::string> v;
+    boost::variant<int, double, std::string> v;
     for (auto const& v2 : h.data)
     {
-        dummy<boost::variant<int,double,std::string> > d(v);
+        dummy<boost::variant<int, double, std::string>> d(v);
         boost::apply_visitor(d, v2);
     }
 }
 
 void run_variant_test(std::size_t runs)
 {
-    test::Holder<util::variant<int,double,std::string> > h;
+    test::Holder<util::variant<int, double, std::string>> h;
     h.data.reserve(runs);
-    for (std::size_t i=0; i< runs;++i)
+    for (std::size_t i=0; i< runs; ++i)
     {
         h.append_move(std::string(TEXT));
         h.append_move(123);
         h.append_move(3.14159);
     }
 
-    util::variant<int,double,std::string> v;
+    util::variant<int, double, std::string> v;
     for (auto const& v2 : h.data)
     {
-        dummy2<util::variant<int,double,std::string> > d(v);
+        dummy2<util::variant<int, double, std::string>> d(v);
         util::apply_visitor (d, v2);
     }
 }
@@ -147,12 +147,12 @@ int main (int argc, char** argv)
     }
 #else
     {
-        typedef std::vector<std::unique_ptr<std::thread> > thread_group;
+        typedef std::vector<std::unique_ptr<std::thread>> thread_group;
         typedef thread_group::value_type value_type;
         thread_group tg;
         std::cerr << "custom variant: ";
         boost::timer::auto_cpu_timer timer;
-        for (std::size_t i=0;i<THREADS;++i)
+        for (std::size_t i=0; i<THREADS; ++i)
         {
             tg.emplace_back(new std::thread(run_variant_test, NUM_RUNS));
         }
@@ -160,12 +160,12 @@ int main (int argc, char** argv)
     }
 
     {
-        typedef std::vector<std::unique_ptr<std::thread> > thread_group;
+        typedef std::vector<std::unique_ptr<std::thread>> thread_group;
         typedef thread_group::value_type value_type;
         thread_group tg;
         std::cerr << "boost variant: ";
         boost::timer::auto_cpu_timer timer;
-        for (std::size_t i=0;i<THREADS;++i)
+        for (std::size_t i=0; i<THREADS; ++i)
         {
             tg.emplace_back(new std::thread(run_boost_test, NUM_RUNS));
         }
@@ -173,12 +173,12 @@ int main (int argc, char** argv)
     }
 
     {
-        typedef std::vector<std::unique_ptr<std::thread> > thread_group;
+        typedef std::vector<std::unique_ptr<std::thread>> thread_group;
         typedef thread_group::value_type value_type;
         thread_group tg;
         std::cerr << "custom variant: ";
         boost::timer::auto_cpu_timer timer;
-        for (std::size_t i=0;i<THREADS;++i)
+        for (std::size_t i=0; i<THREADS; ++i)
         {
             tg.emplace_back(new std::thread(run_variant_test, NUM_RUNS));
         }
@@ -186,12 +186,12 @@ int main (int argc, char** argv)
     }
 
     {
-        typedef std::vector<std::unique_ptr<std::thread> > thread_group;
+        typedef std::vector<std::unique_ptr<std::thread>> thread_group;
         typedef thread_group::value_type value_type;
         thread_group tg;
         std::cerr << "boost variant: ";
         boost::timer::auto_cpu_timer timer;
-        for (std::size_t i=0;i<THREADS;++i)
+        for (std::size_t i=0; i<THREADS; ++i)
         {
             tg.emplace_back(new std::thread(run_boost_test, NUM_RUNS));
         }

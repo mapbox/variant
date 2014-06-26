@@ -27,7 +27,7 @@ struct binary_op
     expression left;  // variant instantiated here...
     expression right;
 
-    binary_op( expression && lhs, expression && rhs )
+    binary_op(expression && lhs, expression && rhs)
         : left(std::move(lhs)), right(std::move(rhs))
     {
     }
@@ -38,7 +38,7 @@ struct print : util::static_visitor<void>
     template <typename T>
     void operator() (T const& val) const
     {
-        std::cerr << val << ":" << typeid(T).name() <<  std::endl;
+        std::cerr << val << ":" << typeid(T).name() << std::endl;
     }
 };
 
@@ -63,14 +63,14 @@ public:
 
     int operator()(binary_op<add> const& binary) const
     {
-        return util::apply_visitor( calculator(), binary.left)
-            + util::apply_visitor( calculator(), binary.right);
+        return util::apply_visitor(calculator(), binary.left)
+            + util::apply_visitor(calculator(), binary.right);
     }
 
     int operator()(binary_op<sub> const& binary) const
     {
-        return util::apply_visitor( calculator(), binary.left )
-            - util::apply_visitor( calculator(), binary.right);
+        return util::apply_visitor(calculator(), binary.left)
+            - util::apply_visitor(calculator(), binary.right);
     }
 };
 
@@ -86,18 +86,18 @@ public:
     std::string operator()(binary_op<add> const& binary) const
     {
         return util::apply_visitor(to_string(), binary.left) + std::string("+")
-            + util::apply_visitor( to_string(), binary.right);
+            + util::apply_visitor(to_string(), binary.right);
     }
 
     std::string operator()(binary_op<sub> const& binary) const
     {
-        return util::apply_visitor( to_string(), binary.left ) + std::string("-")
-            + util::apply_visitor( to_string(), binary.right );
+        return util::apply_visitor(to_string(), binary.left) + std::string("-")
+            + util::apply_visitor(to_string(), binary.right);
     }
 
 };
 
-}
+} // namespace test
 
 int main (int argc, char** argv)
 {
@@ -112,7 +112,7 @@ int main (int argc, char** argv)
 
     test::expression result(
         test::binary_op<test::sub>(
-            test::binary_op<test::add>(2,3),4));
+            test::binary_op<test::add>(2, 3), 4));
 
     std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(test::test(), result) << std::endl;
 
@@ -121,12 +121,12 @@ int main (int argc, char** argv)
         int total = 0;
         for (std::size_t i = 0; i < NUM_ITER; ++i)
         {
-            total += util::apply_visitor(test::calculator(),result);
+            total += util::apply_visitor(test::calculator(), result);
         }
         std::cerr << "total=" << total << std::endl;
     }
 
-    std::cerr << util::apply_visitor(test::to_string(), result) << "=" << util::apply_visitor(test::calculator(),result) << std::endl;
+    std::cerr << util::apply_visitor(test::to_string(), result) << "=" << util::apply_visitor(test::calculator(), result) << std::endl;
 
     return EXIT_SUCCESS;
 }

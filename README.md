@@ -1,4 +1,4 @@
-# MapBox Variant
+# Mapbox Variant
 
 An alternative to `boost::variant` for C++11.
 

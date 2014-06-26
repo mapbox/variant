@@ -28,7 +28,7 @@ struct binary_op
     expression left;  // variant instantiated here...
     expression right;
 
-    binary_op( expression && lhs, expression && rhs )
+    binary_op(expression && lhs, expression && rhs)
         : left(std::move(lhs)), right(std::move(rhs)) {}
 };
 
@@ -37,7 +37,7 @@ struct print : util::static_visitor<void>
     template <typename T>
     void operator() (T const& val) const
     {
-        std::cerr << val << ":" << typeid(T).name() <<  std::endl;
+        std::cerr << val << ":" << typeid(T).name() << std::endl;
     }
 };
 
@@ -96,7 +96,7 @@ public:
 
 };
 
-}
+} // namespace test
 
 int main (int argc, char** argv)
 {
@@ -108,16 +108,16 @@ int main (int argc, char** argv)
 
     const std::size_t NUM_ITER = static_cast<std::size_t>(std::stol(argv[1]));
 
-    test::expression sum(std::unique_ptr<test::binary_op<test::add>>(new test::binary_op<test::add>(2,3)));
-    test::expression result(std::unique_ptr<test::binary_op<test::sub>>(new test::binary_op<test::sub>(std::move(sum),4)));
-    std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(test::test(),result) << std::endl;
+    test::expression sum(std::unique_ptr<test::binary_op<test::add>>(new test::binary_op<test::add>(2, 3)));
+    test::expression result(std::unique_ptr<test::binary_op<test::sub>>(new test::binary_op<test::sub>(std::move(sum), 4)));
+    std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(test::test(), result) << std::endl;
 
     {
         boost::timer::auto_cpu_timer t;
         int total = 0;
         for (std::size_t i = 0; i < NUM_ITER; ++i)
         {
-            total += util::apply_visitor(test::calculator(),result);
+            total += util::apply_visitor(test::calculator(), result);
         }
         std::cerr << "total=" << total << std::endl;
     }

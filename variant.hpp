@@ -61,7 +61,7 @@ struct convertible_type;
 template <typename T, typename First, typename...Types>
 struct convertible_type<T, First, Types...>
 {
-    static constexpr std::size_t index = std::is_convertible<T,First>::value
+    static constexpr std::size_t index = std::is_convertible<T, First>::value
         ? sizeof...(Types) : convertible_type<T, Types...>::index;
 };
 
@@ -74,19 +74,19 @@ struct convertible_type<T>
 template <typename T, typename...Types>
 struct value_traits
 {
-    static constexpr std::size_t direct_index = direct_type<T,Types...>::index;
+    static constexpr std::size_t direct_index = direct_type<T, Types...>::index;
     static constexpr std::size_t index =
-        (direct_index == invalid_value) ? convertible_type<T,Types...>::index : direct_index;
+        (direct_index == invalid_value) ? convertible_type<T, Types...>::index : direct_index;
 };
 
 template <typename T, typename...Types>
 struct is_valid_type;
 
 template <typename T, typename First, typename... Types>
-struct is_valid_type<T,First,Types...>
+struct is_valid_type<T, First, Types...>
 {
     static constexpr bool value = std::is_convertible<T, First>::value
-        || is_valid_type<T,Types...>::value;
+        || is_valid_type<T, Types...>::value;
 };
 
 template <typename T>
@@ -110,7 +110,7 @@ struct select_type<0, T, Types...>
     using type = T;
 };
 
-}
+} // namespace detail
 
 // static visitor
 template <typename R = void>
@@ -224,7 +224,7 @@ template <typename F, typename V, typename...Types>
 struct dispatcher;
 
 template <typename F, typename V, typename T, typename...Types>
-struct dispatcher<F,V,T,Types...>
+struct dispatcher<F, V, T, Types...>
 {
     using result_type = typename F::result_type;
     VARIANT_INLINE static result_type apply_const(V const& v, F f)
@@ -235,7 +235,7 @@ struct dispatcher<F,V,T,Types...>
         }
         else
         {
-            return dispatcher<F,V,Types...>::apply_const(v, f);
+            return dispatcher<F, V, Types...>::apply_const(v, f);
         }
     }
 
@@ -247,13 +247,13 @@ struct dispatcher<F,V,T,Types...>
         }
         else
         {
-            return dispatcher<F,V,Types...>::apply(v, f);
+            return dispatcher<F, V, Types...>::apply(v, f);
         }
     }
 };
 
-template<typename F,typename V>
-struct dispatcher<F,V>
+template<typename F, typename V>
+struct dispatcher<F, V>
 {
     using result_type = typename F::result_type;
     VARIANT_INLINE static result_type apply_const(V const&, F)
@@ -272,7 +272,7 @@ template <typename F, typename V, typename T, typename...Types>
 struct binary_dispatcher_rhs;
 
 template <typename F, typename V, typename T0, typename T1, typename...Types>
-struct binary_dispatcher_rhs<F,V,T0,T1,Types...>
+struct binary_dispatcher_rhs<F, V, T0, T1, Types...>
 {
     using result_type = typename F::result_type;
     VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F f)
@@ -284,7 +284,7 @@ struct binary_dispatcher_rhs<F,V,T0,T1,Types...>
         }
         else
         {
-            return binary_dispatcher_rhs<F,V,T0,Types...>::apply_const(lhs, rhs, f);
+            return binary_dispatcher_rhs<F, V, T0, Types...>::apply_const(lhs, rhs, f);
         }
     }
 
@@ -297,14 +297,14 @@ struct binary_dispatcher_rhs<F,V,T0,T1,Types...>
         }
         else
         {
-            return binary_dispatcher_rhs<F,V,T0,Types...>::apply(lhs, rhs, f);
+            return binary_dispatcher_rhs<F, V, T0, Types...>::apply(lhs, rhs, f);
         }
     }
 
 };
 
-template<typename F,typename V, typename T>
-struct binary_dispatcher_rhs<F,V,T>
+template<typename F, typename V, typename T>
+struct binary_dispatcher_rhs<F, V, T>
 {
     using result_type = typename F::result_type;
     VARIANT_INLINE static result_type apply_const(V const&, V const&, F)
@@ -322,9 +322,9 @@ template <typename F, typename V, typename T, typename...Types>
 struct binary_dispatcher_lhs;
 
 template <typename F, typename V, typename T0, typename T1, typename...Types>
-struct binary_dispatcher_lhs<F,V,T0,T1,Types...>
+struct binary_dispatcher_lhs<F, V, T0, T1, Types...>
 {
-    using result_type =  typename F::result_type;
+    using result_type = typename F::result_type;
     VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F f)
     {
         if (lhs.get_type_index() == sizeof...(Types)) // call binary functor
@@ -333,7 +333,7 @@ struct binary_dispatcher_lhs<F,V,T0,T1,Types...>
         }
         else
         {
-            return binary_dispatcher_lhs<F,V,T0,Types...>::apply_const(lhs, rhs, f);
+            return binary_dispatcher_lhs<F, V, T0, Types...>::apply_const(lhs, rhs, f);
         }
     }
 
@@ -345,16 +345,16 @@ struct binary_dispatcher_lhs<F,V,T0,T1,Types...>
         }
         else
         {
-            return binary_dispatcher_lhs<F,V,T0,Types...>::apply(lhs, rhs, f);
+            return binary_dispatcher_lhs<F, V, T0, Types...>::apply(lhs, rhs, f);
         }
     }
 
 };
 
-template<typename F,typename V, typename T>
-struct binary_dispatcher_lhs<F,V,T>
+template<typename F, typename V, typename T>
+struct binary_dispatcher_lhs<F, V, T>
 {
-    using result_type =  typename F::result_type;
+    using result_type = typename F::result_type;
     VARIANT_INLINE static result_type apply_const(V const&, V const&, F)
     {
         throw std::runtime_error("binary dispatch: FAIL");
@@ -370,7 +370,7 @@ template <typename F, typename V, typename...Types>
 struct binary_dispatcher;
 
 template <typename F, typename V, typename T, typename...Types>
-struct binary_dispatcher<F,V,T,Types...>
+struct binary_dispatcher<F, V, T, Types...>
 {
     using result_type = typename F::result_type;
     VARIANT_INLINE static result_type apply_const(V const& v0, V const& v1, F f)
@@ -383,14 +383,14 @@ struct binary_dispatcher<F,V,T,Types...>
             }
             else
             {
-                return binary_dispatcher_rhs<F,V,T,Types...>::apply_const(v0, v1, f);
+                return binary_dispatcher_rhs<F, V, T, Types...>::apply_const(v0, v1, f);
             }
         }
         else if (v1.get_type_index() == sizeof...(Types))
         {
-            return binary_dispatcher_lhs<F,V,T,Types...>::apply_const(v0, v1, f);
+            return binary_dispatcher_lhs<F, V, T, Types...>::apply_const(v0, v1, f);
         }
-        return binary_dispatcher<F,V,Types...>::apply_const(v0, v1, f);
+        return binary_dispatcher<F, V, Types...>::apply_const(v0, v1, f);
     }
 
     VARIANT_INLINE static result_type apply(V & v0, V & v1, F f)
@@ -403,19 +403,19 @@ struct binary_dispatcher<F,V,T,Types...>
             }
             else
             {
-                return binary_dispatcher_rhs<F,V,T,Types...>::apply(v0, v1, f);
+                return binary_dispatcher_rhs<F, V, T, Types...>::apply(v0, v1, f);
             }
         }
         else if (v1.get_type_index() == sizeof...(Types))
         {
-            return binary_dispatcher_lhs<F,V,T,Types...>::apply(v0, v1, f);
+            return binary_dispatcher_lhs<F, V, T, Types...>::apply(v0, v1, f);
         }
-        return binary_dispatcher<F,V,Types...>::apply(v0, v1, f);
+        return binary_dispatcher<F, V, Types...>::apply(v0, v1, f);
     }
 };
 
-template<typename F,typename V>
-struct binary_dispatcher<F,V>
+template<typename F, typename V>
+struct binary_dispatcher<F, V>
 {
     using result_type = typename F::result_type;
     VARIANT_INLINE static result_type apply_const(V const&, V const&, F)
@@ -442,7 +442,7 @@ struct equal_comp
 struct less_comp
 {
     template <typename T>
-    bool operator()(const T& lhs, const T& rhs) const
+    bool operator()(T const& lhs, T const& rhs) const
     {
         return lhs < rhs;
     }
@@ -454,7 +454,7 @@ class comparer : public static_visitor<bool>
 public:
     explicit comparer(Variant const& lhs) noexcept
         : lhs_(lhs) {}
-    comparer& operator=(const comparer&) = delete;
+    comparer& operator=(comparer const&) = delete;
     // visitor
     template<typename T>
     bool operator()(T const& rhs_content) const
@@ -473,11 +473,11 @@ class printer : public static_visitor<>
 public:
     explicit printer(Out & out)
         : out_(out) {}
-    printer& operator=(printer const &) = delete;
+    printer& operator=(printer const&) = delete;
 
 // visitor
     template <typename T>
-    void operator()( T const & operand) const
+    void operator()(T const& operand) const
     {
         out_ << operand;
     }
@@ -485,7 +485,7 @@ private:
     Out & out_;
 };
 
-} // detail
+} // namespace detail
 
 template<typename... Types>
 class variant
@@ -506,11 +506,11 @@ public:
     VARIANT_INLINE variant()
         : type_index(sizeof...(Types) - 1)
     {
-        new (&data) typename detail::select_type<0,Types...>::type();
+        new (&data) typename detail::select_type<0, Types...>::type();
     }
 
-    template <typename T,class = typename std::enable_if<
-                         detail::is_valid_type<T,Types...>::value>::type>
+    template <typename T, class = typename std::enable_if<
+                         detail::is_valid_type<T, Types...>::value>::type>
     VARIANT_INLINE explicit variant(T const& val) noexcept
         : type_index(detail::value_traits<T, Types...>::index)
     {
@@ -520,9 +520,9 @@ public:
     }
 
     template <typename T, class = typename std::enable_if<
-                          detail::is_valid_type<T,Types...>::value>::type>
+                          detail::is_valid_type<T, Types...>::value>::type>
     VARIANT_INLINE variant(T && val) noexcept
-        : type_index(detail::value_traits<T,Types...>::index)
+        : type_index(detail::value_traits<T, Types...>::index)
     {
         constexpr std::size_t index = sizeof...(Types) - detail::value_traits<T, Types...>::index - 1;
         using target_type = typename detail::select_type<index, Types...>::type;
@@ -548,7 +548,7 @@ public:
         swap(first.data, second.data);
     }
 
-    VARIANT_INLINE variant<Types...>& operator= (variant<Types...> other)
+    VARIANT_INLINE variant<Types...>& operator=(variant<Types...> other)
     {
         swap(*this, other);
         return *this;
@@ -557,7 +557,7 @@ public:
     // conversions
     // move-assign
     template <typename T>
-    VARIANT_INLINE variant<Types...>& operator= (T && rhs) noexcept
+    VARIANT_INLINE variant<Types...>& operator=(T && rhs) noexcept
     {
         variant<Types...> temp(std::move(rhs));
         swap(*this, temp);
@@ -566,7 +566,7 @@ public:
 
     // copy-assign
     template <typename T>
-    VARIANT_INLINE variant<Types...>& operator= (T const& rhs)
+    VARIANT_INLINE variant<Types...>& operator=(T const& rhs)
     {
         variant<Types...> temp(rhs);
         swap(*this, temp);
@@ -589,13 +589,13 @@ public:
     {
         helper_type::destroy(type_index, &data);
         new (&data) T(std::forward<Args>(args)...);
-        type_index = detail::direct_type<T,Types...>::index;
+        type_index = detail::direct_type<T, Types...>::index;
     }
 
     template<typename T>
     VARIANT_INLINE T& get()
     {
-        if (type_index == detail::direct_type<T,Types...>::index)
+        if (type_index == detail::direct_type<T, Types...>::index)
         {
             return *reinterpret_cast<T*>(&data);
         }
@@ -608,7 +608,7 @@ public:
     template<typename T>
     VARIANT_INLINE T const& get() const
     {
-        if (type_index == detail::direct_type<T,Types...>::index)
+        if (type_index == detail::direct_type<T, Types...>::index)
         {
             return *reinterpret_cast<T const*>(&data);
         }
@@ -690,27 +690,27 @@ public:
 
 // const
 template <typename V, typename F>
-auto VARIANT_INLINE static apply_visitor(F f, V const& v) -> decltype(V::visit(v,f))
+auto VARIANT_INLINE static apply_visitor(F f, V const& v) -> decltype(V::visit(v, f))
 {
-    return V::visit(v,f);
+    return V::visit(v, f);
 }
 // non-const
 template <typename V, typename F>
-auto VARIANT_INLINE static apply_visitor(F f, V & v) -> decltype(V::visit(v,f))
+auto VARIANT_INLINE static apply_visitor(F f, V & v) -> decltype(V::visit(v, f))
 {
-    return V::visit(v,f);
+    return V::visit(v, f);
 }
 
 // binary visitor interface
 // const
 template <typename V, typename F>
-auto VARIANT_INLINE static apply_visitor( F f, V const& v0, V const& v1) -> decltype(V::binary_visit(v0, v1, f))
+auto VARIANT_INLINE static apply_visitor(F f, V const& v0, V const& v1) -> decltype(V::binary_visit(v0, v1, f))
 {
     return V::binary_visit(v0, v1, f);
 }
 // non-const
 template <typename V, typename F>
-auto VARIANT_INLINE static apply_visitor( F f, V & v0, V & v1) -> decltype(V::binary_visit(v0, v1, f))
+auto VARIANT_INLINE static apply_visitor(F f, V & v0, V & v1) -> decltype(V::binary_visit(v0, v1, f))
 {
     return V::binary_visit(v0, v1, f);
 }
@@ -718,10 +718,10 @@ auto VARIANT_INLINE static apply_visitor( F f, V & v0, V & v1) -> decltype(V::bi
 
 // operator<<
 template <typename charT, typename traits, typename Variant>
-VARIANT_INLINE std::basic_ostream<charT,traits>&
-operator<< (std::basic_ostream<charT,traits>& out, Variant const& rhs)
+VARIANT_INLINE std::basic_ostream<charT, traits>&
+operator<< (std::basic_ostream<charT, traits>& out, Variant const& rhs)
 {
-    detail::printer<std::basic_ostream<charT,traits> > visitor(out);
+    detail::printer<std::basic_ostream<charT, traits>> visitor(out);
     apply_visitor(visitor, rhs);
     return out;
 }
