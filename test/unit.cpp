@@ -174,7 +174,7 @@ struct MissionInteger
 };
 
 // TODO - remove after https://github.com/mapbox/variant/issues/14
-std::ostream& operator<< (std::ostream& os, MissionInteger const& rhs)
+std::ostream& operator<<(std::ostream& os, MissionInteger const& rhs)
 {
     os << rhs.get();
     return os;
@@ -222,27 +222,27 @@ TEST_CASE( "variant value traits", "[variant::detail]" ) {
     REQUIRE((util::detail::value_traits<std::vector<int>, bool, int, double, std::string>::index == util::detail::invalid_value));
 }
 
-TEST_CASE( "variant default constructor", "variant()" ) {
-    // By default variant is initilised with (default constructed) first type in template parameters pack
-    // As a reusult first type in Types... must be defaul constructable
+TEST_CASE( "variant default constructor", "[variant][default constructor]" ) {
+    // By default variant is initialised with (default constructed) first type in template parameters pack
+    // As a result first type in Types... must be default constructable
     // NOTE: index in reverse order -> index = N - 1
     REQUIRE((util::variant<int, double, std::string>().get_type_index() == 2));
 }
 
 
-TEST_CASE( "variant visitation", "unary visitor" )
+TEST_CASE( "variant visitation", "[visitor][unary visitor]" )
 {
     util::variant<int, double, std::string> var(123);
     REQUIRE(var.get<int>() == 123);
     int val = 456;
     mutating_visitor<int> visitor(val);
-    util::apply_visitor(visitor,var);
+    util::apply_visitor(visitor, var);
     REQUIRE(var.get<int>() == 456);
 }
 
 int main (int argc, char* const argv[])
 {
-    int result = Catch::Session().run( argc, argv );
+    int result = Catch::Session().run(argc, argv);
     if (!result) printf("\x1b[1;32m ✓ \x1b[0m\n");
     return result;
 }
