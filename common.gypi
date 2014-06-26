@@ -33,11 +33,67 @@
               },
               "Release_Win32": {
                 "msvs_configuration_platform": "Win32",
-                "defines": [ "NDEBUG"]
+                "defines": [ "NDEBUG"],
+                "msvs_settings": {
+                  "VCCLCompilerTool": {
+                    "RuntimeLibrary": 0, # static release
+                    "Optimization": 3, # /Ox, full optimization
+                    "FavorSizeOrSpeed": 1, # /Ot, favour speed over size
+                    "InlineFunctionExpansion": 2, # /Ob2, inline anything eligible
+                    "WholeProgramOptimization": "true", # /GL, whole program optimization, needed for LTCG
+                    "OmitFramePointers": "true",
+                    "EnableFunctionLevelLinking": "true",
+                    "EnableIntrinsicFunctions": "true",
+                    "RuntimeTypeInfo": "false",
+                    "ExceptionHandling": "0",
+                    "AdditionalOptions": [
+                      "/MP", # compile across multiple CPUs
+                    ],
+                  },
+                  "VCLibrarianTool": {
+                    "AdditionalOptions": [
+                      "/LTCG", # link time code generation
+                    ],
+                  },
+                  "VCLinkerTool": {
+                    "LinkTimeCodeGeneration": 1, # link-time code generation
+                    "OptimizeReferences": 2, # /OPT:REF
+                    "EnableCOMDATFolding": 2, # /OPT:ICF
+                    "LinkIncremental": 1, # disable incremental linking
+                  }
+                }
               },
               "Release_x64": {
                 "msvs_configuration_platform": "x64",
-                "defines": [ "NDEBUG"]
+                "defines": [ "NDEBUG"],
+                "msvs_settings": {
+                  "VCCLCompilerTool": {
+                    "RuntimeLibrary": 0, # static release
+                    "Optimization": 3, # /Ox, full optimization
+                    "FavorSizeOrSpeed": 1, # /Ot, favour speed over size
+                    "InlineFunctionExpansion": 2, # /Ob2, inline anything eligible
+                    "WholeProgramOptimization": "true", # /GL, whole program optimization, needed for LTCG
+                    "OmitFramePointers": "true",
+                    "EnableFunctionLevelLinking": "true",
+                    "EnableIntrinsicFunctions": "true",
+                    "RuntimeTypeInfo": "false",
+                    "ExceptionHandling": "0",
+                    "AdditionalOptions": [
+                      "/MP", # compile across multiple CPUs
+                    ],
+                  },
+                  "VCLibrarianTool": {
+                    "AdditionalOptions": [
+                      "/LTCG", # link time code generation
+                    ],
+                  },
+                  "VCLinkerTool": {
+                    "LinkTimeCodeGeneration": 1, # link-time code generation
+                    "OptimizeReferences": 2, # /OPT:REF
+                    "EnableCOMDATFolding": 2, # /OPT:ICF
+                    "LinkIncremental": 1, # disable incremental linking
+                  }
+                }
               }
             }
           }
