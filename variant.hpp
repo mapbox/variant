@@ -324,7 +324,7 @@ struct binary_dispatcher_lhs;
 template <typename F, typename V, typename T0, typename T1, typename...Types>
 struct binary_dispatcher_lhs<F, V, T0, T1, Types...>
 {
-    using result_type =  typename F::result_type;
+    using result_type = typename F::result_type;
     VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F f)
     {
         if (lhs.get_type_index() == sizeof...(Types)) // call binary functor
@@ -354,7 +354,7 @@ struct binary_dispatcher_lhs<F, V, T0, T1, Types...>
 template<typename F, typename V, typename T>
 struct binary_dispatcher_lhs<F, V, T>
 {
-    using result_type =  typename F::result_type;
+    using result_type = typename F::result_type;
     VARIANT_INLINE static result_type apply_const(V const&, V const&, F)
     {
         throw std::runtime_error("binary dispatch: FAIL");

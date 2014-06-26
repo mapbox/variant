@@ -21,7 +21,7 @@ struct Holder
     std::vector<value_type> data;
 
     template <typename T>
-    void append_move( T && obj)
+    void append_move(T && obj)
     {
         data.emplace_back(std::forward<T>(obj));
     }
@@ -40,7 +40,7 @@ struct print : util::static_visitor<>
     template <typename T>
     void operator() (T const& val) const
     {
-        std::cerr << val << ":" << typeid(T).name() <<  std::endl;
+        std::cerr << val << ":" << typeid(T).name() << std::endl;
     }
 };
 

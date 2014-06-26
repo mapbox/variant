@@ -28,7 +28,7 @@ struct binary_op
     expression left;  // variant instantiated here...
     expression right;
 
-    binary_op( expression && lhs, expression && rhs )
+    binary_op(expression && lhs, expression && rhs)
         : left(std::move(lhs)), right(std::move(rhs)) {}
 };
 
@@ -37,7 +37,7 @@ struct print : util::static_visitor<void>
     template <typename T>
     void operator() (T const& val) const
     {
-        std::cerr << val << ":" << typeid(T).name() <<  std::endl;
+        std::cerr << val << ":" << typeid(T).name() << std::endl;
     }
 };
 

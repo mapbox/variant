@@ -27,7 +27,7 @@ struct binary_op
     expression left;  // variant instantiated here...
     expression right;
 
-    binary_op( expression && lhs, expression && rhs )
+    binary_op(expression && lhs, expression && rhs)
         : left(std::move(lhs)), right(std::move(rhs))
     {
     }
@@ -38,7 +38,7 @@ struct print : util::static_visitor<void>
     template <typename T>
     void operator() (T const& val) const
     {
-        std::cerr << val << ":" << typeid(T).name() <<  std::endl;
+        std::cerr << val << ":" << typeid(T).name() << std::endl;
     }
 };
 
@@ -63,14 +63,14 @@ public:
 
     int operator()(binary_op<add> const& binary) const
     {
-        return util::apply_visitor( calculator(), binary.left)
-            + util::apply_visitor( calculator(), binary.right);
+        return util::apply_visitor(calculator(), binary.left)
+            + util::apply_visitor(calculator(), binary.right);
     }
 
     int operator()(binary_op<sub> const& binary) const
     {
-        return util::apply_visitor( calculator(), binary.left )
-            - util::apply_visitor( calculator(), binary.right);
+        return util::apply_visitor(calculator(), binary.left)
+            - util::apply_visitor(calculator(), binary.right);
     }
 };
 
@@ -86,13 +86,13 @@ public:
     std::string operator()(binary_op<add> const& binary) const
     {
         return util::apply_visitor(to_string(), binary.left) + std::string("+")
-            + util::apply_visitor( to_string(), binary.right);
+            + util::apply_visitor(to_string(), binary.right);
     }
 
     std::string operator()(binary_op<sub> const& binary) const
     {
-        return util::apply_visitor( to_string(), binary.left ) + std::string("-")
-            + util::apply_visitor( to_string(), binary.right );
+        return util::apply_visitor(to_string(), binary.left) + std::string("-")
+            + util::apply_visitor(to_string(), binary.right);
     }
 
 };

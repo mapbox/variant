@@ -63,13 +63,13 @@ struct javascript_equal_visitor : util::static_visitor<bool>
         return lhs == rhs;
     }
 
-    template <typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type >
+    template <typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
     bool operator() (T lhs, std::string const& rhs) const
     {
         return lhs == string_to_number<T>()(rhs);
     }
 
-    template <typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type >
+    template <typename T, class = typename std::enable_if<std::is_arithmetic<T>::value>::type>
     bool operator() (std::string const& lhs, T rhs) const
     {
         return string_to_number<T>()(lhs) == rhs;
@@ -90,7 +90,7 @@ struct javascript_equal
 
     bool operator() (T const& rhs) const
     {
-        return util::apply_visitor( test::javascript_equal_visitor(), lhs_, rhs);
+        return util::apply_visitor(test::javascript_equal_visitor(), lhs_, rhs);
     }
     T const& lhs_;
 };
