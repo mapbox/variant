@@ -15,8 +15,8 @@ struct check : util::static_visitor<>
 
 
 int main() {
-    typedef util::variant<bool,int, double> variant_type;
+    typedef util::variant<bool, int, double> variant_type;
     variant_type v(0);
-    util::apply_visitor(check(),v);
+    util::apply_visitor(check(), v);
     return 0;
 }

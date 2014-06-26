@@ -112,7 +112,7 @@ int main (int argc, char** argv)
 
     test::expression result(
         test::binary_op<test::sub>(
-            test::binary_op<test::add>(2,3),4));
+            test::binary_op<test::add>(2, 3), 4));
 
     std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(test::test(), result) << std::endl;
 
@@ -121,12 +121,12 @@ int main (int argc, char** argv)
         int total = 0;
         for (std::size_t i = 0; i < NUM_ITER; ++i)
         {
-            total += util::apply_visitor(test::calculator(),result);
+            total += util::apply_visitor(test::calculator(), result);
         }
         std::cerr << "total=" << total << std::endl;
     }
 
-    std::cerr << util::apply_visitor(test::to_string(), result) << "=" << util::apply_visitor(test::calculator(),result) << std::endl;
+    std::cerr << util::apply_visitor(test::to_string(), result) << "=" << util::apply_visitor(test::calculator(), result) << std::endl;
 
     return EXIT_SUCCESS;
 }

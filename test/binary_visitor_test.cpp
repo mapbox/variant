@@ -120,7 +120,7 @@ int main (/*int argc, char** argv*/)
     //        return util::apply_visitor(test::javascript_equal_visitor(), v0, val);
     //    });
 
-    auto itr = std::find_if(vec.begin(), vec.end(),test::javascript_equal<variant_type>(v2));
+    auto itr = std::find_if(vec.begin(), vec.end(), test::javascript_equal<variant_type>(v2));
 
     if (itr != std::end(vec))
     {
