@@ -8,23 +8,27 @@
               "Debug_Win32": {
                 "msvs_configuration_platform": "Win32",
                 "defines": [ "DEBUG","_DEBUG"],
-                "VCCLCompilerTool": {
+                "msvs_settings": {
+                  "VCCLCompilerTool": {
                     "RuntimeLibrary": "1", # static debug /MTd
                     "Optimization": 0, # /Od, no optimization
                     "MinimalRebuild": "false",
                     "OmitFramePointers": "false",
                     "BasicRuntimeChecks": 3, # /RTC1
+                  }
                 }
               },
               "Debug_x64": {
                 "msvs_configuration_platform": "x64",
                 "defines": [ "DEBUG","_DEBUG"],
-                "VCCLCompilerTool": {
+                "msvs_settings": {
+                  "VCCLCompilerTool": {
                     "RuntimeLibrary": "1", # static debug /MTd
                     "Optimization": 0, # /Od, no optimization
                     "MinimalRebuild": "false",
                     "OmitFramePointers": "false",
                     "BasicRuntimeChecks": 3, # /RTC1
+                  }
                 }
               },
               "Release_Win32": {
