@@ -253,23 +253,23 @@ TEST_CASE( "implicit conversion to first type in variant type list", "[variant][
 // test case to help debugging https://github.com/mapbox/variant/issues/25
 TEST_CASE( "implicit conversion to unsigned char", "[variant][implicit conversion]" ) {
     typedef util::variant<unsigned char> variant_type;
-    variant_type var = 500.0; // converted to unsigned char, even if it doesn't fit
-    CHECK(var.get<unsigned char>() == static_cast<unsigned char>(500.0));
-    CHECK(var.get<unsigned char>() == static_cast<unsigned char>(static_cast<unsigned int>(500.0)));
+    variant_type var = 100.0; // converted to unsigned char, even if it doesn't fit
+    CHECK(var.get<unsigned char>() == static_cast<unsigned char>(100.0));
+    CHECK(var.get<unsigned char>() == static_cast<unsigned char>(static_cast<unsigned int>(100.0)));
 }
 
 struct dummy {};
 
 TEST_CASE( "implicit conversion to first type it can convert to even if it doesn't fit", "[variant][implicit conversion]" ) {
     typedef util::variant<dummy, unsigned char, long> variant_type;
-    variant_type var = 500.0; // converted to unsigned char, even if it doesn't fit
-    REQUIRE(var.get<unsigned char>() == static_cast<unsigned char>(500.0));
+    variant_type var = 100.0; // converted to unsigned char, even if it doesn't fit
+    REQUIRE(var.get<unsigned char>() == static_cast<unsigned char>(100.0));
     REQUIRE_THROWS(var.get<long>());
-    var = 500; // int converted to unsigned char, even if it doesn't fit
-    REQUIRE(var.get<unsigned char>() == static_cast<unsigned char>(500));
+    var = 100; // int converted to unsigned char, even if it doesn't fit
+    REQUIRE(var.get<unsigned char>() == static_cast<unsigned char>(100));
     REQUIRE_THROWS(var.get<long>());
-    var = 500L; // explicit long is okay
-    REQUIRE(var.get<long>() == 500L);
+    var = 100L; // explicit long is okay
+    REQUIRE(var.get<long>() == 100L);
     REQUIRE_THROWS(var.get<char>());
 }
 
