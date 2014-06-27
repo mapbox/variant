@@ -250,10 +250,9 @@ TEST_CASE( "implicit conversion to first type in variant type list", "[variant][
     REQUIRE_THROWS(var.get<double>());
 }
 
-// test case to help debugging https://github.com/mapbox/variant/issues/25
 TEST_CASE( "implicit conversion to unsigned char", "[variant][implicit conversion]" ) {
     typedef util::variant<unsigned char> variant_type;
-    variant_type var = 100.0; // converted to unsigned char, even if it doesn't fit
+    variant_type var = 100.0;
     CHECK(var.get<unsigned char>() == static_cast<unsigned char>(100.0));
     CHECK(var.get<unsigned char>() == static_cast<unsigned char>(static_cast<unsigned int>(100.0)));
 }
