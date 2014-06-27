@@ -259,19 +259,6 @@ TEST_CASE( "implicit conversion to unsigned char", "[variant][implicit conversio
 
 struct dummy {};
 
-TEST_CASE( "implicit conversion to first type it can convert to even if it doesn't fit", "[variant][implicit conversion]" ) {
-    typedef util::variant<dummy, unsigned char, long> variant_type;
-    variant_type var = 100.0; // converted to unsigned char, even if it doesn't fit
-    REQUIRE(var.get<unsigned char>() == static_cast<unsigned char>(100.0));
-    REQUIRE_THROWS(var.get<long>());
-    var = 100; // int converted to unsigned char, even if it doesn't fit
-    REQUIRE(var.get<unsigned char>() == static_cast<unsigned char>(100));
-    REQUIRE_THROWS(var.get<long>());
-    var = 100L; // explicit long is okay
-    REQUIRE(var.get<long>() == 100L);
-    REQUIRE_THROWS(var.get<char>());
-}
-
 TEST_CASE( "variant value traits", "[variant::detail]" ) {
     // Users should not create variants with duplicated types
     // however our type indexing should still work
