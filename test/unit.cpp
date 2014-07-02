@@ -276,6 +276,7 @@ TEST_CASE( "variant default constructor", "[variant][default constructor]" ) {
     // As a result first type in Types... must be default constructable
     // NOTE: index in reverse order -> index = N - 1
     REQUIRE((util::variant<int, double, std::string>().get_type_index() == 2));
+    REQUIRE((util::variant<int, double, std::string>(util::no_init()).get_type_index() == util::detail::invalid_value));
 }
 
 TEST_CASE( "variant visitation", "[visitor][unary visitor]" ) {
