@@ -5,6 +5,19 @@ An alternative to `boost::variant` for C++11.
 [![Build Status](https://secure.travis-ci.org/mapbox/variant.svg)](https://travis-ci.org/mapbox/variant)
 [![Build status](https://ci.appveyor.com/api/projects/status/v9tatx21j1k0fcgy)](https://ci.appveyor.com/project/Mapbox/variant)
 
+# Why use Mapbox Variant?
+
+Mapbox variant has the same speedy performance of `boost::variant` but is faster to compile time, results in smaller binaries, and has no dependencies.
+
+For example on OS X 10.9 with clang++ and libc++:
+
+Test | Mapbox Variant | Boost Variant
+--- | --- | ---
+Size of pre-compiled header (release / debug) | 2.8/2.8 MB         | 12/15 MB
+Size of simple program linking variant (release / debug)     | 8/24 K             | 12/40 K
+Time to compile header     | 185 ms             |  675 ms
+
+
 # Depends
 
  - Compiler supporting `-std=c++11`
@@ -42,3 +55,4 @@ On Unix systems run the benchmark like:
 ## Check object sizes
 
     make sizes /path/to/boost/variant.hpp
+
