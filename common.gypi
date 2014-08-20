@@ -52,7 +52,8 @@
                     "EnableIntrinsicFunctions": "true",
                     "AdditionalOptions": [
                       "/MP", # compile across multiple CPUs
-                    ]
+                    ],
+                    "DebugInformationFormat": "0"
                   },
                   "VCLibrarianTool": {
                     "AdditionalOptions": [
@@ -63,7 +64,8 @@
                     "LinkTimeCodeGeneration": 1, # link-time code generation
                     "OptimizeReferences": 2, # /OPT:REF
                     "EnableCOMDATFolding": 2, # /OPT:ICF
-                    "LinkIncremental": 1 # disable incremental linking
+                    "LinkIncremental": 1, # disable incremental linking
+                    "GenerateDebugInformation": "false"
                   }
                 }
               },
@@ -82,7 +84,8 @@
                     "EnableIntrinsicFunctions": "true",
                     "AdditionalOptions": [
                       "/MP", # compile across multiple CPUs
-                    ]
+                    ],
+                    "DebugInformationFormat": "0"
                   },
                   "VCLibrarianTool": {
                     "AdditionalOptions": [
@@ -93,7 +96,8 @@
                     "LinkTimeCodeGeneration": 1, # link-time code generation
                     "OptimizeReferences": 2, # /OPT:REF
                     "EnableCOMDATFolding": 2, # /OPT:ICF
-                    "LinkIncremental": 1 # disable incremental linking
+                    "LinkIncremental": 1, # disable incremental linking
+                    "GenerateDebugInformation": "false"
                   }
                 }
               }
