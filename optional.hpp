@@ -7,15 +7,11 @@
 
 namespace mapbox { namespace util {
 
-    namespace detail {
-        struct none_helper{};
-    }
-
     template<typename T>
     class optional {
         static_assert(!std::is_reference<T>::value, "optional doesn't support references");
 
-        typedef int detail::none_helper::*none_type;
+        struct none_type { };
 
         variant<none_type, T> variant_;
 
