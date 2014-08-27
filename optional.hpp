@@ -18,32 +18,33 @@ namespace mapbox { namespace util {
       public:
         optional() = default;
 
-        explicit optional(optional const& rhs) {
-            variant_ = rhs.variant_;
+        optional(optional const& rhs) {
+            if (this != &rhs) { // protect against invalid self-assignment
+                variant_ = rhs.variant_;
+            }
         }
 
-        explicit optional(T const& v) {
+        optional(T const& v) {
             variant_ = v;
         }
 
-        bool operator!() const noexcept{
-            return variant_.template is<none_type>();
+        optional& operator=(optional other) { // note: argument passed by value!
+            if (this != &other)
+            {
+                swap(other);
+            }
+            return *this;
         }
 
         explicit operator bool() const noexcept {
             return variant_.template is<T>();
         }
 
-        T const& get() const {
-            return variant_.template get<T>();
-        }
+        T const& get() const { return variant_.template get<T>(); }
+        T&       get()       { return variant_.template get<T>(); }
 
-        T&       get() {
-            return variant_.template get<T>();
-        }
-
-        T const& operator *() const { return this->get() ; }
-        T        operator *()       { return this->get() ; }
+        T const& operator *() const { return this->get(); }
+        T        operator *()       { return this->get(); }
 
         optional& operator = ( T const& v ) {
             variant_ = v;
@@ -51,7 +52,10 @@ namespace mapbox { namespace util {
         }
 
         optional& operator = ( optional const& rhs ) {
-            variant_ = rhs.variant_;
+            if (this != &rhs)
+            {
+                variant_ = rhs.variant_;
+            }
             return *this;
         }
 
