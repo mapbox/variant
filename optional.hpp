@@ -15,6 +15,8 @@ namespace mapbox { namespace util {
 
     template<typename T>
     class optional {
+        static_assert(!std::is_reference<T>::value, "optional doesn't support references");
+
         variant<none_t, T> variant_;
 
       public:
@@ -39,6 +41,10 @@ namespace mapbox { namespace util {
         T&       get() {
             return variant_.template get<T>();
         }
+
+        T const& operator *() const { return this->get() ; }
+        T        operator *()       { return this->get() ; }
+
 
         optional& operator = ( T const& v ) {
             variant_ = v;
