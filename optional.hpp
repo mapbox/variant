@@ -7,44 +7,44 @@
 
 namespace mapbox { namespace util {
 
-    namespace detail {
-        struct none_helper{};
-    }
-    typedef int detail::none_helper::*none_t ;
-    none_t const none = (static_cast<none_t>(0)) ;
-
     template<typename T>
     class optional {
         static_assert(!std::is_reference<T>::value, "optional doesn't support references");
 
-        variant<none_t, T> variant_;
+        struct none_type { };
+
+        variant<none_type, T> variant_;
 
       public:
         optional() = default;
 
-        explicit optional(optional const& rhs) {
-            variant_ = rhs.variant_;
+        optional(optional const& rhs) {
+            if (this != &rhs) { // protect against invalid self-assignment
+                variant_ = rhs.variant_;
+            }
         }
 
-        explicit optional(T const& v) {
+        optional(T const& v) {
             variant_ = v;
         }
 
-        bool operator!() const {
-            return variant_.template is<none_t>();
+        optional& operator=(optional other) { // note: argument passed by value!
+            if (this != &other)
+            {
+                swap(other);
+            }
+            return *this;
         }
 
-        T const& get() const {
-            return variant_.template get<T>();
+        explicit operator bool() const noexcept {
+            return variant_.template is<T>();
         }
 
-        T&       get() {
-            return variant_.template get<T>();
-        }
+        T const& get() const { return variant_.template get<T>(); }
+        T&       get()       { return variant_.template get<T>(); }
 
-        T const& operator *() const { return this->get() ; }
-        T        operator *()       { return this->get() ; }
-
+        T const& operator *() const { return this->get(); }
+        T        operator *()       { return this->get(); }
 
         optional& operator = ( T const& v ) {
             variant_ = v;
@@ -52,7 +52,10 @@ namespace mapbox { namespace util {
         }
 
         optional& operator = ( optional const& rhs ) {
-            variant_ = rhs.variant_;
+            if (this != &rhs)
+            {
+                variant_ = rhs.variant_;
+            }
             return *this;
         }
 
@@ -62,12 +65,9 @@ namespace mapbox { namespace util {
         }
 
         void reset() {
-            variant_ = none;
+            variant_ = none_type{};
         }
-
     };
-
-
 }
 }
 
