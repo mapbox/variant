@@ -45,7 +45,6 @@ namespace mapbox { namespace util {
         T const& operator *() const { return this->get() ; }
         T        operator *()       { return this->get() ; }
 
-
         optional& operator = ( T const& v ) {
             variant_ = v;
             return *this;
@@ -64,10 +63,7 @@ namespace mapbox { namespace util {
         void reset() {
             variant_ = none;
         }
-
     };
-
-
 }
 }
 
