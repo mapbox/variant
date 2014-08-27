@@ -10,14 +10,15 @@ namespace mapbox { namespace util {
     namespace detail {
         struct none_helper{};
     }
-    typedef int detail::none_helper::*none_t ;
-    none_t const none = (static_cast<none_t>(0)) ;
 
     template<typename T>
     class optional {
         static_assert(!std::is_reference<T>::value, "optional doesn't support references");
 
-        variant<none_t, T> variant_;
+        typedef int detail::none_helper::*none_type ;
+        none_type const none = (static_cast<none_type>(0)) ;
+
+        variant<none_type, T> variant_;
 
       public:
         optional() = default;
@@ -31,7 +32,7 @@ namespace mapbox { namespace util {
         }
 
         bool operator!() const noexcept{
-            return variant_.template is<none_t>();
+            return variant_.template is<none_type>();
         }
 
         explicit operator bool() const noexcept {
