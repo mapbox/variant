@@ -15,8 +15,7 @@ namespace mapbox { namespace util {
     class optional {
         static_assert(!std::is_reference<T>::value, "optional doesn't support references");
 
-        typedef int detail::none_helper::*none_type ;
-        none_type const none = (static_cast<none_type>(0)) ;
+        typedef int detail::none_helper::*none_type;
 
         variant<none_type, T> variant_;
 
@@ -66,7 +65,7 @@ namespace mapbox { namespace util {
         }
 
         void reset() {
-            variant_ = none;
+            variant_ = none_type{};
         }
     };
 }
