@@ -30,8 +30,12 @@ namespace mapbox { namespace util {
             variant_ = v;
         }
 
-        bool operator!() const {
+        bool operator!() const noexcept{
             return variant_.template is<none_t>();
+        }
+
+        explicit operator bool() const noexcept {
+            return variant_.template is<T>();
         }
 
         T const& get() const {
