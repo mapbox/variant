@@ -514,22 +514,13 @@ public:
     VARIANT_INLINE variant(no_init)
         : type_index(detail::invalid_value) {}
 
+    // http://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
     template <typename T, class = typename std::enable_if<
-                         detail::is_valid_type<T, Types...>::value>::type>
-    VARIANT_INLINE explicit variant(T const& val) noexcept
-        : type_index(detail::value_traits<T, Types...>::index)
-    {
-        constexpr std::size_t index = sizeof...(Types) - detail::value_traits<T, Types...>::index - 1;
-        using target_type = typename detail::select_type<index, Types...>::type;
-        new (&data) target_type(val);
-    }
-
-    template <typename T, class = typename std::enable_if<
-                          detail::is_valid_type<T, Types...>::value>::type>
+                          detail::is_valid_type<typename std::remove_reference<T>::type, Types...>::value>::type>
     VARIANT_INLINE variant(T && val) noexcept
-        : type_index(detail::value_traits<T, Types...>::index)
+        : type_index(detail::value_traits<typename std::remove_reference<T>::type, Types...>::index)
     {
-        constexpr std::size_t index = sizeof...(Types) - detail::value_traits<T, Types...>::index - 1;
+        constexpr std::size_t index = sizeof...(Types) - detail::value_traits<typename std::remove_reference<T>::type, Types...>::index - 1;
         using target_type = typename detail::select_type<index, Types...>::type;
         new (&data) target_type(std::forward<T>(val)); // nothrow
     }
