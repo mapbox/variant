@@ -67,5 +67,16 @@ TEST_CASE( "emplace initialization, reset", "[optional]" ) {
 
     dummy_opt.reset();
     REQUIRE(!dummy_opt);
+}
 
+TEST_CASE( "assignment", "[optional]") {
+    mapbox::util::optional<int> a;
+    mapbox::util::optional<int> b;
+
+    a = 1; b = 3;
+    REQUIRE(a.get() == 1);
+    REQUIRE(b.get() == 3);
+    b = a;
+    REQUIRE(a.get() == b.get());
+    REQUIRE(b.get() == 1);
 }
