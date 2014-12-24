@@ -4,6 +4,7 @@ set -e -u
 set -o pipefail
 
 # install boost headers
+brew unlink boost
 brew install boost
 
 # run tests
