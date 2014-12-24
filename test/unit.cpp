@@ -250,28 +250,14 @@ TEST_CASE( "implicit conversion to first type in variant type list", "[variant][
     REQUIRE_THROWS(var.get<double>());
 }
 
-// test case to help debugging https://github.com/mapbox/variant/issues/25
 TEST_CASE( "implicit conversion to unsigned char", "[variant][implicit conversion]" ) {
     typedef util::variant<unsigned char> variant_type;
-    variant_type var = 500.0; // converted to unsigned char, even if it doesn't fit
-    CHECK(var.get<unsigned char>() == static_cast<unsigned char>(500.0));
-    CHECK(var.get<unsigned char>() == static_cast<unsigned char>(static_cast<unsigned int>(500.0)));
+    variant_type var = 100.0;
+    CHECK(var.get<unsigned char>() == static_cast<unsigned char>(100.0));
+    CHECK(var.get<unsigned char>() == static_cast<unsigned char>(static_cast<unsigned int>(100.0)));
 }
 
 struct dummy {};
-
-TEST_CASE( "implicit conversion to first type it can convert to even if it doesn't fit", "[variant][implicit conversion]" ) {
-    typedef util::variant<dummy, unsigned char, long> variant_type;
-    variant_type var = 500.0; // converted to unsigned char, even if it doesn't fit
-    REQUIRE(var.get<unsigned char>() == static_cast<unsigned char>(500.0));
-    REQUIRE_THROWS(var.get<long>());
-    var = 500; // int converted to unsigned char, even if it doesn't fit
-    REQUIRE(var.get<unsigned char>() == static_cast<unsigned char>(500));
-    REQUIRE_THROWS(var.get<long>());
-    var = 500L; // explicit long is okay
-    REQUIRE(var.get<long>() == 500L);
-    REQUIRE_THROWS(var.get<char>());
-}
 
 TEST_CASE( "variant value traits", "[variant::detail]" ) {
     // Users should not create variants with duplicated types
@@ -290,6 +276,7 @@ TEST_CASE( "variant default constructor", "[variant][default constructor]" ) {
     // As a result first type in Types... must be default constructable
     // NOTE: index in reverse order -> index = N - 1
     REQUIRE((util::variant<int, double, std::string>().get_type_index() == 2));
+    REQUIRE((util::variant<int, double, std::string>(util::no_init()).get_type_index() == util::detail::invalid_value));
 }
 
 TEST_CASE( "variant visitation", "[visitor][unary visitor]" ) {

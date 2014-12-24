@@ -59,12 +59,14 @@ bench: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_w
 	./out/recursive_wrapper_test 100000
 	./out/binary_visitor_test 100000
 
-out/unit: Makefile test/unit.cpp variant.hpp
+out/unit: Makefile test/unit.cpp test/optional_unit.cpp optional.hpp variant.hpp
 	mkdir -p ./out
 	$(CXX) -o out/unit test/unit.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS)
+	$(CXX) -o out/optional_unit test/optional_unit.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS)
 
 test: out/unit
 	./out/unit
+	./out/optional_unit
 
 sizes: Makefile variant.hpp
 	mkdir -p ./out

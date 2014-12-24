@@ -15,7 +15,7 @@ install:
   - python deps/gyp/gyp_main.py variant.gyp --depth=. -f msvs -G msvs_version=2013
   - set MSBUILD_PLATFORM=%platform%
   - if "%MSBUILD_PLATFORM%" == "x86" set MSBUILD_PLATFORM=Win32
-  - msbuild variant.sln /clp:Verbosity=minimal /nologo /p:Configuration=%configuration%;Platform=%MSBUILD_PLATFORM%
+  - msbuild variant.sln /nologo /p:Configuration=%configuration%;Platform=%MSBUILD_PLATFORM%
   - .\"%configuration%"\tests.exe
 
 build: OFF
