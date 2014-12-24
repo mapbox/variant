@@ -78,7 +78,7 @@ struct javascript_equal_visitor : util::static_visitor<bool>
     template <typename T0, typename T1>
     bool operator() (T0 lhs, T1 rhs) const
     {
-        return lhs == rhs;
+        return lhs == static_cast<T0>(rhs);
     }
 };
 
