@@ -48,10 +48,10 @@ if [[ $CXX == "clang++" ]]; then
     make clean
     make coverage
     git status
-    cp unit*gc* test/
     ./out/cov-test
+    cp unit*gc* test/
     sudo pip install cpp-coveralls
-    coveralls -i variant.hpp --gcov-options '\-lp'
+    coveralls -i variant.hpp -i recursive_wrapper.hpp --gcov-options '\-lp'
 fi
 
 # set strictness back to normal
