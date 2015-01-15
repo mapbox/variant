@@ -44,7 +44,7 @@ echo 'testing build with gyp'
 make gyp
 
 # run coverage when using clang++
-if [[ $CXX == "clang++" ]];
+if [[ $CXX == "clang++" ]]; then
     make clean
     make coverage
     git status
