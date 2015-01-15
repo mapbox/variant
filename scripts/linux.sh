@@ -12,19 +12,27 @@ sudo apt-get update -y
 # install boost headers and g++ upgrades
 sudo apt-get -y -qq install boost1.55 gcc-4.8 g++-4.8 gcc-4.7 g++-4.7
 
-# run tests against g++ 4.7
-export CXX="g++-4.7"; export CC="gcc-4.7"
-echo 'running tests against g++ 4.7'
-make test
-make bench
-make clean
+if [[ "$CXX" == "clang++" ]]; then
+    echo 'running tests against clang++'
+    make test
+    make bench
+    make clean
+else
+    # run tests against g++ 4.7
+    export CXX="g++-4.7"; export CC="gcc-4.7"
+    echo 'running tests against g++ 4.7'
+    make test
+    make bench
+    make clean
 
-# run tests against g++ 4.8
-export CXX="g++-4.8"; export CC="gcc-4.8"
-echo 'running tests against g++ 4.8'
-make test
-make bench
-make clean
+    # run tests against g++ 4.8
+    export CXX="g++-4.8"; export CC="gcc-4.8"
+    echo 'running tests against g++ 4.8'
+    make test
+    make bench
+    make clean
+
+fi
 
 # compare object sizes against boost::variant
 echo 'comparing object sizes to boost::variant'
