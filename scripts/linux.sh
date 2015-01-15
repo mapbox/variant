@@ -43,6 +43,17 @@ make clean
 echo 'testing build with gyp'
 make gyp
 
+# run coverage when using clang++
+if [[ $CXX == "clang++" ]];
+    make clean
+    make coverage
+    git status
+    cp unit*gc* test/
+    ./out/cov-test
+    sudo pip install cpp-coveralls
+    coveralls -i variant.hpp --gcov-options '\-lp'
+fi
+
 # set strictness back to normal
 # to avoid tripping up travis
 set +e +u

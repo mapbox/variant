@@ -68,6 +68,10 @@ test: out/unit
 	./out/unit
 	./out/optional_unit
 
+coverage:
+	mkdir -p ./out
+	$(CXX) -o out/cov-test --coverage test/unit.cpp -I./ $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS)
+
 sizes: Makefile variant.hpp
 	mkdir -p ./out
 	@$(CXX) -o ./out/variant_hello_world.out variant.hpp $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./out/variant_hello_world.out
@@ -83,6 +87,8 @@ profile: out/bench-variant-debug
 clean:
 	rm -rf ./out
 	rm -rf *.dSYM
+	rm -f unit.gc*
+	rm -f *gcov
 
 pgo: out Makefile variant.hpp
 	$(CXX) -o out/bench-variant test/bench_variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -pg -fprofile-generate
