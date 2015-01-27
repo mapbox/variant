@@ -2,7 +2,7 @@
 #include "catch.hpp"
 
 #include "variant.hpp"
-
+#include "variant_io.hpp"
 #include <algorithm>
 #include <cstdint>
 #include <iterator>
