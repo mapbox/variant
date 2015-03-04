@@ -216,7 +216,6 @@ TEST_CASE( "get with type not in variant type list should throw", "[variant]" ) 
     typedef util::variant<int> variant_type;
     variant_type var = 5;
     REQUIRE(var.get<int>() == 5);
-    REQUIRE_THROWS(var.get<double>()); // XXX shouldn't this be a compile time error? See https://github.com/mapbox/variant/issues/24
 }
 
 TEST_CASE( "get with wrong type (here: double) should throw", "[variant]" ) {
@@ -237,7 +236,6 @@ TEST_CASE( "implicit conversion", "[variant][implicit conversion]" ) {
     typedef util::variant<int> variant_type;
     variant_type var(5.0); // converted to int
     REQUIRE(var.get<int>() == 5);
-    REQUIRE_THROWS(var.get<double>());
     var = 6.0; // works for operator=, too
     REQUIRE(var.get<int>() == 6);
 }
@@ -247,7 +245,6 @@ TEST_CASE( "implicit conversion to first type in variant type list", "[variant][
     variant_type var = 5.0; // converted to long
     REQUIRE(var.get<long>() == 5);
     REQUIRE_THROWS(var.get<char>());
-    REQUIRE_THROWS(var.get<double>());
 }
 
 TEST_CASE( "implicit conversion to unsigned char", "[variant][implicit conversion]" ) {
