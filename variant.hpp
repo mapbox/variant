@@ -665,6 +665,11 @@ public:
         return type_index;
     }
 
+    VARIANT_INLINE int which() const noexcept
+    {
+        return static_cast<int>(sizeof...(Types) - type_index - 1);
+    }
+
     // visitor
     // unary
     template <typename F, typename V>

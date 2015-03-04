@@ -212,6 +212,18 @@ TEST_CASE( "variant should correctly index types", "[variant]" ) {
     REQUIRE(variant_type(float(0.0)).get_type_index() == 0);
 }
 
+// Test internal api
+TEST_CASE( "variant::which() returns zero based index of stored type", "[variant]" ) {
+    typedef util::variant<bool,std::string,std::uint64_t,std::int64_t,double,float> variant_type;
+    // Index is in reverse order
+    REQUIRE(variant_type(true).which() == 0);
+    REQUIRE(variant_type(std::string("test")).which() == 1);
+    REQUIRE(variant_type(std::uint64_t(0)).which() == 2);
+    REQUIRE(variant_type(std::int64_t(0)).which() == 3);
+    REQUIRE(variant_type(double(0.0)).which() == 4);
+    REQUIRE(variant_type(float(0.0)).which() == 5);
+}
+
 TEST_CASE( "get with type not in variant type list should throw", "[variant]" ) {
     typedef util::variant<int> variant_type;
     variant_type var = 5;
@@ -293,7 +305,6 @@ TEST_CASE( "variant printer", "[visitor][unary visitor][printer]" ) {
     out << var[2];
     REQUIRE(out.str() == "2.1,123,foo,456,foo");
 }
-
 
 int main (int argc, char* const argv[])
 {
