@@ -5,7 +5,6 @@
 #include <sstream>
 #include <utility>
 #include <type_traits>
-#include <boost/variant.hpp>
 #include <boost/timer/timer.hpp>
 #include "variant.hpp"
 
