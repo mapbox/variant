@@ -30,14 +30,12 @@ using variant = util::variant<std::reference_wrapper<const point>,
 struct print
 {
     using result_type = void;
-    void operator() (std::reference_wrapper<const point> const& ref) const
+    void operator() (point const& pt) const
     {
-        auto const& pt = ref.get();
         std::cerr << "Point(" << pt.x << "," << pt.y << ")" << std::endl;
     }
-    void operator() (std::reference_wrapper<const line_string> const& ref) const
+    void operator() (line_string const& line) const
     {
-        auto const& line = ref.get();
         std::cerr << "Line(";
         for (auto const& pt : line)
         {
@@ -68,5 +66,9 @@ int main (int argc, char** argv)
     line.push_back(test::point(999,333));
     var = std::move(std::cref(line));
     util::apply_visitor(test::print(), var);
+    std::cerr << "Is line (cref) ? " << var.is<std::reference_wrapper<test::line_string const>>() << std::endl;
+    auto const& line2 = var.get<test::line_string>(); // accessing underlying type of std::reference_wrapper<T>
+    test::print printer;
+    printer(line2);
     return EXIT_SUCCESS;
 }
