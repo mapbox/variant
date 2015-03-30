@@ -5,6 +5,8 @@ DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions
 COMMON_FLAGS = -Wall -Wsign-compare -Wsign-conversion -Wshadow -Wunused-parameter -pedantic -fvisibility-inlines-hidden -std=c++11
 CXXFLAGS := $(CXXFLAGS)
 LDFLAGS := $(LDFLAGS)
+INSTALL = install -c
+PREFIX = /usr/local
 
 OS:=$(shell uname -s)
 ifeq ($(OS),Darwin)
@@ -92,9 +94,15 @@ clean:
 	rm -f test/unit.gc*
 	rm -f test/*gcov
 
+install:
+	$(INSTALL) variant.hpp $(PREFIX)/include/variant.hpp
+	$(INSTALL) recursive_wrapper.hpp $(PREFIX)/include/recursive_wrapper.hpp
+	$(INSTALL) variant_io.hpp $(PREFIX)/include/variant_io.hpp
+	$(INSTALL) optional.hpp $(PREFIX)/include/optional.hpp
+
 pgo: out Makefile variant.hpp
 	$(CXX) -o out/bench-variant test/bench_variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -pg -fprofile-generate
 	./test-variant 500000 >/dev/null 2>/dev/null
 	$(CXX) -o out/bench-variant test/bench_variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -fprofile-use
 
-.PHONY: sizes test
+.PHONY: sizes test install
