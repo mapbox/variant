@@ -297,12 +297,12 @@ template<typename F, typename V, typename R>
 struct dispatcher<F, V, R>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const&, F const& f)
+    VARIANT_INLINE static result_type apply_const(V const&, F const&)
     {
         throw std::runtime_error(std::string("unary dispatch: FAIL ") + typeid(V).name());
     }
 
-    VARIANT_INLINE static result_type apply(V &, F & f)
+    VARIANT_INLINE static result_type apply(V &, F &)
     {
         throw std::runtime_error(std::string("unary dispatch: FAIL ") + typeid(V).name());
     }
@@ -716,7 +716,7 @@ public:
     // unary
     template <typename F, typename V>
     auto VARIANT_INLINE
-    static visit(V const& v, F & f)
+    static visit(V const& v, F const& f)
         -> decltype(detail::dispatcher<F, V,
                     typename detail::result_of_unary_visit<F,
                     typename detail::select_type<0, Types...>::type>::type, Types...>::apply_const(v, f))
@@ -740,7 +740,7 @@ public:
     // const
     template <typename F, typename V>
     auto VARIANT_INLINE
-    static binary_visit(V const& v0, V const& v1, F & f)
+    static binary_visit(V const& v0, V const& v1, F const& f)
         -> decltype(detail::binary_dispatcher<F, V,
                     typename detail::result_of_binary_visit<F,
                     typename detail::select_type<0, Types...>::type>::type, Types...>::apply_const(v0, v1, f))
@@ -751,7 +751,7 @@ public:
     // non-const
     template <typename F, typename V>
     auto VARIANT_INLINE
-    static binary_visit(V& v0, V& v1, F & f)
+    static binary_visit(V& v0, V& v1, F const& f)
         -> decltype(detail::binary_dispatcher<F, V,
                     typename detail::result_of_binary_visit<F,
                     typename detail::select_type<0, Types...>::type>::type, Types...>::apply(v0, v1, f))
