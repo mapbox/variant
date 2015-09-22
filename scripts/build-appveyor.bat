@@ -29,4 +29,4 @@ build\variant.sln ^
 /p:Configuration=%configuration% ^
 /p:Platform=%MSBUILD_PLATFORM%
 
-"%configuration%"\tests.exe
+build\"%configuration%"\tests.exe
