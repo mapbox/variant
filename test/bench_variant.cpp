@@ -7,7 +7,8 @@
 #include <boost/timer/timer.hpp>
 #include "variant.hpp"
 
-#define TEXT "Testing various variant implementations with a longish string ........................................."
+#define TEXT_SHORT "Test"
+#define TEXT_LONG "Testing various variant implementations with a longish string ........................................."
 //#define BOOST_VARIANT_MINIMIZE_SIZE
 
 using namespace mapbox;
@@ -79,7 +80,8 @@ void run_boost_test(std::size_t runs)
     h.data.reserve(runs);
     for (std::size_t i=0; i< runs; ++i)
     {
-        h.append_move(std::string(TEXT));
+        h.append_move(std::string(TEXT_SHORT));
+        h.append_move(std::string(TEXT_LONG));
         h.append_move(123);
         h.append_move(3.14159);
     }
@@ -98,7 +100,8 @@ void run_variant_test(std::size_t runs)
     h.data.reserve(runs);
     for (std::size_t i=0; i< runs; ++i)
     {
-        h.append_move(std::string(TEXT));
+        h.append_move(std::string(TEXT_SHORT));
+        h.append_move(std::string(TEXT_LONG));
         h.append_move(123);
         h.append_move(3.14159);
     }
