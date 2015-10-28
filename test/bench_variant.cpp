@@ -54,7 +54,7 @@ struct dummy : boost::static_visitor<>
         : v_(v) {}
 
     template <typename T>
-    void operator() (T const& val) const
+    void operator() (T && val) const
     {
         v_ = val;
     }
@@ -68,9 +68,8 @@ struct dummy2 : util::static_visitor<>
         : v_(v) {}
 
     template <typename T>
-    void operator() (T const& val) const
+    void operator() (T && val) const
     {
-        //v_.template set<T>(val);
         v_ = val;
     }
     V & v_;
