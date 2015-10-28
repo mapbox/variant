@@ -56,7 +56,7 @@ struct dummy : boost::static_visitor<>
     template <typename T>
     void operator() (T && val) const
     {
-        v_ = val;
+        v_ = std::move(val);
     }
     V & v_;
 };
@@ -70,7 +70,7 @@ struct dummy2 : util::static_visitor<>
     template <typename T>
     void operator() (T && val) const
     {
-        v_ = val;
+        v_ = std::move(val);
     }
     V & v_;
 };
