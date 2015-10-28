@@ -596,7 +596,7 @@ private:
 public:
     VARIANT_INLINE variant<Types...>& operator=(variant<Types...> &&  other)
     {
-        move_assign(other);
+        move_assign(std::move(other));
         return *this;
     }
 
