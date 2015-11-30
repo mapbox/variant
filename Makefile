@@ -1,6 +1,6 @@
 CXX := $(CXX)
 BOOST_LIBS = -lboost_timer -lboost_system -lboost_chrono
-RELEASE_FLAGS = -O3 -DNDEBUG -finline-functions -march=native -DSINGLE_THREADED
+RELEASE_FLAGS = -O3 -DNDEBUG -march=native -DSINGLE_THREADED
 DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions
 COMMON_FLAGS = -Wall -Wsign-compare -Wsign-conversion -Wshadow -Wunused-parameter -pedantic -fvisibility-inlines-hidden -std=c++11
 CXXFLAGS := $(CXXFLAGS)
