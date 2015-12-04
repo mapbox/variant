@@ -175,7 +175,6 @@ struct MissionInteger
     }
 };
 
-// TODO - remove after https://github.com/mapbox/variant/issues/14
 std::ostream& operator<<(std::ostream& os, MissionInteger const& rhs)
 {
     os << rhs.get();
