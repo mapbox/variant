@@ -3,6 +3,7 @@
 
 #include "variant.hpp"
 #include "variant_io.hpp"
+
 #include <algorithm>
 #include <cstdint>
 #include <iterator>
@@ -42,7 +43,7 @@ TEST_CASE( "variant version", "[variant]" ) {
 }
 
 TEST_CASE( "variant can be moved into vector", "[variant]" ) {
-    typedef mapbox::util::variant<bool,std::string> variant_type;
+    using variant_type = mapbox::util::variant<bool,std::string>;
     variant_type v(std::string("test"));
     std::vector<variant_type> vec;
     vec.emplace_back(std::move(v));
@@ -63,7 +64,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         REQUIRE(v == mapbox::util::variant<bool>(true));
     }
     SECTION( "nullptr" ) {
-        typedef std::nullptr_t value_type;
+        using value_type = std::nullptr_t;
         mapbox::util::variant<value_type> v(nullptr);
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
@@ -75,15 +76,16 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         //REQUIRE(v == mapbox::util::variant<value_type>(nullptr));
     }
     SECTION( "unique_ptr" ) {
-        typedef std::unique_ptr<std::string> value_type;
+        using value_type = std::unique_ptr<std::string>;
         mapbox::util::variant<value_type> v(value_type(new std::string("hello")));
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
         REQUIRE(v.get_type_index() == 0);
         REQUIRE(*v.get<value_type>().get() == *value_type(new std::string("hello")).get());
+        REQUIRE(*v.get<value_type>() == "hello");
     }
     SECTION( "string" ) {
-        typedef std::string value_type;
+        using value_type = std::string;
         mapbox::util::variant<value_type> v(value_type("hello"));
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
@@ -95,7 +97,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         REQUIRE(v == mapbox::util::variant<value_type>(value_type("variant")));
     }
     SECTION( "size_t" ) {
-        typedef std::size_t value_type;
+        using value_type = std::size_t;
         mapbox::util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
@@ -107,7 +109,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         REQUIRE(v == mapbox::util::variant<value_type>(value_type(1)));
     }
     SECTION( "int8_t" ) {
-        typedef std::int8_t value_type;
+        using value_type = std::int8_t;
         mapbox::util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
@@ -119,7 +121,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         REQUIRE(v == mapbox::util::variant<value_type>(value_type(1)));
     }
     SECTION( "int16_t" ) {
-        typedef std::int16_t value_type;
+        using value_type = std::int16_t;
         mapbox::util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
@@ -131,7 +133,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         REQUIRE(v == mapbox::util::variant<value_type>(value_type(1)));
     }
     SECTION( "int32_t" ) {
-        typedef std::int32_t value_type;
+        using value_type = std::int32_t;
         mapbox::util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
@@ -143,7 +145,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         REQUIRE(v == mapbox::util::variant<value_type>(value_type(1)));
     }
     SECTION( "int64_t" ) {
-        typedef std::int64_t value_type;
+        using value_type = std::int64_t;
         mapbox::util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
@@ -158,7 +160,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
 
 struct MissionInteger
 {
-    typedef uint64_t value_type;
+    using value_type = uint64_t;
     value_type val_;
     public:
       MissionInteger(uint64_t val) :
@@ -197,52 +199,44 @@ TEST_CASE( "variant should support custom types", "[variant]" ) {
     REQUIRE(v == mapbox::util::variant<MissionInteger>(MissionInteger(1)));
 }
 
-// Test internal api
 TEST_CASE( "variant should correctly index types", "[variant]" ) {
-    typedef mapbox::util::variant<bool,std::string,std::uint64_t,std::int64_t,double,float> variant_type;
+    using variant_type = mapbox::util::variant<bool,std::string,std::uint64_t,std::int64_t,double,float>;
     // Index is in reverse order
-    REQUIRE(variant_type(true).get_type_index() == 5);
-    REQUIRE(variant_type(std::string("test")).get_type_index() == 4);
-    REQUIRE(variant_type(std::uint64_t(0)).get_type_index() == 3);
-    REQUIRE(variant_type(std::int64_t(0)).get_type_index() == 2);
-    REQUIRE(variant_type(double(0.0)).get_type_index() == 1);
-    REQUIRE(variant_type(float(0.0)).get_type_index() == 0);
+    REQUIRE(5 == variant_type(true).get_type_index());
+    REQUIRE(4 == variant_type(std::string("test")).get_type_index());
+    REQUIRE(3 == variant_type(std::uint64_t(0)).get_type_index());
+    REQUIRE(2 == variant_type(std::int64_t(0)).get_type_index());
+    REQUIRE(1 == variant_type(double(0.0)).get_type_index());
+    REQUIRE(0 == variant_type(float(0.0)).get_type_index());
 }
 
-// Test internal api
 TEST_CASE( "variant::which() returns zero based index of stored type", "[variant]" ) {
-    typedef mapbox::util::variant<bool,std::string,std::uint64_t,std::int64_t,double,float> variant_type;
-    // Index is in reverse order
-    REQUIRE(variant_type(true).which() == 0);
-    REQUIRE(variant_type(std::string("test")).which() == 1);
-    REQUIRE(variant_type(std::uint64_t(0)).which() == 2);
-    REQUIRE(variant_type(std::int64_t(0)).which() == 3);
-    REQUIRE(variant_type(double(0.0)).which() == 4);
-    REQUIRE(variant_type(float(0.0)).which() == 5);
-}
-
-TEST_CASE( "get with type not in variant type list should throw", "[variant]" ) {
-    typedef mapbox::util::variant<int> variant_type;
-    variant_type var = 5;
-    REQUIRE(var.get<int>() == 5);
+    using variant_type = mapbox::util::variant<bool,std::string,std::uint64_t,std::int64_t,double,float>;
+    // Index is in forward order
+    REQUIRE(0 == variant_type(true).which());
+    REQUIRE(1 == variant_type(std::string("test")).which());
+    REQUIRE(2 == variant_type(std::uint64_t(0)).which());
+    REQUIRE(3 == variant_type(std::int64_t(0)).which());
+    REQUIRE(4 == variant_type(double(0.0)).which());
+    REQUIRE(5 == variant_type(float(0.0)).which());
 }
 
 TEST_CASE( "get with wrong type (here: double) should throw", "[variant]" ) {
-    typedef mapbox::util::variant<int, double> variant_type;
+    using variant_type = mapbox::util::variant<int, double>;
     variant_type var = 5;
     REQUIRE(var.get<int>() == 5);
     REQUIRE_THROWS(var.get<double>());
 }
 
 TEST_CASE( "get with wrong type (here: int) should throw", "[variant]" ) {
-    typedef mapbox::util::variant<int, double> variant_type;
+    using variant_type = mapbox::util::variant<int, double>;
     variant_type var = 5.0;
     REQUIRE(var.get<double>() == 5.0);
     REQUIRE_THROWS(var.get<int>());
 }
 
 TEST_CASE( "implicit conversion", "[variant][implicit conversion]" ) {
-    typedef mapbox::util::variant<int> variant_type;
+    using variant_type = mapbox::util::variant<int>;
     variant_type var(5.0); // converted to int
     REQUIRE(var.get<int>() == 5);
     var = 6.0; // works for operator=, too
@@ -250,14 +244,14 @@ TEST_CASE( "implicit conversion", "[variant][implicit conversion]" ) {
 }
 
 TEST_CASE( "implicit conversion to first type in variant type list", "[variant][implicit conversion]" ) {
-    typedef mapbox::util::variant<long, char> variant_type;
+    using variant_type = mapbox::util::variant<long, char>;
     variant_type var = 5.0; // converted to long
     REQUIRE(var.get<long>() == 5);
     REQUIRE_THROWS(var.get<char>());
 }
 
 TEST_CASE( "implicit conversion to unsigned char", "[variant][implicit conversion]" ) {
-    typedef mapbox::util::variant<unsigned char> variant_type;
+    using variant_type = mapbox::util::variant<unsigned char>;
     variant_type var = 100.0;
     CHECK(var.get<unsigned char>() == static_cast<unsigned char>(100.0));
     CHECK(var.get<unsigned char>() == static_cast<unsigned char>(static_cast<unsigned int>(100.0)));
@@ -281,8 +275,11 @@ TEST_CASE( "variant default constructor", "[variant][default constructor]" ) {
     // By default variant is initialised with (default constructed) first type in template parameters pack
     // As a result first type in Types... must be default constructable
     // NOTE: index in reverse order -> index = N - 1
-    REQUIRE((mapbox::util::variant<int, double, std::string>().get_type_index() == 2));
-    REQUIRE((mapbox::util::variant<int, double, std::string>(mapbox::util::no_init()).get_type_index() == mapbox::util::detail::invalid_value));
+    using variant_type = mapbox::util::variant<int, double, std::string>;
+    REQUIRE(variant_type{}.get_type_index() == 2);
+    REQUIRE(variant_type{}.valid());
+    REQUIRE(variant_type{mapbox::util::no_init()}.get_type_index() == mapbox::util::detail::invalid_value);
+    REQUIRE_FALSE(variant_type{mapbox::util::no_init()}.valid());
 }
 
 TEST_CASE( "variant visitation", "[visitor][unary visitor]" ) {
@@ -295,7 +292,7 @@ TEST_CASE( "variant visitation", "[visitor][unary visitor]" ) {
 }
 
 TEST_CASE( "variant printer", "[visitor][unary visitor][printer]" ) {
-    typedef mapbox::util::variant<int, double, std::string> variant_type;
+    using variant_type = mapbox::util::variant<int, double, std::string>;
     std::vector<variant_type> var = {2.1, 123, "foo", 456};
     std::stringstream out;
     std::copy(var.begin(), var.end(), std::ostream_iterator<variant_type>(out, ","));
