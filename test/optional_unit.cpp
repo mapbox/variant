@@ -3,8 +3,6 @@
 
 #include "optional.hpp"
 
-using namespace mapbox;
-
 struct dummy {
     dummy(int _m_1, int _m_2) : m_1(_m_1), m_2(_m_2) {}
     int m_1;
