@@ -300,6 +300,40 @@ TEST_CASE( "variant printer", "[visitor][unary visitor][printer]" ) {
     REQUIRE(out.str() == "2.1,123,foo,456,foo");
 }
 
+TEST_CASE( "swapping variants should do the right thing", "[variant]" ) {
+    using variant_type = mapbox::util::variant<int, double, std::string>;
+    variant_type a = 7;
+    variant_type b = 3;
+    variant_type c = 3.141;
+    variant_type d = "foo";
+    variant_type e = "a long string that is longer than small string optimization";
+
+    using std::swap;
+    swap(a, b);
+    REQUIRE(a.get<int>() == 3);
+    REQUIRE(a.which() == 0);
+    REQUIRE(b.get<int>() == 7);
+    REQUIRE(b.which() == 0);
+
+    swap(b, c);
+    REQUIRE(b.get<double>() == Approx(3.141));
+    REQUIRE(b.which() == 1);
+    REQUIRE(c.get<int>() == 7);
+    REQUIRE(c.which() == 0);
+
+    swap(b, d);
+    REQUIRE(b.get<std::string>() == "foo");
+    REQUIRE(b.which() == 2);
+    REQUIRE(d.get<double>() == Approx(3.141));
+    REQUIRE(d.which() == 1);
+
+    swap(b, e);
+    REQUIRE(b.get<std::string>() == "a long string that is longer than small string optimization");
+    REQUIRE(b.which() == 2);
+    REQUIRE(e.get<std::string>() == "foo");
+    REQUIRE(e.which() == 2);
+}
+
 int main (int argc, char* const argv[])
 {
     int result = Catch::Session().run(argc, argv);
