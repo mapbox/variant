@@ -7,7 +7,9 @@
       "target_name": "tests",
       "type": "executable",
       "sources": [
-        "test/unit.cpp"
+        "test/unit.cpp",
+        "test/t/optional.cpp",
+        "test/t/variant.cpp"
       ],
       "xcode_settings": {
         "SDKROOT": "macosx",

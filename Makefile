@@ -59,14 +59,28 @@ bench: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_w
 	./out/recursive_wrapper_test 100000
 	./out/binary_visitor_test 100000
 
-out/unit: Makefile test/unit.cpp test/optional_unit.cpp optional.hpp variant.hpp variant_io.hpp recursive_wrapper.hpp
+out/unit.o: Makefile test/unit.cpp
 	mkdir -p ./out
-	$(CXX) -o out/unit test/unit.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS)
-	$(CXX) -o out/optional_unit test/optional_unit.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS)
+	$(CXX) -c -o $@ test/unit.cpp -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
+
+out/optional.o: Makefile test/t/optional.cpp optional.hpp variant.hpp variant_io.hpp recursive_wrapper.hpp
+	mkdir -p ./out
+	$(CXX) -c -o $@ test/t/optional.cpp -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
+
+out/variant.o: Makefile test/t/variant.cpp variant.hpp variant_io.hpp recursive_wrapper.hpp
+	mkdir -p ./out
+	$(CXX) -c -o $@ test/t/variant.cpp -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
+
+out/mutating_visitor.o: Makefile test/t/variant.cpp variant.hpp variant_io.hpp recursive_wrapper.hpp
+	mkdir -p ./out
+	$(CXX) -c -o $@ test/t/mutating_visitor.cpp -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
+
+out/unit: out/unit.o out/mutating_visitor.o out/optional.o out/variant.o
+	mkdir -p ./out
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 test: out/unit
 	./out/unit
-	./out/optional_unit
 
 coverage:
 	mkdir -p ./out
