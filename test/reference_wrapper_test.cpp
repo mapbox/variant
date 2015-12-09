@@ -1,11 +1,12 @@
+
+#include <cstdlib>
+#include <functional>
 #include <iostream>
-#include <vector>
-#include <thread>
-#include <string>
-#include <sstream>
-#include <utility>
 #include <type_traits>
-#include <boost/timer/timer.hpp>
+#include <typeinfo>
+#include <utility>
+#include <vector>
+
 #include "variant.hpp"
 
 using namespace mapbox;

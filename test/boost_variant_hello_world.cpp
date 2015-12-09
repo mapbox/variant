@@ -1,5 +1,5 @@
 #include <boost/variant.hpp>
-#include <cstdint>
+
 #include <stdexcept>
 
 struct check : boost::static_visitor<>

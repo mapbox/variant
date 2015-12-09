@@ -1,13 +1,14 @@
+
+#include <algorithm>
 #include <cstdint>
+#include <cstdlib>
 #include <iostream>
-#include <vector>
-#include <thread>
-#include <string>
 #include <sstream>
-#include <utility>
+#include <string>
 #include <type_traits>
-#include <boost/variant.hpp>
-#include <boost/timer/timer.hpp>
+#include <utility>
+#include <vector>
+
 #include "variant.hpp"
 #include "variant_io.hpp"
 

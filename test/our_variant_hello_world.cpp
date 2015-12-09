@@ -1,5 +1,5 @@
 #include "variant.hpp"
-#include <cstdint>
+
 #include <stdexcept>
 
 struct check : mapbox::util::static_visitor<>

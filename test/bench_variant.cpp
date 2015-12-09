@@ -1,10 +1,16 @@
+
+#include <algorithm>
+#include <cstdlib>
 #include <iostream>
-#include <vector>
-#include <thread>
+#include <memory>
 #include <string>
+#include <thread>
 #include <utility>
+#include <vector>
+
 #include <boost/variant.hpp>
 #include <boost/timer/timer.hpp>
+
 #include "variant.hpp"
 
 #define TEXT_SHORT "Test"
