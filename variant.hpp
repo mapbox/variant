@@ -184,10 +184,10 @@ struct static_max<arg1, arg2, others...>
         static_max<arg2, others...>::value;
 };
 
-template<typename... Types>
+template <typename... Types>
 struct variant_helper;
 
-template<typename T, typename... Types>
+template <typename T, typename... Types>
 struct variant_helper<T, Types...>
 {
     VARIANT_INLINE static void destroy(const std::size_t id, void * data)
@@ -244,7 +244,7 @@ struct variant_helper<T, Types...>
     }
 };
 
-template<> struct variant_helper<>
+template <> struct variant_helper<>
 {
     VARIANT_INLINE static void destroy(const std::size_t, void *) {}
     VARIANT_INLINE static void move(const std::size_t, void *, void *) {}
@@ -323,7 +323,7 @@ struct dispatcher<F, V, R, T, Types...>
     }
 };
 
-template<typename F, typename V, typename R>
+template <typename F, typename V, typename R>
 struct dispatcher<F, V, R>
 {
     using result_type = R;
@@ -374,7 +374,7 @@ struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
 
 };
 
-template<typename F, typename V, typename R, typename T>
+template <typename F, typename V, typename R, typename T>
 struct binary_dispatcher_rhs<F, V, R, T>
 {
     using result_type = R;
@@ -422,7 +422,7 @@ struct binary_dispatcher_lhs<F, V, R, T0, T1, Types...>
 
 };
 
-template<typename F, typename V, typename R, typename T>
+template <typename F, typename V, typename R, typename T>
 struct binary_dispatcher_lhs<F, V, R, T>
 {
     using result_type = R;
@@ -485,7 +485,7 @@ struct binary_dispatcher<F, V, R, T, Types...>
     }
 };
 
-template<typename F, typename V, typename R>
+template <typename F, typename V, typename R>
 struct binary_dispatcher<F, V, R>
 {
     using result_type = R;
@@ -527,7 +527,7 @@ public:
         : lhs_(lhs) {}
     comparer & operator=(comparer const&) = delete;
     // visitor
-    template<typename T>
+    template <typename T>
     bool operator()(T const& rhs_content) const
     {
         T const& lhs_content = lhs_.template get<T>();
@@ -542,7 +542,7 @@ private:
 
 struct no_init {};
 
-template<typename... Types>
+template <typename... Types>
 class variant
 {
 private:
@@ -639,7 +639,7 @@ public:
         return *this;
     }
 
-    template<typename T>
+    template <typename T>
     VARIANT_INLINE bool is() const
     {
         static_assert(detail::has_type<T, Types...>::value, "invalid type in T in `is<T>()` for this variant");
@@ -651,7 +651,7 @@ public:
         return (type_index != detail::invalid_value);
     }
 
-    template<typename T, typename... Args>
+    template <typename T, typename... Args>
     VARIANT_INLINE void set(Args &&... args)
     {
         helper_type::destroy(type_index, &data);
@@ -660,9 +660,9 @@ public:
     }
 
     // get<T>()
-    template<typename T, typename std::enable_if<
-                         (detail::direct_type<T, Types...>::index != detail::invalid_value)
-                         >::type* = nullptr>
+    template <typename T, typename std::enable_if<
+                          (detail::direct_type<T, Types...>::index != detail::invalid_value)
+                          >::type* = nullptr>
     VARIANT_INLINE T & get()
     {
         if (type_index == detail::direct_type<T, Types...>::index)
@@ -867,13 +867,13 @@ auto VARIANT_INLINE static apply_visitor(F f, V & v0, V & v1) -> decltype(V::bin
 }
 
 // getter interface
-template<typename ResultType, typename T>
+template <typename ResultType, typename T>
 ResultType & get(T & var)
 {
     return var.template get<ResultType>();
 }
 
-template<typename ResultType, typename T>
+template <typename ResultType, typename T>
 ResultType const& get(T const& var)
 {
     return var.template get<ResultType>();
