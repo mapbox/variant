@@ -114,15 +114,15 @@ int main (int argc, char** argv)
 
     std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(test::test(), result) << std::endl;
 
+    int total = 0;
     {
         boost::timer::auto_cpu_timer t;
-        int total = 0;
         for (std::size_t i = 0; i < NUM_ITER; ++i)
         {
             total += util::apply_visitor(test::calculator(), result);
         }
-        std::cerr << "total=" << total << std::endl;
     }
+    std::cerr << "total=" << total << std::endl;
 
     std::cerr << util::apply_visitor(test::to_string(), result) << "=" << util::apply_visitor(test::calculator(), result) << std::endl;
 
