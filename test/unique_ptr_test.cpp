@@ -5,7 +5,6 @@
 #include <sstream>
 #include <utility>
 #include <type_traits>
-#include <boost/variant.hpp>
 #include <boost/timer/timer.hpp>
 #include "variant.hpp"
 
@@ -29,7 +28,9 @@ struct binary_op
     expression right;
 
     binary_op(expression && lhs, expression && rhs)
-        : left(std::move(lhs)), right(std::move(rhs)) {}
+        : left(std::move(lhs)), right(std::move(rhs))
+    {
+    }
 };
 
 struct print : util::static_visitor<void>
@@ -110,6 +111,7 @@ int main (int argc, char** argv)
 
     test::expression sum(std::unique_ptr<test::binary_op<test::add>>(new test::binary_op<test::add>(2, 3)));
     test::expression result(std::unique_ptr<test::binary_op<test::sub>>(new test::binary_op<test::sub>(std::move(sum), 4)));
+
     std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(test::test(), result) << std::endl;
 
     {
