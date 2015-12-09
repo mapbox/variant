@@ -33,23 +33,23 @@ gyp: ./deps/gyp
 	make V=1 -C ./out tests
 	./out/Release/tests
 
-out/bench-variant-debug: Makefile test/bench_variant.cpp variant.hpp
+out/bench-variant-debug: Makefile test/bench_variant.cpp variant.hpp recursive_wrapper.hpp
 	mkdir -p ./out
 	$(CXX) -o out/bench-variant-debug test/bench_variant.cpp -I./ $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
-out/bench-variant: Makefile test/bench_variant.cpp variant.hpp
+out/bench-variant: Makefile test/bench_variant.cpp variant.hpp recursive_wrapper.hpp
 	mkdir -p ./out
 	$(CXX) -o out/bench-variant test/bench_variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
-out/unique_ptr_test: Makefile test/unique_ptr_test.cpp variant.hpp
+out/unique_ptr_test: Makefile test/unique_ptr_test.cpp variant.hpp recursive_wrapper.hpp
 	mkdir -p ./out
 	$(CXX) -o out/unique_ptr_test test/unique_ptr_test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
-out/recursive_wrapper_test: Makefile test/recursive_wrapper_test.cpp variant.hpp
+out/recursive_wrapper_test: Makefile test/recursive_wrapper_test.cpp variant.hpp recursive_wrapper.hpp
 	mkdir -p ./out
 	$(CXX) -o out/recursive_wrapper_test test/recursive_wrapper_test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
-out/binary_visitor_test: Makefile test/binary_visitor_test.cpp variant.hpp
+out/binary_visitor_test: Makefile test/binary_visitor_test.cpp variant.hpp variant_io.hpp recursive_wrapper.hpp
 	mkdir -p ./out
 	$(CXX) -o out/binary_visitor_test test/binary_visitor_test.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
@@ -59,7 +59,7 @@ bench: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_w
 	./out/recursive_wrapper_test 100000
 	./out/binary_visitor_test 100000
 
-out/unit: Makefile test/unit.cpp test/optional_unit.cpp optional.hpp variant.hpp
+out/unit: Makefile test/unit.cpp test/optional_unit.cpp optional.hpp variant.hpp variant_io.hpp recursive_wrapper.hpp
 	mkdir -p ./out
 	$(CXX) -o out/unit test/unit.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS)
 	$(CXX) -o out/optional_unit test/optional_unit.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS)
@@ -92,7 +92,7 @@ clean:
 	rm -f test/unit.gc*
 	rm -f test/*gcov
 
-pgo: out Makefile variant.hpp
+pgo: out Makefile variant.hpp recursive_wrapper.hpp
 	$(CXX) -o out/bench-variant test/bench_variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -pg -fprofile-generate
 	./test-variant 500000 >/dev/null 2>/dev/null
 	$(CXX) -o out/bench-variant test/bench_variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -fprofile-use
