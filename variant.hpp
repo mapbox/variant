@@ -101,7 +101,6 @@ struct has_type<T, First, Types...>
 
 template <typename T>
 struct has_type<T> : std::false_type {};
-//
 
 template <typename T, typename... Types>
 struct is_valid_type;
@@ -243,7 +242,8 @@ struct variant_helper<T, Types...>
     }
 };
 
-template <> struct variant_helper<>
+template <>
+struct variant_helper<>
 {
     VARIANT_INLINE static void destroy(const std::size_t, void *) {}
     VARIANT_INLINE static void move(const std::size_t, void *, void *) {}
@@ -256,12 +256,12 @@ namespace detail {
 template <typename T>
 struct unwrapper
 {
-    T const& operator() (T const& obj) const
+    T const& operator()(T const& obj) const
     {
         return obj;
     }
 
-    T & operator() (T & obj) const
+    T & operator()(T & obj) const
     {
         return obj;
     }
@@ -271,7 +271,7 @@ struct unwrapper
 template <typename T>
 struct unwrapper<recursive_wrapper<T>>
 {
-    auto operator() (recursive_wrapper<T> const& obj) const
+    auto operator()(recursive_wrapper<T> const& obj) const
         -> typename recursive_wrapper<T>::type const&
     {
         return obj.get();
@@ -281,7 +281,7 @@ struct unwrapper<recursive_wrapper<T>>
 template <typename T>
 struct unwrapper<std::reference_wrapper<T>>
 {
-    auto operator() (std::reference_wrapper<T> const& obj) const
+    auto operator()(std::reference_wrapper<T> const& obj) const
         -> typename std::reference_wrapper<T>::type const&
     {
         return obj.get();
@@ -642,12 +642,12 @@ public:
     VARIANT_INLINE bool is() const
     {
         static_assert(detail::has_type<T, Types...>::value, "invalid type in T in `is<T>()` for this variant");
-        return (type_index == detail::direct_type<T, Types...>::index);
+        return type_index == detail::direct_type<T, Types...>::index;
     }
 
     VARIANT_INLINE bool valid() const
     {
-        return (type_index != detail::invalid_value);
+        return type_index != detail::invalid_value;
     }
 
     template <typename T, typename... Args>

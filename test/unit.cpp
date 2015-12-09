@@ -19,13 +19,13 @@ struct mutating_visitor
     mutating_visitor(T & val)
         : val_(val) {}
 
-    void operator() (T & val) const
+    void operator()(T & val) const
     {
         val = val_;
     }
 
     template <typename T1>
-    void operator() (T1 &) const {} // no-op
+    void operator()(T1 &) const {} // no-op
 
     T & val_;
 };

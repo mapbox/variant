@@ -57,7 +57,8 @@ template <typename T> class optional
         return *this;
     }
 
-    template <typename... Args> void emplace(Args &&... args)
+    template <typename... Args>
+    void emplace(Args &&... args)
     {
         variant_ = T{std::forward<Args>(args)...};
     }

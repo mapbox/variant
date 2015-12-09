@@ -30,11 +30,11 @@ using variant = util::variant<std::reference_wrapper<const point>,
 struct print
 {
     using result_type = void;
-    void operator() (point const& pt) const
+    void operator()(point const& pt) const
     {
         std::cerr << "Point(" << pt.x << "," << pt.y << ")" << std::endl;
     }
-    void operator() (line_string const& line) const
+    void operator()(line_string const& line) const
     {
         std::cerr << "Line(";
         for (auto const& pt : line)
@@ -44,7 +44,7 @@ struct print
         std::cerr << ")" << std::endl;
     }
     template <typename T>
-    void operator() (T const& val) const
+    void operator()(T const& val) const
     {
         std::cerr << typeid(T).name() << std::endl;
     }
@@ -53,7 +53,7 @@ struct print
 
 }
 
-int main (int argc, char** argv)
+int main()
 {
     std::cerr << sizeof(test::polygon) << std::endl;
     std::cerr << sizeof(test::variant) << std::endl;

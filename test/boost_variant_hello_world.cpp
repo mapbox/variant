@@ -5,7 +5,7 @@
 struct check : boost::static_visitor<>
 {
     template <typename T>
-    void operator() (T const& val) const
+    void operator()(T const& val) const
     {
         if (val != 0) throw std::runtime_error("invalid");
     }

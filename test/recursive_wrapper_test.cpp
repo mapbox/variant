@@ -14,7 +14,9 @@ namespace test {
 
 struct add;
 struct sub;
-template <typename OpTag> struct binary_op;
+
+template <typename OpTag>
+struct binary_op;
 
 typedef util::variant<int ,
                       util::recursive_wrapper<binary_op<add>>,
@@ -36,7 +38,7 @@ struct binary_op
 struct print : util::static_visitor<void>
 {
     template <typename T>
-    void operator() (T const& val) const
+    void operator()(T const& val) const
     {
         std::cerr << val << ":" << typeid(T).name() << std::endl;
     }
@@ -46,7 +48,7 @@ struct print : util::static_visitor<void>
 struct test : util::static_visitor<std::string>
 {
     template <typename T>
-    std::string operator() (T const& obj) const
+    std::string operator()(T const& obj) const
     {
         return std::string("TYPE_ID=") + typeid(obj).name();
     }
@@ -99,7 +101,7 @@ public:
 
 } // namespace test
 
-int main (int argc, char** argv)
+int main(int argc, char** argv)
 {
     if (argc != 2)
     {
