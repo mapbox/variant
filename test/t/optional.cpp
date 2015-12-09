@@ -12,51 +12,51 @@ struct dummy {
 
 
 TEST_CASE( "optional can be instantiated with a POD type", "[optional]" ) {
-    mapbox::util::optional<double> dbl_opt;
+    mapbox::util::optional<int> dbl_opt;
 
     REQUIRE(!dbl_opt);
-    dbl_opt = 3.1415;
+    dbl_opt = 3;
     REQUIRE(dbl_opt);
 
-    REQUIRE(dbl_opt.get() == 3.1415);
-    REQUIRE(*dbl_opt == 3.1415);
+    REQUIRE(dbl_opt.get() == 3);
+    REQUIRE(*dbl_opt == 3);
 }
 
 TEST_CASE( "copy c'tor", "[optional]" ) {
-    mapbox::util::optional<double> dbl_opt;
+    mapbox::util::optional<int> dbl_opt;
 
     REQUIRE(!dbl_opt);
-    dbl_opt = 3.1415;
+    dbl_opt = 3;
     REQUIRE(dbl_opt);
 
-    mapbox::util::optional<double> other = dbl_opt;
+    mapbox::util::optional<int> other = dbl_opt;
 
-    REQUIRE(other.get() == 3.1415);
-    REQUIRE(*other == 3.1415);
+    REQUIRE(other.get() == 3);
+    REQUIRE(*other == 3);
 }
 
 TEST_CASE( "const operator*, const get()", "[optional]" ) {
-    const mapbox::util::optional<double> dbl_opt = 3.1415;
+    const mapbox::util::optional<int> dbl_opt = 3;
 
     REQUIRE(dbl_opt);
 
     auto pi1 = dbl_opt.get();
     auto pi2 = *dbl_opt;
 
-    REQUIRE(pi1 == 3.1415);
-    REQUIRE(pi2 == 3.1415);
+    REQUIRE(pi1 == 3);
+    REQUIRE(pi2 == 3);
 }
 
 TEST_CASE( "non-const operator*, non-const get()", "[optional]" ) {
-    mapbox::util::optional<double> dbl_opt = 3.1415;
+    mapbox::util::optional<int> dbl_opt = 3;
 
     REQUIRE(dbl_opt);
 
     auto pi1 = dbl_opt.get();
     auto pi2 = *dbl_opt;
 
-    REQUIRE(pi1 == 3.1415);
-    REQUIRE(pi2 == 3.1415);
+    REQUIRE(pi1 == 3);
+    REQUIRE(pi2 == 3);
 }
 
 TEST_CASE( "emplace initialization, reset", "[optional]" ) {
