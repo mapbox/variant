@@ -105,6 +105,7 @@ clean:
 	rm -f *gcov
 	rm -f test/unit.gc*
 	rm -f test/*gcov
+	rm -f *.gcda *.gcno
 
 pgo: out Makefile variant.hpp recursive_wrapper.hpp
 	$(CXX) -o out/bench-variant test/bench_variant.cpp -I./ $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS) -pg -fprofile-generate
