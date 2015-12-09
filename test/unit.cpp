@@ -1,4 +1,4 @@
-#define CATCH_CONFIG_RUNNER
+#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
 #include "variant.hpp"
@@ -323,9 +323,3 @@ TEST_CASE( "swapping variants should do the right thing", "[variant]" ) {
     REQUIRE(e.which() == 2);
 }
 
-int main (int argc, char* const argv[])
-{
-    int result = Catch::Session().run(argc, argv);
-    if (!result) printf("\x1b[1;32m ✓ \x1b[0m\n");
-    return result;
-}
