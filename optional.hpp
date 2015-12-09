@@ -37,19 +37,19 @@ class optional
 
     explicit operator bool() const noexcept { return variant_.template is<T>(); }
 
-    T const &get() const { return variant_.template get<T>(); }
-    T &get() { return variant_.template get<T>(); }
+    T const& get() const { return variant_.template get<T>(); }
+    T & get() { return variant_.template get<T>(); }
 
-    T const &operator*() const { return this->get(); }
+    T const& operator*() const { return this->get(); }
     T operator*() { return this->get(); }
 
-    optional &operator=(T const &v)
+    optional & operator=(T const &v)
     {
         variant_ = v;
         return *this;
     }
 
-    optional &operator=(optional const &rhs)
+    optional & operator=(optional const &rhs)
     {
         if (this != &rhs)
         {
@@ -65,8 +65,10 @@ class optional
     }
 
     void reset() { variant_ = none_type{}; }
-};
-}
-}
+
+}; // class optional
+
+} // namespace util
+} // namespace mapbox
 
 #endif // MAPBOX_UTIL_OPTIONAL_HPP
