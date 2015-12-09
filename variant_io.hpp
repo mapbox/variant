@@ -25,11 +25,11 @@ private:
 }
 
 // operator<<
-template <typename charT, typename traits, typename... Types>
-VARIANT_INLINE std::basic_ostream<charT, traits>&
-operator<< (std::basic_ostream<charT, traits>& out, variant<Types...> const& rhs)
+template <typename CharT, typename Traits, typename... Types>
+VARIANT_INLINE std::basic_ostream<CharT, Traits>&
+operator<< (std::basic_ostream<CharT, Traits>& out, variant<Types...> const& rhs)
 {
-    detail::printer<std::basic_ostream<charT, traits>> visitor(out);
+    detail::printer<std::basic_ostream<CharT, Traits>> visitor(out);
     apply_visitor(visitor, rhs);
     return out;
 }
