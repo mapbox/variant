@@ -36,12 +36,24 @@ TEST_CASE( "copy c'tor", "[optional]" ) {
 }
 
 TEST_CASE( "const operator*, const get()", "[optional]" ) {
+    const mapbox::util::optional<double> dbl_opt = 3.1415;
+
+    REQUIRE(dbl_opt);
+
+    auto pi1 = dbl_opt.get();
+    auto pi2 = *dbl_opt;
+
+    REQUIRE(pi1 == 3.1415);
+    REQUIRE(pi2 == 3.1415);
+}
+
+TEST_CASE( "non-const operator*, non-const get()", "[optional]" ) {
     mapbox::util::optional<double> dbl_opt = 3.1415;
 
     REQUIRE(dbl_opt);
 
-    const double pi1 = dbl_opt.get();
-    const double pi2 = *dbl_opt;
+    auto pi1 = dbl_opt.get();
+    auto pi2 = *dbl_opt;
 
     REQUIRE(pi1 == 3.1415);
     REQUIRE(pi2 == 3.1415);
@@ -72,3 +84,13 @@ TEST_CASE( "assignment", "[optional]") {
     REQUIRE(a.get() == b.get());
     REQUIRE(b.get() == 1);
 }
+
+TEST_CASE( "self assignment", "[optional]") {
+    mapbox::util::optional<int> a;
+
+    a = 1;
+    REQUIRE(a.get() == 1);
+    a = a;
+    REQUIRE(a.get() == 1);
+}
+
