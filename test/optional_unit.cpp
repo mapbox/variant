@@ -11,7 +11,7 @@ struct dummy {
 };
 
 
-TEST_CASE( "optional can be instantiated with a POD type", "[optiona]" ) {
+TEST_CASE( "optional can be instantiated with a POD type", "[optional]" ) {
     mapbox::util::optional<double> dbl_opt;
 
     REQUIRE(!dbl_opt);
@@ -22,7 +22,7 @@ TEST_CASE( "optional can be instantiated with a POD type", "[optiona]" ) {
     REQUIRE(*dbl_opt == 3.1415);
 }
 
-TEST_CASE( "copy c'tor", "[optiona]" ) {
+TEST_CASE( "copy c'tor", "[optional]" ) {
     mapbox::util::optional<double> dbl_opt;
 
     REQUIRE(!dbl_opt);
@@ -35,7 +35,7 @@ TEST_CASE( "copy c'tor", "[optiona]" ) {
     REQUIRE(*other == 3.1415);
 }
 
-TEST_CASE( "const operator*, const get()", "[optiona]" ) {
+TEST_CASE( "const operator*, const get()", "[optional]" ) {
     mapbox::util::optional<double> dbl_opt = 3.1415;
 
     REQUIRE(dbl_opt);
