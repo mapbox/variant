@@ -34,7 +34,6 @@
 
 namespace mapbox { namespace util {
 
-// static visitor
 template <typename R = void>
 struct static_visitor
 {
@@ -149,7 +148,7 @@ struct result_of_unary_visit<F, V, typename enable_if_type<typename F::result_ty
     using type = typename F::result_type;
 };
 
-template <typename F, typename V, class Enable = void>
+template <typename F, typename V, typename Enable = void>
 struct result_of_binary_visit
 {
     using type = typename std::result_of<F(V &, V &)>::type;

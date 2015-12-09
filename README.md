@@ -6,7 +6,7 @@ An alternative to `boost::variant` for C++11.
 [![Build status](https://ci.appveyor.com/api/projects/status/v9tatx21j1k0fcgy)](https://ci.appveyor.com/project/Mapbox/variant)
 [![Coverage Status](https://coveralls.io/repos/mapbox/variant/badge.svg?branch=master)](https://coveralls.io/r/mapbox/variant?branch=master)
 
-# Why use Mapbox Variant?
+## Why use Mapbox Variant?
 
 Mapbox variant has the same speedy performance of `boost::variant` but is faster to compile, results in smaller binaries, and has no dependencies.
 
@@ -19,7 +19,7 @@ Size of simple program linking variant (release / debug)     | 8/24 K           
 Time to compile header     | 185 ms             |  675 ms
 
 
-# Depends
+## Depends
 
  - Compiler supporting `-std=c++11`
 
@@ -34,13 +34,27 @@ Tested with
 
 Note: get the "2013 Nov CTP" release at http://www.microsoft.com/en-us/download/details.aspx?id=41151 and the 2014 CTP at http://www.visualstudio.com/en-us/downloads/visual-studio-14-ctp-vs.aspx
 
-# Usage
 
-There is nothing to build, just include `variant.hpp` and `recursive_wrapper.hpp` in your project.
+## Usage
 
-# Tests
+There is nothing to build, just include `variant.hpp` and
+`recursive_wrapper.hpp` in your project. Include `variant_io.hpp` if you need
+the `operator<<` overload for variant. Include `optional.hpp` to get an
+`optional<T>` class.
 
-The tests depend on:
+
+## Unit Tests
+
+On Unix systems compile and run the unit tests with `make test`.
+
+On Windows do:
+
+    vcbuild
+
+
+## Benchmarks
+
+The benchmarks depend on:
 
  - Boost headers (for benchmarking against `boost::variant`)
  - Boost built with `--with-timer` (used for benchmark timing)
@@ -49,17 +63,8 @@ On Unix systems set your boost includes and libs locations and run `make test`:
 
     export LDFLAGS='-L/opt/boost/lib'
     export CXXFLAGS='-I/opt/boost/include'
-    make test
-
-On windows do:
-
-    vcbuild
-
-## Benchmark
-
-On Unix systems run the benchmark like:
-
     make bench
+
 
 ## Check object sizes
 

@@ -11,7 +11,8 @@ namespace mapbox
 namespace util
 {
 
-template <typename T> class optional
+template <typename T>
+class optional
 {
     static_assert(!std::is_reference<T>::value, "optional doesn't support references");
 
