@@ -36,4 +36,4 @@ operator<< (std::basic_ostream<CharT, Traits>& out, variant<Types...> const& rhs
 
 }}
 
-#endif //MAPBOX_UTIL_VARIANT_IO_HPP
+#endif // MAPBOX_UTIL_VARIANT_IO_HPP

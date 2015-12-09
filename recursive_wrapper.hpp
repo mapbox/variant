@@ -1,5 +1,5 @@
-#ifndef MAPBOX_UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
-#define MAPBOX_UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
+#ifndef MAPBOX_UTIL_RECURSIVE_WRAPPER_HPP
+#define MAPBOX_UTIL_RECURSIVE_WRAPPER_HPP
 
 #include <utility>
 
@@ -124,4 +124,4 @@ inline void swap(recursive_wrapper<T> & lhs, recursive_wrapper<T> & rhs) noexcep
 
 }}
 
-#endif // MAPBOX_UTIL_VARIANT_RECURSIVE_WRAPPER_HPP
+#endif // MAPBOX_UTIL_RECURSIVE_WRAPPER_HPP

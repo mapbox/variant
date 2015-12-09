@@ -66,4 +66,4 @@ template <typename T> class optional
 }
 }
 
-#endif
+#endif // MAPBOX_UTIL_OPTIONAL_HPP
