@@ -51,7 +51,7 @@ if [[ $CXX == "clang++" ]]; then
     ./out/cov-test
     cp unit*gc* test/
     sudo pip install cpp-coveralls
-    coveralls -i variant.hpp -i recursive_wrapper.hpp --gcov-options '\-lp'
+    coveralls -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp --gcov-options '\-lp'
 fi
 
 # set strictness back to normal

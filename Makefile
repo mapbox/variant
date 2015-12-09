@@ -63,6 +63,10 @@ out/unit.o: Makefile test/unit.cpp
 	mkdir -p ./out
 	$(CXX) -c -o $@ test/unit.cpp -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
 
+out/mutating_visitor.o: Makefile test/t/variant.cpp variant.hpp variant_io.hpp recursive_wrapper.hpp
+	mkdir -p ./out
+	$(CXX) -c -o $@ test/t/mutating_visitor.cpp -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
+
 out/optional.o: Makefile test/t/optional.cpp optional.hpp variant.hpp variant_io.hpp recursive_wrapper.hpp
 	mkdir -p ./out
 	$(CXX) -c -o $@ test/t/optional.cpp -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
@@ -70,10 +74,6 @@ out/optional.o: Makefile test/t/optional.cpp optional.hpp variant.hpp variant_io
 out/variant.o: Makefile test/t/variant.cpp variant.hpp variant_io.hpp recursive_wrapper.hpp
 	mkdir -p ./out
 	$(CXX) -c -o $@ test/t/variant.cpp -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
-
-out/mutating_visitor.o: Makefile test/t/variant.cpp variant.hpp variant_io.hpp recursive_wrapper.hpp
-	mkdir -p ./out
-	$(CXX) -c -o $@ test/t/mutating_visitor.cpp -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
 
 out/unit: out/unit.o out/mutating_visitor.o out/optional.o out/variant.o
 	mkdir -p ./out
@@ -84,7 +84,7 @@ test: out/unit
 
 coverage:
 	mkdir -p ./out
-	$(CXX) -o out/cov-test --coverage test/unit.cpp -I./ $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS)
+	$(CXX) -o out/cov-test --coverage test/unit.cpp test/t/*.cpp -I./ -Itest/include $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS)
 
 sizes: Makefile variant.hpp recursive_wrapper.hpp
 	mkdir -p ./out

@@ -3,3 +3,5 @@ out
 profiling
 build
 deps
+*.gcda
+*.gcno

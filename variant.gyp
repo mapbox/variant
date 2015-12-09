@@ -8,6 +8,7 @@
       "type": "executable",
       "sources": [
         "test/unit.cpp",
+        "test/t/mutating_visitor.cpp",
         "test/t/optional.cpp",
         "test/t/variant.cpp"
       ],
