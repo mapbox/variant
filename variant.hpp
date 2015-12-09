@@ -1,14 +1,13 @@
 #ifndef MAPBOX_UTIL_VARIANT_HPP
 #define MAPBOX_UTIL_VARIANT_HPP
 
-#include <utility>
-#include <typeinfo>
-#include <type_traits>
-#include <stdexcept> // runtime_error
-#include <new> // operator new
 #include <cstddef> // size_t
-#include <iosfwd>
+#include <new> // operator new
+#include <stdexcept> // runtime_error
 #include <string>
+#include <type_traits>
+#include <typeinfo>
+#include <utility>
 
 #include "recursive_wrapper.hpp"
 

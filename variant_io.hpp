@@ -1,6 +1,10 @@
 #ifndef MAPBOX_UTIL_VARIANT_IO_HPP
 #define MAPBOX_UTIL_VARIANT_IO_HPP
 
+#include <iosfwd>
+
+#include "variant.hpp"
+
 namespace mapbox { namespace util {
 
 namespace detail {

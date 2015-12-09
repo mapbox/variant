@@ -2,6 +2,7 @@
 #define MAPBOX_UTIL_OPTIONAL_HPP
 
 #include <type_traits>
+#include <utility>
 
 #include "variant.hpp"
 
