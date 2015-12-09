@@ -50,10 +50,10 @@ namespace detail {
 
 static constexpr std::size_t invalid_value = std::size_t(-1);
 
-template <typename T, typename...Types>
+template <typename T, typename... Types>
 struct direct_type;
 
-template <typename T, typename First, typename...Types>
+template <typename T, typename First, typename... Types>
 struct direct_type<T, First, Types...>
 {
     static constexpr std::size_t index = std::is_same<T, First>::value
@@ -66,10 +66,10 @@ struct direct_type<T>
     static constexpr std::size_t index = invalid_value;
 };
 
-template <typename T, typename...Types>
+template <typename T, typename... Types>
 struct convertible_type;
 
-template <typename T, typename First, typename...Types>
+template <typename T, typename First, typename... Types>
 struct convertible_type<T, First, Types...>
 {
     static constexpr std::size_t index = std::is_convertible<T, First>::value
@@ -82,7 +82,7 @@ struct convertible_type<T>
     static constexpr std::size_t index = invalid_value;
 };
 
-template <typename T, typename...Types>
+template <typename T, typename... Types>
 struct value_traits
 {
     static constexpr std::size_t direct_index = direct_type<T, Types...>::index;
@@ -91,7 +91,7 @@ struct value_traits
 };
 
 // check if T is in Types...
-template <typename T, typename...Types>
+template <typename T, typename... Types>
 struct has_type;
 
 template <typename T, typename First, typename... Types>
@@ -105,7 +105,7 @@ template <typename T>
 struct has_type<T> : std::false_type {};
 //
 
-template <typename T, typename...Types>
+template <typename T, typename... Types>
 struct is_valid_type;
 
 template <typename T, typename First, typename... Types>
@@ -118,19 +118,19 @@ struct is_valid_type<T, First, Types...>
 template <typename T>
 struct is_valid_type<T> : std::false_type {};
 
-template <std::size_t N, typename ... Types>
+template <std::size_t N, typename... Types>
 struct select_type
 {
     static_assert(N < sizeof...(Types), "index out of bounds");
 };
 
-template <std::size_t N, typename T, typename ... Types>
+template <std::size_t N, typename T, typename... Types>
 struct select_type<N, T, Types...>
 {
     using type = typename select_type<N - 1, Types...>::type;
 };
 
-template <typename T, typename ... Types>
+template <typename T, typename... Types>
 struct select_type<0, T, Types...>
 {
     using type = T;
@@ -169,7 +169,7 @@ struct result_of_binary_visit<F, V, typename enable_if_type<typename F::result_t
 } // namespace detail
 
 
-template <std::size_t arg1, std::size_t ... others>
+template <std::size_t arg1, std::size_t... others>
 struct static_max;
 
 template <std::size_t arg>
@@ -178,7 +178,7 @@ struct static_max<arg>
     static const std::size_t value = arg;
 };
 
-template <std::size_t arg1, std::size_t arg2, std::size_t ... others>
+template <std::size_t arg1, std::size_t arg2, std::size_t... others>
 struct static_max<arg1, arg2, others...>
 {
     static const std::size_t value = arg1 >= arg2 ? static_max<arg1, others...>::value :
@@ -292,10 +292,10 @@ struct unwrapper<std::reference_wrapper<T>>
 };
 
 
-template <typename F, typename V, typename R, typename...Types>
+template <typename F, typename V, typename R, typename... Types>
 struct dispatcher;
 
-template <typename F, typename V, typename R, typename T, typename...Types>
+template <typename F, typename V, typename R, typename T, typename... Types>
 struct dispatcher<F, V, R, T, Types...>
 {
     using result_type = R;
@@ -340,10 +340,10 @@ struct dispatcher<F, V, R>
 };
 
 
-template <typename F, typename V, typename R, typename T, typename...Types>
+template <typename F, typename V, typename R, typename T, typename... Types>
 struct binary_dispatcher_rhs;
 
-template <typename F, typename V, typename R, typename T0, typename T1, typename...Types>
+template <typename F, typename V, typename R, typename T0, typename T1, typename... Types>
 struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
 {
     using result_type = R;
@@ -390,10 +390,10 @@ struct binary_dispatcher_rhs<F, V, R, T>
 };
 
 
-template <typename F, typename V, typename R,  typename T, typename...Types>
+template <typename F, typename V, typename R,  typename T, typename... Types>
 struct binary_dispatcher_lhs;
 
-template <typename F, typename V, typename R, typename T0, typename T1, typename...Types>
+template <typename F, typename V, typename R, typename T0, typename T1, typename... Types>
 struct binary_dispatcher_lhs<F, V, R, T0, T1, Types...>
 {
     using result_type = R;
@@ -438,10 +438,10 @@ struct binary_dispatcher_lhs<F, V, R, T>
     }
 };
 
-template <typename F, typename V, typename R, typename...Types>
+template <typename F, typename V, typename R, typename... Types>
 struct binary_dispatcher;
 
-template <typename F, typename V, typename R, typename T, typename...Types>
+template <typename F, typename V, typename R, typename T, typename... Types>
 struct binary_dispatcher<F, V, R, T, Types...>
 {
     using result_type = R;
