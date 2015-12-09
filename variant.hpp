@@ -13,7 +13,7 @@
 #include "recursive_wrapper.hpp"
 
 #ifdef _MSC_VER
- // http://msdn.microsoft.com/en-us/library/z8y1yy88.aspx
+ // https://msdn.microsoft.com/en-us/library/bw1hbe6y.aspx
  #ifdef NDEBUG
   #define VARIANT_INLINE __forceinline
  #else
