@@ -31,7 +31,6 @@
 #define VARIANT_MINOR_VERSION 1
 #define VARIANT_PATCH_VERSION 0
 
-// translates to 100
 #define VARIANT_VERSION (VARIANT_MAJOR_VERSION*100000) + (VARIANT_MINOR_VERSION*100) + (VARIANT_PATCH_VERSION)
 
 namespace mapbox { namespace util {

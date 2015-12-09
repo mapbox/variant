@@ -31,17 +31,6 @@ struct mutating_visitor
 };
 
 
-
-TEST_CASE( "variant version", "[variant]" ) {
-    unsigned int version = VARIANT_VERSION;
-    REQUIRE(version == 100);
-    #if VARIANT_VERSION == 100
-        REQUIRE(true);
-    #else
-        REQUIRE(false);
-    #endif
-}
-
 TEST_CASE( "variant can be moved into vector", "[variant]" ) {
     using variant_type = mapbox::util::variant<bool,std::string>;
     variant_type v(std::string("test"));
