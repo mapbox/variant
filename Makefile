@@ -35,7 +35,7 @@ gyp: ./deps/gyp
 
 out/bench-variant-debug: Makefile test/bench_variant.cpp variant.hpp recursive_wrapper.hpp
 	mkdir -p ./out
-	$(CXX) -o out/bench-variant-debug test/bench_variant.cpp -I./ $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
+	$(CXX) -o out/bench-variant-debug test/bench_variant.cpp -I./ -pthreads $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_LIBS)
 
 out/bench-variant: Makefile test/bench_variant.cpp variant.hpp recursive_wrapper.hpp
 	mkdir -p ./out
