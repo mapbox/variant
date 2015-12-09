@@ -11,7 +11,7 @@ class printer
 public:
     explicit printer(Out & out)
         : out_(out) {}
-    printer& operator=(printer const&) = delete;
+    printer & operator=(printer const&) = delete;
 
 // visitor
     template <typename T>

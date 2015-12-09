@@ -25,7 +25,7 @@ struct mutating_visitor
     }
 
     template <typename T1>
-    void operator() (T1& ) const {} // no-op
+    void operator() (T1 &) const {} // no-op
 
     T & val_;
 };
@@ -177,7 +177,7 @@ struct MissionInteger
     }
 };
 
-std::ostream& operator<<(std::ostream& os, MissionInteger const& rhs)
+std::ostream& operator<<(std::ostream & os, MissionInteger const& rhs)
 {
     os << rhs.get();
     return os;

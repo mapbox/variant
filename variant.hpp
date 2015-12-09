@@ -143,7 +143,7 @@ struct enable_if_type { using type = R; };
 template <typename F, typename V, typename Enable = void>
 struct result_of_unary_visit
 {
-    using type = typename std::result_of<F(V&)>::type;
+    using type = typename std::result_of<F(V &)>::type;
 };
 
 template <typename F, typename V>
@@ -155,7 +155,7 @@ struct result_of_unary_visit<F, V, typename enable_if_type<typename F::result_ty
 template <typename F, typename V, class Enable = void>
 struct result_of_binary_visit
 {
-    using type = typename std::result_of<F(V&,V&)>::type;
+    using type = typename std::result_of<F(V &, V &)>::type;
 };
 
 
@@ -263,7 +263,7 @@ struct unwrapper
         return obj;
     }
 
-    T& operator() (T & obj) const
+    T & operator() (T & obj) const
     {
         return obj;
     }
@@ -526,7 +526,7 @@ class comparer
 public:
     explicit comparer(Variant const& lhs) noexcept
         : lhs_(lhs) {}
-    comparer& operator=(comparer const&) = delete;
+    comparer & operator=(comparer const&) = delete;
     // visitor
     template<typename T>
     bool operator()(T const& rhs_content) const
@@ -585,7 +585,7 @@ public:
         helper_type::copy(old.type_index, &old.data, &data);
     }
 
-    VARIANT_INLINE variant(variant<Types...>&& old) noexcept
+    VARIANT_INLINE variant(variant<Types...> && old) noexcept
         : type_index(old.type_index)
     {
         helper_type::move(old.type_index, &old.data, &data);
@@ -653,7 +653,7 @@ public:
     }
 
     template<typename T, typename... Args>
-    VARIANT_INLINE void set(Args&&... args)
+    VARIANT_INLINE void set(Args &&... args)
     {
         helper_type::destroy(type_index, &data);
         new (&data) T(std::forward<Args>(args)...);
@@ -664,7 +664,7 @@ public:
     template<typename T, typename std::enable_if<
                          (detail::direct_type<T, Types...>::index != detail::invalid_value)
                          >::type* = nullptr>
-    VARIANT_INLINE T& get()
+    VARIANT_INLINE T & get()
     {
         if (type_index == detail::direct_type<T, Types...>::index)
         {
@@ -695,7 +695,7 @@ public:
     template <typename T, typename std::enable_if<
                           (detail::direct_type<recursive_wrapper<T>, Types...>::index != detail::invalid_value)
                           >::type* = nullptr>
-    VARIANT_INLINE T& get()
+    VARIANT_INLINE T & get()
     {
         if (type_index == detail::direct_type<recursive_wrapper<T>, Types...>::index)
         {
