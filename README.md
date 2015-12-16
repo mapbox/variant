@@ -47,9 +47,7 @@ the `operator<<` overload for variant. Include `optional.hpp` to get an
 
 On Unix systems compile and run the unit tests with `make test`.
 
-On Windows do:
-
-    vcbuild
+On Windows run `scripts/build-local.bat`.
 
 
 ## Benchmarks
