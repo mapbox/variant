@@ -1,6 +1,7 @@
 #ifndef MAPBOX_UTIL_RECURSIVE_WRAPPER_HPP
 #define MAPBOX_UTIL_RECURSIVE_WRAPPER_HPP
 
+#include <cassert>
 #include <utility>
 
 namespace mapbox { namespace util {
@@ -8,37 +9,32 @@ namespace mapbox { namespace util {
 template <typename T>
 class recursive_wrapper
 {
-public:
-    using type = T;
-private:
 
     T* p_;
 
+    void assign(T const& rhs);
+
 public:
 
-    ~recursive_wrapper();
+    using type = T;
+
     recursive_wrapper();
+    ~recursive_wrapper() noexcept;
 
     recursive_wrapper(recursive_wrapper const& operand);
     recursive_wrapper(T const& operand);
     recursive_wrapper(recursive_wrapper && operand);
     recursive_wrapper(T && operand);
 
-private:
-
-    void assign(T const& rhs);
-
-public:
-
     inline recursive_wrapper & operator=(recursive_wrapper const& rhs)
     {
-        assign( rhs.get() );
+        assign(rhs.get());
         return *this;
     }
 
     inline recursive_wrapper & operator=(T const& rhs)
     {
-        assign( rhs );
+        assign(rhs);
         return *this;
     }
 
@@ -62,22 +58,27 @@ public:
         return *this;
     }
 
+    T & get()
+    {
+        assert(p_);
+        return *get_pointer();
+    }
 
-public:
+    T const& get() const
+    {
+        assert(p_);
+        return *get_pointer();
+    }
 
-    T & get() { return *get_pointer(); }
-    T const& get() const { return *get_pointer(); }
     T* get_pointer() { return p_; }
-    const T* get_pointer() const { return p_; }
-    operator T const&() const { return this->get(); }
-    operator T &() { return this->get(); }
-};
 
-template <typename T>
-recursive_wrapper<T>::~recursive_wrapper()
-{
-    delete p_;
-}
+    const T* get_pointer() const { return p_; }
+
+    operator T const&() const { return this->get(); }
+
+    operator T &() { return this->get(); }
+
+}; // class recursive_wrapper
 
 template <typename T>
 recursive_wrapper<T>::recursive_wrapper()
@@ -86,8 +87,14 @@ recursive_wrapper<T>::recursive_wrapper()
 }
 
 template <typename T>
+recursive_wrapper<T>::~recursive_wrapper() noexcept
+{
+    delete p_;
+}
+
+template <typename T>
 recursive_wrapper<T>::recursive_wrapper(recursive_wrapper const& operand)
-    : p_(new T( operand.get() ))
+    : p_(new T(operand.get()))
 {
 }
 
@@ -106,7 +113,7 @@ recursive_wrapper<T>::recursive_wrapper(recursive_wrapper && operand)
 
 template <typename T>
 recursive_wrapper<T>::recursive_wrapper(T && operand)
-    : p_(new T( std::move(operand) ))
+    : p_(new T(std::move(operand)))
 {
 }
 
