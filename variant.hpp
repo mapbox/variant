@@ -5,6 +5,7 @@
 #include <new> // operator new
 #include <stdexcept> // runtime_error
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <typeinfo>
 #include <utility>
@@ -113,24 +114,6 @@ struct is_valid_type<T, First, Types...>
 
 template <typename T>
 struct is_valid_type<T> : std::false_type {};
-
-template <std::size_t N, typename... Types>
-struct select_type
-{
-    static_assert(N < sizeof...(Types), "index out of bounds");
-};
-
-template <std::size_t N, typename T, typename... Types>
-struct select_type<N, T, Types...>
-{
-    using type = typename select_type<N - 1, Types...>::type;
-};
-
-template <typename T, typename... Types>
-struct select_type<0, T, Types...>
-{
-    using type = T;
-};
 
 
 template <typename T, typename R = void>
@@ -563,7 +546,7 @@ public:
     VARIANT_INLINE variant()
         : type_index(sizeof...(Types) - 1)
     {
-        new (&data) typename detail::select_type<0, Types...>::type();
+        new (&data) typename std::tuple_element<0, std::tuple<Types...>>::type();
     }
 
     VARIANT_INLINE variant(no_init)
@@ -576,7 +559,7 @@ public:
         : type_index(detail::value_traits<typename std::remove_reference<T>::type, Types...>::index)
     {
         constexpr std::size_t index = sizeof...(Types) - detail::value_traits<typename std::remove_reference<T>::type, Types...>::index - 1;
-        using target_type = typename detail::select_type<index, Types...>::type;
+        using target_type = typename std::tuple_element<index, std::tuple<Types...>>::type;
         new (&data) target_type(std::forward<T>(val)); // nothrow
     }
 
@@ -771,9 +754,9 @@ public:
     static visit(V const& v, F f)
         -> decltype(detail::dispatcher<F, V,
                     typename detail::result_of_unary_visit<F,
-                    typename detail::select_type<0, Types...>::type>::type, Types...>::apply_const(v, f))
+                    typename std::tuple_element<0, std::tuple<Types...>>::type>::type, Types...>::apply_const(v, f))
     {
-        using R = typename detail::result_of_unary_visit<F, typename detail::select_type<0, Types...>::type>::type;
+        using R = typename detail::result_of_unary_visit<F, typename std::tuple_element<0, std::tuple<Types...>>::type>::type;
         return detail::dispatcher<F, V, R, Types...>::apply_const(v, f);
     }
     // non-const
@@ -782,9 +765,9 @@ public:
     static visit(V & v, F f)
         -> decltype(detail::dispatcher<F, V,
                     typename detail::result_of_unary_visit<F,
-                    typename detail::select_type<0, Types...>::type>::type, Types...>::apply(v, f))
+                    typename std::tuple_element<0, std::tuple<Types...>>::type>::type, Types...>::apply(v, f))
     {
-        using R = typename detail::result_of_unary_visit<F, typename detail::select_type<0, Types...>::type>::type;
+        using R = typename detail::result_of_unary_visit<F, typename std::tuple_element<0, std::tuple<Types...>>::type>::type;
         return detail::dispatcher<F, V, R, Types...>::apply(v, f);
     }
 
@@ -795,9 +778,9 @@ public:
     static binary_visit(V const& v0, V const& v1, F f)
         -> decltype(detail::binary_dispatcher<F, V,
                     typename detail::result_of_binary_visit<F,
-                    typename detail::select_type<0, Types...>::type>::type, Types...>::apply_const(v0, v1, f))
+                    typename std::tuple_element<0, std::tuple<Types...>>::type>::type, Types...>::apply_const(v0, v1, f))
     {
-        using R = typename detail::result_of_binary_visit<F,typename detail::select_type<0, Types...>::type>::type;
+        using R = typename detail::result_of_binary_visit<F,typename std::tuple_element<0, std::tuple<Types...>>::type>::type;
         return detail::binary_dispatcher<F, V, R, Types...>::apply_const(v0, v1, f);
     }
     // non-const
@@ -806,9 +789,9 @@ public:
     static binary_visit(V& v0, V& v1, F f)
         -> decltype(detail::binary_dispatcher<F, V,
                     typename detail::result_of_binary_visit<F,
-                    typename detail::select_type<0, Types...>::type>::type, Types...>::apply(v0, v1, f))
+                    typename std::tuple_element<0, std::tuple<Types...>>::type>::type, Types...>::apply(v0, v1, f))
     {
-        using R = typename detail::result_of_binary_visit<F,typename detail::select_type<0, Types...>::type>::type;
+        using R = typename detail::result_of_binary_visit<F,typename std::tuple_element<0, std::tuple<Types...>>::type>::type;
         return detail::binary_dispatcher<F, V, R, Types...>::apply(v0, v1, f);
     }
 
