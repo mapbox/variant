@@ -252,6 +252,43 @@ struct variant_helper<>
 
 namespace detail {
 
+template <typename T>
+struct unwrapper
+{
+    T const& operator()(T const& obj) const
+    {
+        return obj;
+    }
+
+    T & operator()(T & obj) const
+    {
+        return obj;
+    }
+};
+
+
+template <typename T>
+struct unwrapper<recursive_wrapper<T>>
+{
+    auto operator()(recursive_wrapper<T> const& obj) const
+        -> typename recursive_wrapper<T>::type const&
+    {
+        return obj.get();
+    }
+};
+
+template <typename T>
+struct unwrapper<std::reference_wrapper<T>>
+{
+    auto operator()(std::reference_wrapper<T> const& obj) const
+        -> typename std::reference_wrapper<T>::type const&
+    {
+        return obj.get();
+    }
+
+};
+
+
 template <typename F, typename V, typename R, typename... Types>
 struct dispatcher;
 
@@ -263,7 +300,7 @@ struct dispatcher<F, V, R, T, Types...>
     {
         if (v.get_type_index() == sizeof...(Types))
         {
-            return f(v. template get<T>());
+            return f(unwrapper<T>()(v. template get<T>()));
         }
         else
         {
@@ -275,7 +312,7 @@ struct dispatcher<F, V, R, T, Types...>
     {
         if (v.get_type_index() == sizeof...(Types))
         {
-            return f(v. template get<T>());
+            return f(unwrapper<T>()(v. template get<T>()));
         }
         else
         {
@@ -311,7 +348,8 @@ struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
     {
         if (rhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
-            return f(lhs. template get<T0>(), rhs. template get<T1>());
+            return f(unwrapper<T0>()(lhs. template get<T0>()),
+                     unwrapper<T1>()(rhs. template get<T1>()));
         }
         else
         {
@@ -323,7 +361,8 @@ struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
     {
         if (rhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
-            return f(lhs. template get<T0>(), rhs. template get<T1>());
+            return f(unwrapper<T0>()(lhs. template get<T0>()),
+                     unwrapper<T1>()(rhs. template get<T1>()));
         }
         else
         {
