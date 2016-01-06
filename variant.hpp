@@ -255,23 +255,20 @@ namespace detail {
 template <typename T>
 struct unwrapper
 {
-    T const& operator()(T const& obj) const
-    {
-        return obj;
-    }
-
-    T & operator()(T & obj) const
-    {
-        return obj;
-    }
+    static T const& apply_const(T const& obj) {return obj;}
+    static T& apply(T & obj) {return obj;}
 };
-
 
 template <typename T>
 struct unwrapper<recursive_wrapper<T>>
 {
-    auto operator()(recursive_wrapper<T> const& obj) const
+    static auto apply_const(recursive_wrapper<T> const& obj)
         -> typename recursive_wrapper<T>::type const&
+    {
+        return obj.get();
+    }
+    static auto apply(recursive_wrapper<T> & obj)
+        -> typename recursive_wrapper<T>::type&
     {
         return obj.get();
     }
@@ -280,14 +277,17 @@ struct unwrapper<recursive_wrapper<T>>
 template <typename T>
 struct unwrapper<std::reference_wrapper<T>>
 {
-    auto operator()(std::reference_wrapper<T> const& obj) const
+    static auto apply_const(std::reference_wrapper<T> const& obj)
         -> typename std::reference_wrapper<T>::type const&
     {
         return obj.get();
     }
-
+    static auto apply(std::reference_wrapper<T> & obj)
+        -> typename std::reference_wrapper<T>::type&
+    {
+        return obj.get();
+    }
 };
-
 
 template <typename F, typename V, typename R, typename... Types>
 struct dispatcher;
@@ -300,7 +300,7 @@ struct dispatcher<F, V, R, T, Types...>
     {
         if (v.get_type_index() == sizeof...(Types))
         {
-            return f(unwrapper<T>()(v. template get<T>()));
+            return f(unwrapper<T>::apply_const(v. template get<T>()));
         }
         else
         {
@@ -312,7 +312,7 @@ struct dispatcher<F, V, R, T, Types...>
     {
         if (v.get_type_index() == sizeof...(Types))
         {
-            return f(unwrapper<T>()(v. template get<T>()));
+            return f(unwrapper<T>::apply(v. template get<T>()));
         }
         else
         {
@@ -348,8 +348,8 @@ struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
     {
         if (rhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
-            return f(unwrapper<T0>()(lhs. template get<T0>()),
-                     unwrapper<T1>()(rhs. template get<T1>()));
+            return f(unwrapper<T0>::apply_const(lhs. template get<T0>()),
+                     unwrapper<T1>::apply_const(rhs. template get<T1>()));
         }
         else
         {
@@ -361,8 +361,8 @@ struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
     {
         if (rhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
-            return f(unwrapper<T0>()(lhs. template get<T0>()),
-                     unwrapper<T1>()(rhs. template get<T1>()));
+            return f(unwrapper<T0>::apply(lhs. template get<T0>()),
+                     unwrapper<T1>::apply(rhs. template get<T1>()));
         }
         else
         {
@@ -398,7 +398,8 @@ struct binary_dispatcher_lhs<F, V, R, T0, T1, Types...>
     {
         if (lhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
-            return f(lhs. template get<T1>(), rhs. template get<T0>());
+            return f(unwrapper<T1>::apply_const(lhs. template get<T1>()),
+                     unwrapper<T0>::apply_const(rhs. template get<T0>()));
         }
         else
         {
@@ -410,7 +411,8 @@ struct binary_dispatcher_lhs<F, V, R, T0, T1, Types...>
     {
         if (lhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
-            return f(lhs. template get<T1>(), rhs. template get<T0>());
+            return f(unwrapper<T1>::apply(lhs. template get<T1>()),
+                     unwrapper<T0>::apply(rhs. template get<T0>()));
         }
         else
         {
@@ -448,7 +450,8 @@ struct binary_dispatcher<F, V, R, T, Types...>
         {
             if (v0.get_type_index() == v1.get_type_index())
             {
-                return f(v0. template get<T>(), v1. template get<T>()); // call binary functor
+                return f(unwrapper<T>::apply_const(v0. template get<T>()),
+                         unwrapper<T>::apply_const(v1. template get<T>())); // call binary functor
             }
             else
             {
@@ -468,7 +471,8 @@ struct binary_dispatcher<F, V, R, T, Types...>
         {
             if (v0.get_type_index() == v1.get_type_index())
             {
-                return f(v0. template get<T>(), v1. template get<T>()); // call binary functor
+                return f(unwrapper<T>::apply(v0. template get<T>()),
+                         unwrapper<T>::apply(v1. template get<T>())); // call binary functor
             }
             else
             {
