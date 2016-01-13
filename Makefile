@@ -71,6 +71,10 @@ out/optional.o: Makefile test/t/optional.cpp optional.hpp variant.hpp variant_io
 	mkdir -p ./out
 	$(CXX) -c -o $@ test/t/optional.cpp -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
 
+out/issue21.o: Makefile test/t/issue21.cpp optional.hpp variant.hpp variant_io.hpp recursive_wrapper.hpp
+	mkdir -p ./out
+	$(CXX) -c -o $@ test/t/issue21.cpp -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
+
 out/recursive_wrapper.o: Makefile test/t/recursive_wrapper.cpp recursive_wrapper.hpp
 	mkdir -p ./out
 	$(CXX) -c -o $@ test/t/recursive_wrapper.cpp -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
@@ -79,7 +83,7 @@ out/variant.o: Makefile test/t/variant.cpp variant.hpp variant_io.hpp recursive_
 	mkdir -p ./out
 	$(CXX) -c -o $@ test/t/variant.cpp -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
 
-out/unit: out/unit.o out/mutating_visitor.o out/optional.o out/recursive_wrapper.o out/variant.o
+out/unit: out/unit.o out/issue21.o out/mutating_visitor.o out/optional.o out/recursive_wrapper.o out/variant.o
 	mkdir -p ./out
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
