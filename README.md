@@ -21,14 +21,17 @@ Time to compile header     | 185 ms             |  675 ms
 
 ## Depends
 
- - Compiler supporting `-std=c++11`
+ - Compiler supporting `-std=c++11` or `-std=c++14`
 
 Tested with
 
  - g++-4.7
  - g++-4.8
+ - g++-4.9
+ - g++-5
  - clang++-3.4
  - clang++-3.5
+ - clang++-3.8
  - Visual C++ Compiler November 2013 CTP
  - Visual C++ Compiler 2014 CTP 4
 
