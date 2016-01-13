@@ -1,6 +1,17 @@
 #ifndef MAPBOX_UTIL_RECURSIVE_WRAPPER_HPP
 #define MAPBOX_UTIL_RECURSIVE_WRAPPER_HPP
 
+// Based on variant/recursive_wrapper.hpp from boost.
+//
+// Original license:
+//
+// Copyright (c) 2002-2003
+// Eric Friedman, Itay Maman
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+
 #include <cassert>
 #include <utility>
 
