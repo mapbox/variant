@@ -34,6 +34,20 @@
 
 namespace mapbox { namespace util {
 
+// XXX This should derive from std::logic_error instead of std::runtime_error.
+//     See https://github.com/mapbox/variant/issues/48 for details.
+class bad_variant_access : public std::runtime_error {
+
+public:
+
+    explicit bad_variant_access(const std::string& what_arg) :
+        runtime_error(what_arg) {}
+
+    explicit bad_variant_access(const char* what_arg) :
+        runtime_error(what_arg) {}
+
+}; // class bad_variant_access
+
 template <typename R = void>
 struct static_visitor
 {
@@ -673,7 +687,7 @@ public:
         }
         else
         {
-            throw std::runtime_error("in get<T>()");
+            throw bad_variant_access("in get<T>()");
         }
     }
 
@@ -688,7 +702,7 @@ public:
         }
         else
         {
-            throw std::runtime_error("in get<T>()");
+            throw bad_variant_access("in get<T>()");
         }
     }
 
@@ -704,7 +718,7 @@ public:
         }
         else
         {
-            throw std::runtime_error("in get<T>()");
+            throw bad_variant_access("in get<T>()");
         }
     }
 
@@ -719,7 +733,7 @@ public:
         }
         else
         {
-            throw std::runtime_error("in get<T>()");
+            throw bad_variant_access("in get<T>()");
         }
     }
 
@@ -735,7 +749,7 @@ public:
         }
         else
         {
-            throw std::runtime_error("in get<T>()");
+            throw bad_variant_access("in get<T>()");
         }
     }
 
@@ -750,7 +764,7 @@ public:
         }
         else
         {
-            throw std::runtime_error("in get<T>()");
+            throw bad_variant_access("in get<T>()");
         }
     }
 
