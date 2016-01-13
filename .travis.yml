@@ -9,10 +9,18 @@ addons_shortcuts:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5', 'boost-latest' ]
       packages: [ 'gdb', 'clang-3.5', 'libstdc++-4.9-dev', 'libstdc++6', 'libllvm3.4', 'libboost1.55-all-dev' ]
   # TODO: 4.7,4.8,5.1
+  addons_gcc49: &gcc48
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test', 'boost-latest' ]
+      packages: [ 'gdb', 'g++-4.8', 'gcc-4.8', 'libllvm3.4', 'libboost1.55-all-dev' ]
   addons_gcc49: &gcc49
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'boost-latest' ]
       packages: [ 'gdb', 'g++-4.9', 'gcc-4.9', 'libllvm3.4', 'libboost1.55-all-dev' ]
+  addons_gcc49: &gcc5
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test', 'boost-latest' ]
+      packages: [ 'gdb', 'g++-5', 'gcc-5', 'libllvm3.4', 'libboost1.55-all-dev' ]
   addons_clang38: &clang38
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise', 'boost-latest' ]
@@ -41,6 +49,14 @@ matrix:
       compiler: ": gcc49"
       env: CXX=g++-4.9
       addons: *gcc49
+    - os: linux
+      compiler: ": gcc48"
+      env: CXX=g++-4.8
+      addons: *gcc48
+    - os: linux
+      compiler: ": gcc5"
+      env: CXX=g++-5
+      addons: *gcc5
 
 before_install:
  - echo ${CXX}
@@ -50,7 +66,7 @@ before_install:
      brew install boost;
      export PYTHONPATH=$(pwd)/mason_packages/.link/lib/python/site-packages;
    fi
- - if [[ ${COVERAGE} == true ]]; then
+ - if [[ ${COVERAGE:-0} == 'True' ]]; then
      PYTHONUSERBASE=$(pwd)./.local pip install --user cpp-coveralls;
    fi
 
