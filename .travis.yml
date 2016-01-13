@@ -78,7 +78,7 @@ before_install:
      export PYTHONPATH=$(pwd)/mason_packages/.link/lib/python/site-packages;
    fi
  - if [[ ${COVERAGE:-0} == 'True' ]]; then
-     PYTHONUSERBASE=$(pwd)./.local pip install --user cpp-coveralls;
+     PYTHONUSERBASE=$(pwd)/.local pip install --user cpp-coveralls;
    fi
 
 install:
