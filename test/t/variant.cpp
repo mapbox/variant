@@ -196,6 +196,8 @@ TEST_CASE( "variant::which() returns zero based index of stored type", "[variant
 TEST_CASE( "get with wrong type (here: double) should throw", "[variant]" ) {
     using variant_type = mapbox::util::variant<int, double>;
     variant_type var = 5;
+    REQUIRE(var.is<int>());
+    REQUIRE_FALSE(var.is<double>());
     REQUIRE(var.get<int>() == 5);
     REQUIRE_THROWS(var.get<double>());
 }
@@ -203,6 +205,8 @@ TEST_CASE( "get with wrong type (here: double) should throw", "[variant]" ) {
 TEST_CASE( "get with wrong type (here: int) should throw", "[variant]" ) {
     using variant_type = mapbox::util::variant<int, double>;
     variant_type var = 5.0;
+    REQUIRE(var.is<double>());
+    REQUIRE_FALSE(var.is<int>());
     REQUIRE(var.get<double>() == 5.0);
     REQUIRE_THROWS(var.get<int>());
 }
