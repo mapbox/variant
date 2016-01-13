@@ -38,24 +38,32 @@ matrix:
       env: TEST_GYP_BUILD=True
       compiler: clang
     - os: linux
-      compiler: ": clang35"
+      compiler: "clang35"
       env: CXX=clang++-3.5 COVERAGE=True
       addons: *clang35
     - os: linux
-      compiler: ": clang38"
+      compiler: "clang38"
       env: CXX=clang++-3.8
       addons: *clang38
     - os: linux
-      compiler: ": gcc49"
-      env: CXX=g++-4.9
-      addons: *gcc49
+      compiler: "gcc47"
+      env: CXX=g++-4.7
+      addons: *gcc47
     - os: linux
-      compiler: ": gcc48"
+      compiler: "gcc48"
       env: CXX=g++-4.8
       addons: *gcc48
     - os: linux
-      compiler: ": gcc5"
-      env: CXX=g++-5
+      compiler: "gcc49"
+      env: CXX=g++-4.9
+      addons: *gcc49
+    - os: linux
+      compiler: "gcc5"
+      env: CXX=g++-5 CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0"
+      addons: *gcc5
+    - os: linux
+      compiler: "gcc5"
+      env: CXX=g++-5 CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=1"
       addons: *gcc5
 
 before_install:
@@ -89,5 +97,5 @@ script:
     make coverage;
     ./out/cov-test;
     cp unit*gc* test/;
-    ./.local/bin/coveralls -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp --gcov-options '\-lp';
+    ./.local/bin/cpp-coveralls -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp --gcov-options '\-lp';
    fi
