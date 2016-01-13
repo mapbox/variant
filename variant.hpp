@@ -335,18 +335,18 @@ struct dispatcher<F, V, R, T, Types...>
     }
 };
 
-template <typename F, typename V, typename R>
-struct dispatcher<F, V, R>
+template <typename F, typename V, typename R, typename T>
+struct dispatcher<F, V, R, T>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const&, F)
+    VARIANT_INLINE static result_type apply_const(V const& v, F f)
     {
-        throw std::runtime_error(std::string("unary dispatch: FAIL ") + typeid(V).name());
+        return f(unwrapper<T>::apply_const(v. template get<T>()));
     }
 
-    VARIANT_INLINE static result_type apply(V &, F)
+    VARIANT_INLINE static result_type apply(V & v, F f)
     {
-        throw std::runtime_error(std::string("unary dispatch: FAIL ") + typeid(V).name());
+        return f(unwrapper<T>::apply(v. template get<T>()));
     }
 };
 
@@ -386,18 +386,22 @@ struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
 
 };
 
-template <typename F, typename V, typename R, typename T>
-struct binary_dispatcher_rhs<F, V, R, T>
+template <typename F, typename V, typename R, typename T0, typename T1>
+struct binary_dispatcher_rhs<F, V, R, T0, T1>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const&, V const&, F)
+    VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F f)
     {
-        throw std::runtime_error("binary dispatch: FAIL");
+        return f(unwrapper<T0>::apply_const(lhs. template get<T0>()),
+                 unwrapper<T1>::apply_const(rhs. template get<T1>()));
     }
-    VARIANT_INLINE static result_type apply(V &, V &, F)
+
+    VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F f)
     {
-        throw std::runtime_error("binary dispatch: FAIL");
+        return f(unwrapper<T0>::apply(lhs. template get<T0>()),
+                 unwrapper<T1>::apply(rhs. template get<T1>()));
     }
+
 };
 
 
@@ -436,20 +440,24 @@ struct binary_dispatcher_lhs<F, V, R, T0, T1, Types...>
 
 };
 
-template <typename F, typename V, typename R, typename T>
-struct binary_dispatcher_lhs<F, V, R, T>
+template <typename F, typename V, typename R, typename T0, typename T1>
+struct binary_dispatcher_lhs<F, V, R, T0, T1>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const&, V const&, F)
+    VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F f)
     {
-        throw std::runtime_error("binary dispatch: FAIL");
+        return f(unwrapper<T1>::apply_const(lhs. template get<T1>()),
+                 unwrapper<T0>::apply_const(rhs. template get<T0>()));
     }
 
-    VARIANT_INLINE static result_type apply(V &, V &, F)
+    VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F f)
     {
-        throw std::runtime_error("binary dispatch: FAIL");
+        return f(unwrapper<T1>::apply(lhs. template get<T1>()),
+                 unwrapper<T0>::apply(rhs. template get<T0>()));
     }
+
 };
+
 
 template <typename F, typename V, typename R, typename... Types>
 struct binary_dispatcher;
@@ -501,20 +509,23 @@ struct binary_dispatcher<F, V, R, T, Types...>
     }
 };
 
-template <typename F, typename V, typename R>
-struct binary_dispatcher<F, V, R>
+template <typename F, typename V, typename R, typename T>
+struct binary_dispatcher<F, V, R, T>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const&, V const&, F)
+    VARIANT_INLINE static result_type apply_const(V const& v0, V const& v1, F f)
     {
-        throw std::runtime_error("binary dispatch: FAIL");
+        return f(unwrapper<T>::apply_const(v0. template get<T>()),
+                 unwrapper<T>::apply_const(v1. template get<T>())); // call binary functor
     }
 
-    VARIANT_INLINE static result_type apply(V &, V &, F)
+    VARIANT_INLINE static result_type apply(V & v0, V & v1, F f)
     {
-        throw std::runtime_error("binary dispatch: FAIL");
+        return f(unwrapper<T>::apply(v0. template get<T>()),
+                 unwrapper<T>::apply(v1. template get<T>())); // call binary functor
     }
 };
+
 
 // comparator functors
 struct equal_comp
