@@ -72,10 +72,10 @@ matrix:
 before_install:
  - echo ${CXX}
  - if [[ $(uname -s) == 'Linux' ]]; then
-     export PYTHONPATH=$(pwd)/mason_packages/.link/lib/python2.7/site-packages;
+     export PYTHONPATH=$(pwd)/.local/lib/python2.7/site-packages;
    else
      brew install boost;
-     export PYTHONPATH=$(pwd)/mason_packages/.link/lib/python/site-packages;
+     export PYTHONPATH=$(pwd)/.local/lib/python/site-packages;
    fi
  - if [[ ${COVERAGE:-0} == 'True' ]]; then
      PYTHONUSERBASE=$(pwd)/.local pip install --user cpp-coveralls;
