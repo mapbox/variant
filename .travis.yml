@@ -27,6 +27,7 @@ matrix:
       compiler: clang
     - os: osx
       osx_image: xcode7
+      env: TEST_GYP_BUILD=True
       compiler: clang
     - os: linux
       compiler: ": clang35"
@@ -61,16 +62,16 @@ install:
    else
      make sizes `brew --prefix`/include/boost/variant.hpp;
    fi
- - make clean
- - make gyp
+ - if [[ ${TEST_GYP_BUILD:-0} == 'True' ]]; then
+     make clean;
+     make gyp;
+   fi
 
 script:
-
  - if [[ ${COVERAGE:-0} == 'True' ]]; then
     make clean;
     make coverage;
     ./out/cov-test;
     cp unit*gc* test/;
-    sudo pip install cpp-coveralls;
     ./.local/bin/coveralls -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp --gcov-options '\-lp';
    fi
