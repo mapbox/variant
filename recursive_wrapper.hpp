@@ -23,19 +23,42 @@ class recursive_wrapper
 
     T* p_;
 
-    void assign(T const& rhs);
+    void assign(T const& rhs)
+    {
+        this->get() = rhs;
+    }
 
 public:
 
     using type = T;
 
-    recursive_wrapper();
-    ~recursive_wrapper() noexcept;
+    /**
+     * Default constructor default initializes the internally stored value.
+     * For POD types this means nothing is done and the storage is
+     * uninitialized.
+     *
+     * @throws std::bad_alloc if there is insufficient memory for an object
+     *         of type T.
+     * @throws any exception thrown by the default constructur of T.
+     */
+    recursive_wrapper() : p_(new T) {};
 
-    recursive_wrapper(recursive_wrapper const& operand);
-    recursive_wrapper(T const& operand);
-    recursive_wrapper(recursive_wrapper && operand);
-    recursive_wrapper(T && operand);
+    ~recursive_wrapper() noexcept { delete p_; };
+
+    recursive_wrapper(recursive_wrapper const& operand)
+        : p_(new T(operand.get())) {}
+
+    recursive_wrapper(T const& operand)
+        : p_(new T(operand)) {}
+
+    recursive_wrapper(recursive_wrapper && operand)
+        : p_(operand.p_)
+    {
+        operand.p_ = nullptr;
+    }
+
+    recursive_wrapper(T && operand)
+        : p_(new T(std::move(operand))) {}
 
     inline recursive_wrapper & operator=(recursive_wrapper const& rhs)
     {
@@ -55,7 +78,6 @@ public:
         operand.p_ = p_;
         p_ = temp;
     }
-
 
     recursive_wrapper & operator=(recursive_wrapper && rhs) noexcept
     {
@@ -90,49 +112,6 @@ public:
     operator T &() { return this->get(); }
 
 }; // class recursive_wrapper
-
-template <typename T>
-recursive_wrapper<T>::recursive_wrapper()
-    : p_(new T)
-{
-}
-
-template <typename T>
-recursive_wrapper<T>::~recursive_wrapper() noexcept
-{
-    delete p_;
-}
-
-template <typename T>
-recursive_wrapper<T>::recursive_wrapper(recursive_wrapper const& operand)
-    : p_(new T(operand.get()))
-{
-}
-
-template <typename T>
-recursive_wrapper<T>::recursive_wrapper(T const& operand)
-    : p_(new T(operand))
-{
-}
-
-template <typename T>
-recursive_wrapper<T>::recursive_wrapper(recursive_wrapper && operand)
-    : p_(operand.p_)
-{
-    operand.p_ = nullptr;
-}
-
-template <typename T>
-recursive_wrapper<T>::recursive_wrapper(T && operand)
-    : p_(new T(std::move(operand)))
-{
-}
-
-template <typename T>
-void recursive_wrapper<T>::assign(T const& rhs)
-{
-    this->get() = rhs;
-}
 
 template <typename T>
 inline void swap(recursive_wrapper<T> & lhs, recursive_wrapper<T> & rhs) noexcept
