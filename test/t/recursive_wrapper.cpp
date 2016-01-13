@@ -10,12 +10,6 @@ using rwp = mapbox::util::recursive_wrapper<std::pair<int, int>>;
 
 TEST_CASE("recursive wrapper of int") {
 
-    // this fails, POD types are not initialized. is this okay?
-/*    SECTION("default constructed") {
-        rwi a;
-        REQUIRE(a.get() == 0);
-    }*/
-
     SECTION("construct with value") {
         rwi a{7};
         REQUIRE(a.get() == 7);
