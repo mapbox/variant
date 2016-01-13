@@ -1,22 +1,76 @@
-language: cpp
+language: c
 
-# http://docs.travis-ci.com/user/multi-os/
-os:
-  - linux
-  - osx
+sudo: false
 
-compiler:
- - clang
- - gcc
+# Save common build configurations as shortcuts, so we can reference them later.
+addons_shortcuts:
+  addons_clang35: &clang35
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5' ]
+      packages: [ 'gdb', 'clang-3.5', 'libstdc++-4.9-dev', 'libstdc++6', 'libllvm3.4', 'libboost-all-dev' ]
+  # TODO: 4.7,4.8,5.1
+  addons_gcc49: &gcc49
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test' ]
+      packages: [ 'gdb', 'g++-4.9', 'gcc-4.9', 'libllvm3.4', 'libboost-all-dev' ]
+  addons_clang38: &clang38
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise' ]
+      packages: [ 'clang-3.8', 'libgcc-4.9-dev', 'libstdc++-4.9-dev', 'libstdc++6',
+                  'libllvm3.4', 'libclang-common-3.8-dev', 'libclang1-3.8', 'liblldb-3.8',
+                  'libllvm3.8', 'lldb-3.8', 'llvm-3.8', 'llvm-3.8-dev', 'llvm-3.8-runtime', 'libboost-all-dev']
+
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode6
+      compiler: clang
+    - os: osx
+      osx_image: xcode7
+      compiler: clang
+    - os: linux
+      compiler: ": clang35"
+      env: CXX=clang++-3.5 COVERAGE=True
+      addons: *clang35
+    - os: linux
+      compiler: ": clang38"
+      env: CXX=clang++-3.8
+      addons: *clang38
+    - os: linux
+      compiler: ": gcc49"
+      env: CXX=g++-4.9
+      addons: *gcc49
 
 before_install:
- - true
+ - echo ${CXX}
+ - if [[ $(uname -s) == 'Linux' ]]; then
+     export PYTHONPATH=$(pwd)/mason_packages/.link/lib/python2.7/site-packages;
+   else
+     brew install boost;
+     export PYTHONPATH=$(pwd)/mason_packages/.link/lib/python/site-packages;
+   fi
+ - if [[ ${COVERAGE} == true ]]; then
+     PYTHONUSERBASE=$(pwd)./.local pip install --user cpp-coveralls;
+   fi
 
 install:
- - true
-
-before_script:
- - true
+ - make test
+ - make bench
+ - if [[ $(uname -s) == 'Linux' ]]; then
+     make sizes /usr/include/boost/variant.hpp;
+   else
+     make sizes `brew --prefix`/include/boost/variant.hpp;
+   fi
+ - make clean
+ - make gyp
 
 script:
- - source "scripts/${TRAVIS_OS_NAME}.sh"
+
+ - if [[ ${COVERAGE:-0} == 'True' ]]; then
+    make clean;
+    make coverage;
+    ./out/cov-test;
+    cp unit*gc* test/;
+    sudo pip install cpp-coveralls;
+    ./.local/bin/coveralls -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp --gcov-options '\-lp';
+   fi
