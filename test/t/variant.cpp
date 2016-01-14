@@ -241,8 +241,9 @@ TEST_CASE( "Type indexing should work with variants with duplicated types", "[va
     REQUIRE((mapbox::util::detail::value_traits<int, bool, int, double, std::string>::index == 2));
     REQUIRE((mapbox::util::detail::value_traits<double, bool, int, double, std::string>::index == 1));
     REQUIRE((mapbox::util::detail::value_traits<std::string, bool, int, double, std::string>::index == 0));
-    REQUIRE((mapbox::util::detail::value_traits<dummy, bool, int, double, std::string>::index == mapbox::util::detail::invalid_value));
-    REQUIRE((mapbox::util::detail::value_traits<std::vector<int>, bool, int, double, std::string>::index == mapbox::util::detail::invalid_value));
+    // For the following two, the instantiation of value_traits should fail. How can we test that?
+    //REQUIRE((mapbox::util::detail::value_traits<dummy, bool, int, double, std::string>::index == mapbox::util::detail::invalid_value));
+    //REQUIRE((mapbox::util::detail::value_traits<std::vector<int>, bool, int, double, std::string>::index == mapbox::util::detail::invalid_value));
 }
 
 TEST_CASE( "variant default constructor", "[variant][default constructor]" ) {
