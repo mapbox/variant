@@ -552,6 +552,8 @@ struct no_init {};
 template <typename... Types>
 class variant
 {
+    static_assert(sizeof...(Types) > 0, "Template parameter type list of variant can not be empty");
+
 private:
 
     static const std::size_t data_size = detail::static_max<sizeof(Types)...>::value;
