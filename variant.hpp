@@ -682,6 +682,7 @@ public:
     VARIANT_INLINE void set(Args &&... args)
     {
         helper_type::destroy(type_index, &data);
+        type_index = detail::invalid_value;
         new (&data) T(std::forward<Args>(args)...);
         type_index = detail::direct_type<T, Types...>::index;
     }
