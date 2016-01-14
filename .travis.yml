@@ -89,6 +89,7 @@ install:
    else
      make sizes `brew --prefix`/include/boost/variant.hpp;
    fi
+ - script/run_compilation_failure_tests.sh
  - if [[ ${TEST_GYP_BUILD:-0} == 'True' ]]; then
      make clean;
      make gyp;
