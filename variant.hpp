@@ -159,7 +159,6 @@ struct result_of_binary_visit<F, V, typename enable_if_type<typename F::result_t
 };
 
 
-} // namespace detail
 
 
 template <std::size_t arg1, std::size_t... others>
@@ -246,8 +245,6 @@ struct variant_helper<>
     VARIANT_INLINE static void copy(const std::size_t, const void *, void *) {}
     VARIANT_INLINE static void direct_swap(const std::size_t, void *, void *) {}
 };
-
-namespace detail {
 
 template <typename T>
 struct unwrapper
@@ -557,11 +554,11 @@ class variant
 {
 private:
 
-    static const std::size_t data_size = static_max<sizeof(Types)...>::value;
-    static const std::size_t data_align = static_max<alignof(Types)...>::value;
+    static const std::size_t data_size = detail::static_max<sizeof(Types)...>::value;
+    static const std::size_t data_align = detail::static_max<alignof(Types)...>::value;
 
     using data_type = typename std::aligned_storage<data_size, data_align>::type;
-    using helper_type = variant_helper<Types...>;
+    using helper_type = detail::variant_helper<Types...>;
 
     std::size_t type_index;
     data_type data;
