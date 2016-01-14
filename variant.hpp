@@ -569,6 +569,7 @@ public:
     VARIANT_INLINE variant()
         : type_index(sizeof...(Types) - 1)
     {
+        static_assert(std::is_default_constructible<first_type>::value, "First type in variant must be default constructible to allow default construction of variant");
         new (&data) first_type();
     }
 
