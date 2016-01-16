@@ -828,7 +828,10 @@ public:
         return detail::binary_dispatcher<F, V, R, Types...>::apply(v0, v1, f);
     }
 
-    ~variant() noexcept(std::is_nothrow_destructible<std::tuple<Types...>>::value)
+    ~variant()
+#if !defined(__GNUC__) || (100 * __GNUC__ + __GNUC_MINOR__ >= 408)
+        noexcept(std::is_nothrow_destructible<std::tuple<Types...>>::value)
+#endif
     {
         helper_type::destroy(type_index, &data);
     }
