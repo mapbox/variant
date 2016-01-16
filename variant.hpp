@@ -102,10 +102,8 @@ struct value_traits
     static constexpr bool is_direct = direct_index != invalid_value;
     static constexpr std::size_t index = is_direct ? direct_index : convertible_type<value_type, Types...>::index;
     static constexpr bool is_valid = index != invalid_value;
-    static constexpr std::size_t tindex = sizeof...(Types) - index - 1;
-    // this should fail if !is_valid (tindex will be == sizeof...(Types)),
-    //  making the whole value_traits instantiation fail
-    using target_type = typename std::tuple_element<tindex, std::tuple<Types...>>::type;
+    static constexpr std::size_t tindex = is_valid ? sizeof...(Types) - index : 0;
+    using target_type = typename std::tuple_element<tindex, std::tuple<void, Types...>>::type;
 };
 
 // check if T is in Types...
@@ -586,7 +584,8 @@ public:
         : type_index(detail::invalid_value) {}
 
     // http://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
-    template <typename T, typename Traits = detail::value_traits<T, Types...>>
+    template <typename T, typename Traits = detail::value_traits<T, Types...>,
+                          typename Enable = typename std::enable_if<Traits::is_valid>::type>
     VARIANT_INLINE variant(T && val)
         noexcept(std::is_nothrow_constructible<typename Traits::target_type, T && >::value)
         : type_index(Traits::index)
