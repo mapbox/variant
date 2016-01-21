@@ -1,6 +1,7 @@
 #ifndef MAPBOX_UTIL_VARIANT_HPP
 #define MAPBOX_UTIL_VARIANT_HPP
 
+#include <cassert>
 #include <cstddef> // size_t
 #include <new> // operator new
 #include <stdexcept> // runtime_error
@@ -831,11 +832,18 @@ public:
     // equality
     VARIANT_INLINE bool operator==(variant const& rhs) const
     {
+        assert(valid() && rhs.valid());
         if (this->get_type_index() != rhs.get_type_index())
             return false;
         detail::comparer<variant, detail::equal_comp> visitor(*this);
         return visit(rhs, visitor);
     }
+
+    VARIANT_INLINE bool operator!=(variant const& rhs) const
+    {
+        return !(*this == rhs);
+    }
+
     // less than
     VARIANT_INLINE bool operator<(variant const& rhs) const
     {

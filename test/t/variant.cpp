@@ -191,7 +191,7 @@ TEST_CASE( "variant should correctly index types", "[variant]" ) {
 
 TEST_CASE( "variant::which() returns zero based index of stored type", "[variant]" ) {
     using variant_type = mapbox::util::variant<bool,std::string,std::uint64_t,std::int64_t,double,float>;
-    // Index is in forward order
+    // which() returns index in forward order
     REQUIRE(0 == variant_type(true).which());
     REQUIRE(1 == variant_type(std::string("test")).which());
     REQUIRE(2 == variant_type(std::uint64_t(0)).which());
@@ -304,5 +304,24 @@ TEST_CASE( "swapping variants should do the right thing", "[variant]" ) {
     REQUIRE(b.which() == 2);
     REQUIRE(e.get<std::string>() == "foo");
     REQUIRE(e.which() == 2);
+}
+
+TEST_CASE("variant should work with equality operators") {
+    using variant_type = mapbox::util::variant<int, std::string>;
+
+    variant_type a{1};
+    variant_type b{1};
+    variant_type c{2};
+    variant_type s{"foo"};
+
+    REQUIRE(a == b);
+    REQUIRE_FALSE(a == c);
+    REQUIRE_FALSE(a == s);
+    REQUIRE_FALSE(c == s);
+
+    REQUIRE_FALSE(a != b);
+    REQUIRE(a != c);
+    REQUIRE(a != s);
+    REQUIRE(c != s);
 }
 
