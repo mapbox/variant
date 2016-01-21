@@ -314,14 +314,54 @@ TEST_CASE("variant should work with equality operators") {
     variant_type c{2};
     variant_type s{"foo"};
 
+    REQUIRE(a == a);
     REQUIRE(a == b);
     REQUIRE_FALSE(a == c);
     REQUIRE_FALSE(a == s);
     REQUIRE_FALSE(c == s);
 
+    REQUIRE_FALSE(a != a);
     REQUIRE_FALSE(a != b);
     REQUIRE(a != c);
     REQUIRE(a != s);
     REQUIRE(c != s);
+}
+
+TEST_CASE("variant should work with comparison operators") {
+    using variant_type = mapbox::util::variant<int, std::string>;
+
+    variant_type a{1};
+    variant_type b{1};
+    variant_type c{2};
+    variant_type s{"foo"};
+    variant_type t{"bar"};
+
+    REQUIRE_FALSE(a < a);
+    REQUIRE_FALSE(a < b);
+    REQUIRE(a < c);
+    REQUIRE(a < s);
+    REQUIRE(c < s);
+    REQUIRE(t < s);
+
+    REQUIRE_FALSE(a > a);
+    REQUIRE_FALSE(a > b);
+    REQUIRE_FALSE(a > c);
+    REQUIRE_FALSE(a > s);
+    REQUIRE_FALSE(c > s);
+    REQUIRE_FALSE(t > s);
+
+    REQUIRE(a <= a);
+    REQUIRE(a <= b);
+    REQUIRE(a <= c);
+    REQUIRE(a <= s);
+    REQUIRE(c <= s);
+    REQUIRE(t <= s);
+
+    REQUIRE(a >= a);
+    REQUIRE(a >= b);
+    REQUIRE_FALSE(a >= c);
+    REQUIRE_FALSE(a >= s);
+    REQUIRE_FALSE(c >= s);
+    REQUIRE_FALSE(t >= s);
 }
 

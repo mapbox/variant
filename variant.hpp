@@ -847,6 +847,7 @@ public:
     // less than
     VARIANT_INLINE bool operator<(variant const& rhs) const
     {
+        assert(valid() && rhs.valid());
         if (this->get_type_index() != rhs.get_type_index())
         {
             return this->get_type_index() < rhs.get_type_index();
@@ -854,6 +855,18 @@ public:
         }
         detail::comparer<variant, detail::less_comp> visitor(*this);
         return visit(rhs, visitor);
+    }
+    VARIANT_INLINE bool operator>(variant const& rhs) const
+    {
+        return rhs < *this;
+    }
+    VARIANT_INLINE bool operator<=(variant const& rhs) const
+    {
+        return !(*this > rhs);
+    }
+    VARIANT_INLINE bool operator>=(variant const& rhs) const
+    {
+        return !(*this < rhs);
     }
 };
 
