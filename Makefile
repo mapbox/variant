@@ -61,11 +61,11 @@ bench: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_w
 
 out/unit.o: Makefile test/unit.cpp
 	mkdir -p ./out
-	$(CXX) -c -o $@ test/unit.cpp -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
+	$(CXX) -c -o $@ test/unit.cpp -Itest/include $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
 
 out/%.o: test/t/%.cpp Makefile optional.hpp recursive_wrapper.hpp variant.hpp variant_io.hpp
 	mkdir -p ./out
-	$(CXX) -c -o $@ $< -I. -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
+	$(CXX) -c -o $@ $< -I. -Itest/include $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
 
 out/unit: out/unit.o out/issue21.o out/mutating_visitor.o out/optional.o out/recursive_wrapper.o out/variant.o
 	mkdir -p ./out
