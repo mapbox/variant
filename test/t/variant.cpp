@@ -13,6 +13,16 @@
 #include <sstream>
 #include <string>
 
+// Hack to make nullptr work with Catch
+namespace std {
+
+    template<class C, class T>
+    std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& os, std::nullptr_t) {
+    return os << (void*) nullptr;
+    }
+
+}
+
 
 TEST_CASE( "variant can be moved into vector", "[variant]" ) {
     using variant_type = mapbox::util::variant<bool,std::string>;
@@ -41,11 +51,8 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
         REQUIRE(v.get_type_index() == 0);
-        // TODO: commented since it breaks on windows: 'operator << is ambiguous'
-        //REQUIRE(v.get<value_type>() == nullptr);
-        // FIXME: does not compile: ./variant.hpp:340:14: error: use of overloaded operator '<<' is ambiguous (with operand types 'std::__1::basic_ostream<char>' and 'const nullptr_t')
-        // https://github.com/mapbox/variant/issues/14
-        //REQUIRE(v == mapbox::util::variant<value_type>(nullptr));
+        REQUIRE(v.get<value_type>() == nullptr);
+        REQUIRE(v == mapbox::util::variant<value_type>(nullptr));
     }
     SECTION( "unique_ptr" ) {
         using value_type = std::unique_ptr<std::string>;
