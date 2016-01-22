@@ -1,8 +1,11 @@
+
 CXX := $(CXX)
+CXX_STD ?= c++11
+
 BOOST_LIBS = -lboost_timer -lboost_system -lboost_chrono
 RELEASE_FLAGS = -O3 -DNDEBUG -march=native -DSINGLE_THREADED -fvisibility-inlines-hidden
 DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions
-COMMON_FLAGS = -Wall -pedantic -Wextra -Wsign-compare -Wsign-conversion -Wshadow -Wunused-parameter -std=c++11
+COMMON_FLAGS = -Wall -pedantic -Wextra -Wsign-compare -Wsign-conversion -Wshadow -Wunused-parameter -std=$(CXX_STD)
 CXXFLAGS := $(CXXFLAGS)
 LDFLAGS := $(LDFLAGS)
 

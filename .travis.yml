@@ -49,6 +49,10 @@ matrix:
       env: CXX=clang++-3.8
       addons: *clang38
     - os: linux
+      compiler: "clang38"
+      env: CXX=clang++-3.8 CXX_STD=c++14
+      addons: *clang38
+    - os: linux
       compiler: "gcc47"
       env: CXX=g++-4.7
       addons: *gcc47
@@ -59,6 +63,10 @@ matrix:
     - os: linux
       compiler: "gcc49"
       env: CXX=g++-4.9
+      addons: *gcc49
+    - os: linux
+      compiler: "gcc49"
+      env: CXX=g++-4.9 CXX_STD=c++14
       addons: *gcc49
     - os: linux
       compiler: "gcc5"
