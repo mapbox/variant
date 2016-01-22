@@ -1,6 +1,8 @@
 #ifndef MAPBOX_UTIL_OPTIONAL_HPP
 #define MAPBOX_UTIL_OPTIONAL_HPP
 
+#pragma message("This implementation of optional is deprecated. See https://github.com/mapbox/variant/issues/64.")
+
 #include <type_traits>
 #include <utility>
 

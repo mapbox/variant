@@ -42,8 +42,7 @@ Note: get the "2013 Nov CTP" release at http://www.microsoft.com/en-us/download/
 
 There is nothing to build, just include `variant.hpp` and
 `recursive_wrapper.hpp` in your project. Include `variant_io.hpp` if you need
-the `operator<<` overload for variant. Include `optional.hpp` to get an
-`optional<T>` class.
+the `operator<<` overload for variant.
 
 
 ## Unit Tests
