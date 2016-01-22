@@ -206,7 +206,9 @@ TEST_CASE( "get with wrong type (here: double) should throw", "[variant]" ) {
     REQUIRE(var.is<int>());
     REQUIRE_FALSE(var.is<double>());
     REQUIRE(var.get<int>() == 5);
-    REQUIRE_THROWS(var.get<double>());
+    REQUIRE_THROWS_AS({
+        var.get<double>();
+    }, mapbox::util::bad_variant_access&);
 }
 
 TEST_CASE( "get with wrong type (here: int) should throw", "[variant]" ) {
@@ -215,7 +217,9 @@ TEST_CASE( "get with wrong type (here: int) should throw", "[variant]" ) {
     REQUIRE(var.is<double>());
     REQUIRE_FALSE(var.is<int>());
     REQUIRE(var.get<double>() == 5.0);
-    REQUIRE_THROWS(var.get<int>());
+    REQUIRE_THROWS_AS({
+        var.get<int>();
+    }, mapbox::util::bad_variant_access&);
 }
 
 TEST_CASE( "implicit conversion", "[variant][implicit conversion]" ) {
@@ -230,7 +234,9 @@ TEST_CASE( "implicit conversion to first type in variant type list", "[variant][
     using variant_type = mapbox::util::variant<long, char>;
     variant_type var = 5.0; // converted to long
     REQUIRE(var.get<long>() == 5);
-    REQUIRE_THROWS(var.get<char>());
+    REQUIRE_THROWS_AS({
+        var.get<char>();
+    }, mapbox::util::bad_variant_access&);
 }
 
 TEST_CASE( "implicit conversion to unsigned char", "[variant][implicit conversion]" ) {
