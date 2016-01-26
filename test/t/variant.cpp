@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <iterator>
+#include <functional>
 #include <limits>
 #include <memory>
 #include <ostream>
@@ -369,5 +370,23 @@ TEST_CASE("variant should work with comparison operators") {
     REQUIRE_FALSE(a >= s);
     REQUIRE_FALSE(c >= s);
     REQUIRE_FALSE(t >= s);
+}
+
+TEST_CASE( "storing reference wrappers works" ) {
+    using variant_type = mapbox::util::variant<std::reference_wrapper<int>, std::reference_wrapper<double>>;
+
+    int a = 1;
+    variant_type v{std::ref(a)};
+    REQUIRE(v.get<int>() == 1);
+    a = 2;
+    REQUIRE(v.get<int>() == 2);
+
+    double b = 3.141;
+    v = std::ref(b);
+    REQUIRE(v.get<double>() == Approx(3.141));
+    b = 2.718;
+    REQUIRE(v.get<double>() == Approx(2.718));
+    a = 3;
+    REQUIRE(v.get<double>() == Approx(2.718));
 }
 

@@ -545,6 +545,17 @@ private:
     Variant const& lhs_;
 };
 
+// True if Predicate matches for all of the types Ts
+template <template<typename> class Predicate, typename... Ts>
+struct static_all_of : std::is_same<std::tuple<std::true_type, typename Predicate<Ts>::type...>,
+                                    std::tuple<typename Predicate<Ts>::type..., std::true_type>>
+{};
+
+// True if Predicate matches for none of the types Ts
+template <template<typename> class Predicate, typename... Ts>
+struct static_none_of : std::is_same<std::tuple<std::false_type, typename Predicate<Ts>::type...>,
+                                     std::tuple<typename Predicate<Ts>::type..., std::false_type>>
+{};
 
 } // namespace detail
 
@@ -554,6 +565,7 @@ template <typename... Types>
 class variant
 {
     static_assert(sizeof...(Types) > 0, "Template parameter type list of variant can not be empty");
+    static_assert(detail::static_none_of<std::is_reference, Types...>::value, "Variant can not hold reference types. Maybe use std::reference?");
 
 private:
 
@@ -581,11 +593,11 @@ public:
 
     // http://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
     template <typename T, class = typename std::enable_if<
-                          detail::is_valid_type<typename std::remove_reference<T>::type, Types...>::value>::type>
+                          detail::is_valid_type<T, Types...>::value>::type>
     VARIANT_INLINE variant(T && val) noexcept
-        : type_index(detail::value_traits<typename std::remove_reference<T>::type, Types...>::index)
+        : type_index(detail::value_traits<T, Types...>::index)
     {
-        constexpr std::size_t index = sizeof...(Types) - detail::value_traits<typename std::remove_reference<T>::type, Types...>::index - 1;
+        constexpr std::size_t index = sizeof...(Types) - detail::value_traits<T, Types...>::index - 1;
         using target_type = typename std::tuple_element<index, std::tuple<Types...>>::type;
         new (&data) target_type(std::forward<T>(val)); // nothrow
     }
