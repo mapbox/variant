@@ -55,7 +55,7 @@ On Windows run `scripts/build-local.bat`.
 ## Limitations
 
 * The `variant` can not hold references (something like `variant<int&>` is
-  no possible). You might want to try `std::reference_wrapper` instead.
+  not possible). You might want to try `std::reference_wrapper` instead.
 
 
 ## Benchmarks
