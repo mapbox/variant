@@ -222,6 +222,16 @@ TEST_CASE( "get with wrong type (here: int) should throw", "[variant]" ) {
     }, mapbox::util::bad_variant_access&);
 }
 
+TEST_CASE( "get with any type should throw if not initialized", "[variant]" ) {
+    mapbox::util::variant<int, double> var{mapbox::util::no_init()};
+    REQUIRE_THROWS_AS({
+        var.get<int>();
+    }, mapbox::util::bad_variant_access&);
+    REQUIRE_THROWS_AS({
+        var.get<double>();
+    }, mapbox::util::bad_variant_access&);
+}
+
 TEST_CASE( "implicit conversion", "[variant][implicit conversion]" ) {
     using variant_type = mapbox::util::variant<int>;
     variant_type var(5.0); // converted to int
