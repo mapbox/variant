@@ -293,7 +293,7 @@ struct dispatcher<F, V, R, T, Types...>
     using result_type = R;
     VARIANT_INLINE static result_type apply_const(V const& v, F && f)
     {
-        if (v.get_type_index() == sizeof...(Types))
+        if (v. template is<T>())
         {
             return f(unwrapper<T>::apply_const(v. template get<T>()));
         }
@@ -305,7 +305,7 @@ struct dispatcher<F, V, R, T, Types...>
 
     VARIANT_INLINE static result_type apply(V & v, F && f)
     {
-        if (v.get_type_index() == sizeof...(Types))
+        if (v. template is<T>())
         {
             return f(unwrapper<T>::apply(v. template get<T>()));
         }
@@ -341,7 +341,7 @@ struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
     using result_type = R;
     VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F && f)
     {
-        if (rhs.get_type_index() == sizeof...(Types)) // call binary functor
+        if (rhs. template is<T1>()) // call binary functor
         {
             return f(unwrapper<T0>::apply_const(lhs. template get<T0>()),
                      unwrapper<T1>::apply_const(rhs. template get<T1>()));
@@ -354,7 +354,7 @@ struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
 
     VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F && f)
     {
-        if (rhs.get_type_index() == sizeof...(Types)) // call binary functor
+        if (rhs. template is<T1>()) // call binary functor
         {
             return f(unwrapper<T0>::apply(lhs. template get<T0>()),
                      unwrapper<T1>::apply(rhs. template get<T1>()));
@@ -395,7 +395,7 @@ struct binary_dispatcher_lhs<F, V, R, T0, T1, Types...>
     using result_type = R;
     VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F && f)
     {
-        if (lhs.get_type_index() == sizeof...(Types)) // call binary functor
+        if (lhs. template is<T1>()) // call binary functor
         {
             return f(unwrapper<T1>::apply_const(lhs. template get<T1>()),
                      unwrapper<T0>::apply_const(rhs. template get<T0>()));
@@ -408,7 +408,7 @@ struct binary_dispatcher_lhs<F, V, R, T0, T1, Types...>
 
     VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F && f)
     {
-        if (lhs.get_type_index() == sizeof...(Types)) // call binary functor
+        if (lhs. template is<T1>()) // call binary functor
         {
             return f(unwrapper<T1>::apply(lhs. template get<T1>()),
                      unwrapper<T0>::apply(rhs. template get<T0>()));
@@ -449,9 +449,9 @@ struct binary_dispatcher<F, V, R, T, Types...>
     using result_type = R;
     VARIANT_INLINE static result_type apply_const(V const& v0, V const& v1, F && f)
     {
-        if (v0.get_type_index() == sizeof...(Types))
+        if (v0. template is<T>())
         {
-            if (v0.get_type_index() == v1.get_type_index())
+            if (v1. template is<T>())
             {
                 return f(unwrapper<T>::apply_const(v0. template get<T>()),
                          unwrapper<T>::apply_const(v1. template get<T>())); // call binary functor
@@ -461,7 +461,7 @@ struct binary_dispatcher<F, V, R, T, Types...>
                 return binary_dispatcher_rhs<F, V, R, T, Types...>::apply_const(v0, v1, std::forward<F>(f));
             }
         }
-        else if (v1.get_type_index() == sizeof...(Types))
+        else if (v1. template is<T>())
         {
             return binary_dispatcher_lhs<F, V, R, T, Types...>::apply_const(v0, v1, std::forward<F>(f));
         }
@@ -470,9 +470,9 @@ struct binary_dispatcher<F, V, R, T, Types...>
 
     VARIANT_INLINE static result_type apply(V & v0, V & v1, F && f)
     {
-        if (v0.get_type_index() == sizeof...(Types))
+        if (v0. template is<T>())
         {
-            if (v0.get_type_index() == v1.get_type_index())
+            if (v1. template is<T>())
             {
                 return f(unwrapper<T>::apply(v0. template get<T>()),
                          unwrapper<T>::apply(v1. template get<T>())); // call binary functor
@@ -482,7 +482,7 @@ struct binary_dispatcher<F, V, R, T, Types...>
                 return binary_dispatcher_rhs<F, V, R, T, Types...>::apply(v0, v1, std::forward<F>(f));
             }
         }
-        else if (v1.get_type_index() == sizeof...(Types))
+        else if (v1. template is<T>())
         {
             return binary_dispatcher_lhs<F, V, R, T, Types...>::apply(v0, v1, std::forward<F>(f));
         }
@@ -769,7 +769,7 @@ public:
     {
         return type_index;
     }
-
+    
     VARIANT_INLINE int which() const noexcept
     {
         return static_cast<int>(sizeof...(Types) - type_index - 1);
@@ -833,7 +833,7 @@ public:
     VARIANT_INLINE bool operator==(variant const& rhs) const
     {
         assert(valid() && rhs.valid());
-        if (this->get_type_index() != rhs.get_type_index())
+        if (this->which() != rhs.which())
         {
             return false;
         }
@@ -850,7 +850,7 @@ public:
     VARIANT_INLINE bool operator<(variant const& rhs) const
     {
         assert(valid() && rhs.valid());
-        if (this->get_type_index() != rhs.get_type_index())
+        if (this->which() != rhs.which())
         {
             return this->which() < rhs.which();
         }
