@@ -1,4 +1,3 @@
-
 #include "catch.hpp"
 
 #include "variant.hpp"
@@ -38,7 +37,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         mapbox::util::variant<bool> v(true);
         REQUIRE(v.valid());
         REQUIRE(v.is<bool>());
-        REQUIRE(v.get_type_index() == 0);
+        REQUIRE(v.which() == 0);
         REQUIRE(v.get<bool>() == true);
         v.set<bool>(false);
         REQUIRE(v.get<bool>() == false);
@@ -50,7 +49,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         mapbox::util::variant<value_type> v(nullptr);
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(v.get_type_index() == 0);
+        REQUIRE(v.which() == 0);
         REQUIRE(v.get<value_type>() == nullptr);
         REQUIRE(v == mapbox::util::variant<value_type>(nullptr));
     }
@@ -59,7 +58,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         mapbox::util::variant<value_type> v(value_type(new std::string("hello")));
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(v.get_type_index() == 0);
+        REQUIRE(v.which() == 0);
         REQUIRE(*v.get<value_type>().get() == *value_type(new std::string("hello")).get());
         REQUIRE(*v.get<value_type>() == "hello");
     }
@@ -68,7 +67,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         mapbox::util::variant<value_type> v(value_type("hello"));
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(v.get_type_index() == 0);
+        REQUIRE(v.which() == 0);
         REQUIRE(v.get<value_type>() == value_type("hello"));
         v.set<value_type>(value_type("there"));
         REQUIRE(v.get<value_type>() == value_type("there"));
@@ -80,7 +79,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         mapbox::util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(v.get_type_index() == 0);
+        REQUIRE(v.which() == 0);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(value_type(0));
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -92,7 +91,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         mapbox::util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(v.get_type_index() == 0);
+        REQUIRE(v.which() == 0);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -104,7 +103,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         mapbox::util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(v.get_type_index() == 0);
+        REQUIRE(v.which() == 0);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -116,7 +115,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         mapbox::util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(v.get_type_index() == 0);
+        REQUIRE(v.which() == 0);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -128,7 +127,7 @@ TEST_CASE( "variant should support built-in types", "[variant]" ) {
         mapbox::util::variant<value_type> v(std::numeric_limits<value_type>::max());
         REQUIRE(v.valid());
         REQUIRE(v.is<value_type>());
-        REQUIRE(v.get_type_index() == 0);
+        REQUIRE(v.which() == 0);
         REQUIRE(v.get<value_type>() == std::numeric_limits<value_type>::max());
         v.set<value_type>(0);
         REQUIRE(v.get<value_type>() == value_type(0));
@@ -167,7 +166,7 @@ TEST_CASE( "variant should support custom types", "[variant]" ) {
     mapbox::util::variant<MissionInteger> v(MissionInteger(34838300));
     REQUIRE(v.valid());
     REQUIRE(v.is<MissionInteger>());
-    REQUIRE(v.get_type_index() == 0);
+    REQUIRE(v.which() == 0);
     REQUIRE(v.get<MissionInteger>() == MissionInteger(34838300));
     REQUIRE(v.get<MissionInteger>().get() == MissionInteger::value_type(34838300));
     // TODO: should both of the set usages below compile?
@@ -176,17 +175,6 @@ TEST_CASE( "variant should support custom types", "[variant]" ) {
     REQUIRE(v.get<MissionInteger>().get() == MissionInteger::value_type(0));
     v = MissionInteger(1);
     REQUIRE(v == mapbox::util::variant<MissionInteger>(MissionInteger(1)));
-}
-
-TEST_CASE( "variant should correctly index types", "[variant]" ) {
-    using variant_type = mapbox::util::variant<bool,std::string,std::uint64_t,std::int64_t,double,float>;
-    // Index is in reverse order
-    REQUIRE(5 == variant_type(true).get_type_index());
-    REQUIRE(4 == variant_type(std::string("test")).get_type_index());
-    REQUIRE(3 == variant_type(std::uint64_t(0)).get_type_index());
-    REQUIRE(2 == variant_type(std::int64_t(0)).get_type_index());
-    REQUIRE(1 == variant_type(double(0.0)).get_type_index());
-    REQUIRE(0 == variant_type(float(0.0)).get_type_index());
 }
 
 TEST_CASE( "variant::which() returns zero based index of stored type", "[variant]" ) {
@@ -273,7 +261,7 @@ TEST_CASE( "variant default constructor", "[variant][default constructor]" ) {
     // As a result first type in Types... must be default constructable
     // NOTE: index in reverse order -> index = N - 1
     using variant_type = mapbox::util::variant<int, double, std::string>;
-    REQUIRE(variant_type{}.get_type_index() == 2);
+    REQUIRE(variant_type{}.which() == 0);
     REQUIRE(variant_type{}.valid());
     REQUIRE(variant_type{mapbox::util::no_init()}.get_type_index() == mapbox::util::detail::invalid_value);
     REQUIRE_FALSE(variant_type{mapbox::util::no_init()}.valid());
@@ -380,4 +368,3 @@ TEST_CASE("variant should work with comparison operators") {
     REQUIRE_FALSE(c >= s);
     REQUIRE_FALSE(t >= s);
 }
-
