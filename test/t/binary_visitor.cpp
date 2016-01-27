@@ -30,6 +30,11 @@ TEST_CASE( "const binary visitor works on const variants", "[visitor][binary vis
     REQUIRE(mapbox::util::apply_visitor(v, c, d) == Approx(10));
     REQUIRE(mapbox::util::apply_visitor(v, a, c) == Approx(14.1));
     REQUIRE(mapbox::util::apply_visitor(v, a, d) == Approx(9.9));
+
+    REQUIRE(mapbox::util::apply_visitor(v, b, a) == Approx(10));
+    REQUIRE(mapbox::util::apply_visitor(v, d, c) == Approx(10));
+    REQUIRE(mapbox::util::apply_visitor(v, c, a) == Approx(14.1));
+    REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
 TEST_CASE( "non-const binary visitor works on const variants", "[visitor][binary visitor]" ) {
@@ -44,6 +49,11 @@ TEST_CASE( "non-const binary visitor works on const variants", "[visitor][binary
     REQUIRE(mapbox::util::apply_visitor(v, c, d) == Approx(10));
     REQUIRE(mapbox::util::apply_visitor(v, a, c) == Approx(14.1));
     REQUIRE(mapbox::util::apply_visitor(v, a, d) == Approx(9.9));
+
+    REQUIRE(mapbox::util::apply_visitor(v, b, a) == Approx(10));
+    REQUIRE(mapbox::util::apply_visitor(v, d, c) == Approx(10));
+    REQUIRE(mapbox::util::apply_visitor(v, c, a) == Approx(14.1));
+    REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
 TEST_CASE( "const binary visitor works on non-const variants", "[visitor][binary visitor]" ) {
@@ -58,6 +68,11 @@ TEST_CASE( "const binary visitor works on non-const variants", "[visitor][binary
     REQUIRE(mapbox::util::apply_visitor(v, c, d) == Approx(10));
     REQUIRE(mapbox::util::apply_visitor(v, a, c) == Approx(14.1));
     REQUIRE(mapbox::util::apply_visitor(v, a, d) == Approx(9.9));
+
+    REQUIRE(mapbox::util::apply_visitor(v, b, a) == Approx(10));
+    REQUIRE(mapbox::util::apply_visitor(v, d, c) == Approx(10));
+    REQUIRE(mapbox::util::apply_visitor(v, c, a) == Approx(14.1));
+    REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
 TEST_CASE( "non-const binary visitor works on non-const variants", "[visitor][binary visitor]" ) {
@@ -72,6 +87,11 @@ TEST_CASE( "non-const binary visitor works on non-const variants", "[visitor][bi
     REQUIRE(mapbox::util::apply_visitor(v, c, d) == Approx(10));
     REQUIRE(mapbox::util::apply_visitor(v, a, c) == Approx(14.1));
     REQUIRE(mapbox::util::apply_visitor(v, a, d) == Approx(9.9));
+
+    REQUIRE(mapbox::util::apply_visitor(v, b, a) == Approx(10));
+    REQUIRE(mapbox::util::apply_visitor(v, d, c) == Approx(10));
+    REQUIRE(mapbox::util::apply_visitor(v, c, a) == Approx(14.1));
+    REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
 TEST_CASE( "rvalue binary visitor works on const variants", "[visitor][binary visitor]" ) {
@@ -84,6 +104,11 @@ TEST_CASE( "rvalue binary visitor works on const variants", "[visitor][binary vi
     REQUIRE(mapbox::util::apply_visitor(add_visitor{}, c, d) == Approx(10));
     REQUIRE(mapbox::util::apply_visitor(add_visitor{}, a, c) == Approx(14.1));
     REQUIRE(mapbox::util::apply_visitor(add_visitor{}, a, d) == Approx(9.9));
+
+    REQUIRE(mapbox::util::apply_visitor(add_visitor{}, b, a) == Approx(10));
+    REQUIRE(mapbox::util::apply_visitor(add_visitor{}, d, c) == Approx(10));
+    REQUIRE(mapbox::util::apply_visitor(add_visitor{}, c, a) == Approx(14.1));
+    REQUIRE(mapbox::util::apply_visitor(add_visitor{}, d, a) == Approx(9.9));
 }
 
 struct sum_mul_visitor
@@ -114,6 +139,11 @@ TEST_CASE( "mutable binary visitor works", "[visitor][binary visitor]" ) {
     REQUIRE(mapbox::util::apply_visitor(v, a, d) == Approx(0.4));
 
     REQUIRE(v.sum == Approx(6.62));
+
+    REQUIRE(mapbox::util::apply_visitor(v, b, a) == Approx(6));
+    REQUIRE(mapbox::util::apply_visitor(v, d, c) == Approx(0.02));
+    REQUIRE(mapbox::util::apply_visitor(v, c, a) == Approx(0.2));
+    REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(0.4));
 }
 
 struct swap_visitor {
@@ -150,6 +180,12 @@ TEST_CASE( "static mutating visitor on mutable variants works", "[visitor][binar
 
     SECTION("swap a and c") {
         mapbox::util::apply_visitor(v, a, c);
+        REQUIRE(a.get<int>() == 0);
+        REQUIRE(c.get<double>() == Approx(2.0));
+    }
+
+    SECTION("swap c and a") {
+        mapbox::util::apply_visitor(v, c, a);
         REQUIRE(a.get<int>() == 0);
         REQUIRE(c.get<double>() == Approx(2.0));
     }
