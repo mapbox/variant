@@ -8,12 +8,13 @@
       "type": "executable",
       "sources": [
         "test/unit.cpp",
+        "test/t/binary_visitor.cpp",
         "test/t/issue21.cpp",
         "test/t/mutating_visitor.cpp",
         "test/t/optional.cpp",
         "test/t/recursive_wrapper.cpp",
-        "test/t/variant.cpp",
-        "test/t/visitor.cpp"
+        "test/t/unary_visitor.cpp",
+        "test/t/variant.cpp"
       ],
       "xcode_settings": {
         "SDKROOT": "macosx",
