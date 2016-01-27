@@ -13,6 +13,7 @@
         "test/t/mutating_visitor.cpp",
         "test/t/optional.cpp",
         "test/t/recursive_wrapper.cpp",
+        "test/t/sizeof.cpp",
         "test/t/unary_visitor.cpp",
         "test/t/variant.cpp"
       ],
