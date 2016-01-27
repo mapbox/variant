@@ -52,6 +52,12 @@ On Unix systems compile and run the unit tests with `make test`.
 On Windows run `scripts/build-local.bat`.
 
 
+## Limitations
+
+* The `variant` can not hold references (something like `variant<int&>` is
+  not possible). You might want to try `std::reference_wrapper` instead.
+
+
 ## Benchmarks
 
 The benchmarks depend on:
