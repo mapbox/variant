@@ -291,7 +291,7 @@ template <typename F, typename V, typename R, typename T, typename... Types>
 struct dispatcher<F, V, R, T, Types...>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const& v, F f)
+    VARIANT_INLINE static result_type apply_const(V const& v, F & f)
     {
         if (v.get_type_index() == sizeof...(Types))
         {
@@ -303,7 +303,7 @@ struct dispatcher<F, V, R, T, Types...>
         }
     }
 
-    VARIANT_INLINE static result_type apply(V & v, F f)
+    VARIANT_INLINE static result_type apply(V & v, F & f)
     {
         if (v.get_type_index() == sizeof...(Types))
         {
@@ -320,12 +320,12 @@ template <typename F, typename V, typename R, typename T>
 struct dispatcher<F, V, R, T>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const& v, F f)
+    VARIANT_INLINE static result_type apply_const(V const& v, F & f)
     {
         return f(unwrapper<T>::apply_const(v. template get<T>()));
     }
 
-    VARIANT_INLINE static result_type apply(V & v, F f)
+    VARIANT_INLINE static result_type apply(V & v, F & f)
     {
         return f(unwrapper<T>::apply(v. template get<T>()));
     }
@@ -339,7 +339,7 @@ template <typename F, typename V, typename R, typename T0, typename T1, typename
 struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F f)
+    VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F & f)
     {
         if (rhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
@@ -352,7 +352,7 @@ struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
         }
     }
 
-    VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F f)
+    VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F & f)
     {
         if (rhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
@@ -371,13 +371,13 @@ template <typename F, typename V, typename R, typename T0, typename T1>
 struct binary_dispatcher_rhs<F, V, R, T0, T1>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F f)
+    VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F & f)
     {
         return f(unwrapper<T0>::apply_const(lhs. template get<T0>()),
                  unwrapper<T1>::apply_const(rhs. template get<T1>()));
     }
 
-    VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F f)
+    VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F & f)
     {
         return f(unwrapper<T0>::apply(lhs. template get<T0>()),
                  unwrapper<T1>::apply(rhs. template get<T1>()));
@@ -393,7 +393,7 @@ template <typename F, typename V, typename R, typename T0, typename T1, typename
 struct binary_dispatcher_lhs<F, V, R, T0, T1, Types...>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F f)
+    VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F & f)
     {
         if (lhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
@@ -406,7 +406,7 @@ struct binary_dispatcher_lhs<F, V, R, T0, T1, Types...>
         }
     }
 
-    VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F f)
+    VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F & f)
     {
         if (lhs.get_type_index() == sizeof...(Types)) // call binary functor
         {
@@ -425,13 +425,13 @@ template <typename F, typename V, typename R, typename T0, typename T1>
 struct binary_dispatcher_lhs<F, V, R, T0, T1>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F f)
+    VARIANT_INLINE static result_type apply_const(V const& lhs, V const& rhs, F & f)
     {
         return f(unwrapper<T1>::apply_const(lhs. template get<T1>()),
                  unwrapper<T0>::apply_const(rhs. template get<T0>()));
     }
 
-    VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F f)
+    VARIANT_INLINE static result_type apply(V & lhs, V & rhs, F & f)
     {
         return f(unwrapper<T1>::apply(lhs. template get<T1>()),
                  unwrapper<T0>::apply(rhs. template get<T0>()));
@@ -447,7 +447,7 @@ template <typename F, typename V, typename R, typename T, typename... Types>
 struct binary_dispatcher<F, V, R, T, Types...>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const& v0, V const& v1, F f)
+    VARIANT_INLINE static result_type apply_const(V const& v0, V const& v1, F & f)
     {
         if (v0.get_type_index() == sizeof...(Types))
         {
@@ -468,7 +468,7 @@ struct binary_dispatcher<F, V, R, T, Types...>
         return binary_dispatcher<F, V, R, Types...>::apply_const(v0, v1, f);
     }
 
-    VARIANT_INLINE static result_type apply(V & v0, V & v1, F f)
+    VARIANT_INLINE static result_type apply(V & v0, V & v1, F & f)
     {
         if (v0.get_type_index() == sizeof...(Types))
         {
@@ -494,13 +494,13 @@ template <typename F, typename V, typename R, typename T>
 struct binary_dispatcher<F, V, R, T>
 {
     using result_type = R;
-    VARIANT_INLINE static result_type apply_const(V const& v0, V const& v1, F f)
+    VARIANT_INLINE static result_type apply_const(V const& v0, V const& v1, F & f)
     {
         return f(unwrapper<T>::apply_const(v0. template get<T>()),
                  unwrapper<T>::apply_const(v1. template get<T>())); // call binary functor
     }
 
-    VARIANT_INLINE static result_type apply(V & v0, V & v1, F f)
+    VARIANT_INLINE static result_type apply(V & v0, V & v1, F & f)
     {
         return f(unwrapper<T>::apply(v0. template get<T>()),
                  unwrapper<T>::apply(v1. template get<T>())); // call binary functor
@@ -779,7 +779,7 @@ public:
     // unary
     template <typename F, typename V>
     auto VARIANT_INLINE
-    static visit(V const& v, F f)
+    static visit(V const& v, F & f)
         -> decltype(detail::dispatcher<F, V,
                     typename detail::result_of_unary_visit<F,
                     first_type>::type, Types...>::apply_const(v, f))
@@ -790,7 +790,7 @@ public:
     // non-const
     template <typename F, typename V>
     auto VARIANT_INLINE
-    static visit(V & v, F f)
+    static visit(V & v, F & f)
         -> decltype(detail::dispatcher<F, V,
                     typename detail::result_of_unary_visit<F,
                     first_type>::type, Types...>::apply(v, f))
@@ -803,7 +803,7 @@ public:
     // const
     template <typename F, typename V>
     auto VARIANT_INLINE
-    static binary_visit(V const& v0, V const& v1, F f)
+    static binary_visit(V const& v0, V const& v1, F & f)
         -> decltype(detail::binary_dispatcher<F, V,
                     typename detail::result_of_binary_visit<F,
                     first_type>::type, Types...>::apply_const(v0, v1, f))
@@ -814,7 +814,7 @@ public:
     // non-const
     template <typename F, typename V>
     auto VARIANT_INLINE
-    static binary_visit(V& v0, V& v1, F f)
+    static binary_visit(V& v0, V& v1, F & f)
         -> decltype(detail::binary_dispatcher<F, V,
                     typename detail::result_of_binary_visit<F,
                     first_type>::type, Types...>::apply(v0, v1, f))
@@ -874,13 +874,24 @@ public:
 
 // const
 template <typename V, typename F>
-auto VARIANT_INLINE apply_visitor(F f, V const& v) -> decltype(V::visit(v, f))
+auto VARIANT_INLINE apply_visitor(F const& f, V const& v) -> decltype(V::visit(v, f))
+{
+    return V::visit(v, f);
+}
+template <typename V, typename F>
+auto VARIANT_INLINE apply_visitor(F & f, V const& v) -> decltype(V::visit(v, f))
 {
     return V::visit(v, f);
 }
 // non-const
 template <typename V, typename F>
-auto VARIANT_INLINE apply_visitor(F f, V & v) -> decltype(V::visit(v, f))
+auto VARIANT_INLINE apply_visitor(F const& f, V & v) -> decltype(V::visit(v, f))
+{
+    return V::visit(v, f);
+}
+
+template <typename V, typename F>
+auto VARIANT_INLINE apply_visitor(F & f, V & v) -> decltype(V::visit(v, f))
 {
     return V::visit(v, f);
 }
@@ -888,13 +899,23 @@ auto VARIANT_INLINE apply_visitor(F f, V & v) -> decltype(V::visit(v, f))
 // binary visitor interface
 // const
 template <typename V, typename F>
-auto VARIANT_INLINE apply_visitor(F f, V const& v0, V const& v1) -> decltype(V::binary_visit(v0, v1, f))
+auto VARIANT_INLINE apply_visitor(F const& f, V const& v0, V const& v1) -> decltype(V::binary_visit(v0, v1, f))
+{
+    return V::binary_visit(v0, v1, f);
+}
+template <typename V, typename F>
+auto VARIANT_INLINE apply_visitor(F & f, V const& v0, V const& v1) -> decltype(V::binary_visit(v0, v1, f))
 {
     return V::binary_visit(v0, v1, f);
 }
 // non-const
 template <typename V, typename F>
-auto VARIANT_INLINE apply_visitor(F f, V & v0, V & v1) -> decltype(V::binary_visit(v0, v1, f))
+auto VARIANT_INLINE apply_visitor(F const& f, V & v0, V & v1) -> decltype(V::binary_visit(v0, v1, f))
+{
+    return V::binary_visit(v0, v1, f);
+}
+template <typename V, typename F>
+auto VARIANT_INLINE apply_visitor(F & f, V & v0, V & v1) -> decltype(V::binary_visit(v0, v1, f))
 {
     return V::binary_visit(v0, v1, f);
 }
