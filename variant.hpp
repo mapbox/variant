@@ -834,7 +834,9 @@ public:
     {
         assert(valid() && rhs.valid());
         if (this->get_type_index() != rhs.get_type_index())
+        {
             return false;
+        }
         detail::comparer<variant, detail::equal_comp> visitor(*this);
         return visit(rhs, visitor);
     }
