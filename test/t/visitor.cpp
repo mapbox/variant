@@ -13,22 +13,21 @@ struct some_visitor
     some_visitor(int init)
         : var_(init) {}
 
-    int operator()(int val) {
+    int operator()(int val) const {
         return var_ + val;
     }
 
-    int operator()(double val) {
+    int operator()(double val) const {
         return var_ + int(val);
     }
 
-    template <typename T1>
-    int operator()(T1 &) const {
+    int operator()(const std::string &) const {
         return 0;
     }
 
 };
 
-TEST_CASE( "simple visitor works on const variants", "[visitor][unary visitor]" ) {
+TEST_CASE( "non-const visitor works on const variants", "[visitor][unary visitor]" ) {
     using variant_type = const mapbox::util::variant<int, double, std::string>;
     variant_type var1(123);
     variant_type var2(3.2);
@@ -37,11 +36,49 @@ TEST_CASE( "simple visitor works on const variants", "[visitor][unary visitor]" 
     REQUIRE(var2.get<double>() == Approx(3.2));
     REQUIRE(var3.get<std::string>() == "foo");
 
-    some_visitor visitor(1);
+    some_visitor visitor{1};
 
     REQUIRE(mapbox::util::apply_visitor(visitor, var1) == 124);
     REQUIRE(mapbox::util::apply_visitor(visitor, var2) == 4);
     REQUIRE(mapbox::util::apply_visitor(visitor, var3) == 0);
+}
+
+TEST_CASE( "const visitor works on const variants", "[visitor][unary visitor]" ) {
+    using variant_type = const mapbox::util::variant<int, double, std::string>;
+    variant_type var1(123);
+    variant_type var2(3.2);
+    variant_type var3("foo");
+    REQUIRE(var1.get<int>() == 123);
+    REQUIRE(var2.get<double>() == Approx(3.2));
+    REQUIRE(var3.get<std::string>() == "foo");
+
+    const some_visitor visitor{1};
+
+    REQUIRE(mapbox::util::apply_visitor(visitor, var1) == 124);
+    REQUIRE(mapbox::util::apply_visitor(visitor, var2) == 4);
+    REQUIRE(mapbox::util::apply_visitor(visitor, var3) == 0);
+}
+
+TEST_CASE( "rvalue visitor works on const variants", "[visitor][unary visitor]" ) {
+    using variant_type = const mapbox::util::variant<int, double, std::string>;
+    variant_type var1(123);
+    variant_type var2(3.2);
+    variant_type var3("foo");
+    REQUIRE(var1.get<int>() == 123);
+    REQUIRE(var2.get<double>() == Approx(3.2));
+    REQUIRE(var3.get<std::string>() == "foo");
+
+    REQUIRE(mapbox::util::apply_visitor(some_visitor{1}, var1) == 124);
+    REQUIRE(mapbox::util::apply_visitor(some_visitor{1}, var2) == 4);
+    REQUIRE(mapbox::util::apply_visitor(some_visitor{1}, var3) == 0);
+}
+
+TEST_CASE( "visitor works on rvalue variants", "[visitor][unary visitor]" ) {
+    using variant_type = const mapbox::util::variant<int, double, std::string>;
+
+    REQUIRE(mapbox::util::apply_visitor(some_visitor{1}, variant_type{123}) == 124);
+    REQUIRE(mapbox::util::apply_visitor(some_visitor{1}, variant_type{3.2}) == 4);
+    REQUIRE(mapbox::util::apply_visitor(some_visitor{1}, variant_type{"foo"}) == 0);
 }
 
 struct total_sizeof
@@ -65,12 +102,19 @@ struct total_sizeof
 }; // total_sizeof
 
 TEST_CASE( "changes in visitor should be visible", "[visitor][unary visitor]" ) {
-    typedef mapbox::util::variant< int, std::string, double > t_var1;
-    t_var1 v1;
+    using variant_type = mapbox::util::variant<int, std::string, double>;
+    variant_type v;
     total_sizeof ts;
-
-    v1 = 5.9;
-    REQUIRE(mapbox::util::apply_visitor(ts, v1) == sizeof(double));
+    v = 5.9;
+    REQUIRE(mapbox::util::apply_visitor(ts, v) == sizeof(double));
     REQUIRE(ts.result() == sizeof(double));
+}
+
+TEST_CASE( "changes in const visitor (with mutable internals) should be visible", "[visitor][unary visitor]" ) {
+    using variant_type = const mapbox::util::variant<int, std::string, double>;
+    variant_type v{"foo"};
+    const total_sizeof ts;
+    REQUIRE(mapbox::util::apply_visitor(ts, v) == sizeof(std::string));
+    REQUIRE(ts.result() == sizeof(std::string));
 }
 
