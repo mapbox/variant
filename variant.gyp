@@ -8,7 +8,12 @@
       "type": "executable",
       "sources": [
         "test/unit.cpp",
-        "test/t/binary_visitor.cpp",
+        "test/t/binary_visitor_1.cpp",
+        "test/t/binary_visitor_2.cpp",
+        "test/t/binary_visitor_3.cpp",
+        "test/t/binary_visitor_4.cpp",
+        "test/t/binary_visitor_5.cpp",
+        "test/t/binary_visitor_6.cpp",
         "test/t/issue21.cpp",
         "test/t/mutating_visitor.cpp",
         "test/t/optional.cpp",

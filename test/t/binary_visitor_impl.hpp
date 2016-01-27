@@ -3,10 +3,7 @@
 
 #include "catch.hpp"
 
-#include "variant.hpp"
 #include "variant_io.hpp"
-
-using variant_type = mapbox::util::variant<bool, int, double, char>;
 
 struct add_visitor
 {
@@ -18,7 +15,7 @@ struct add_visitor
     }
 };
 
-TEST_CASE( "const binary visitor works on const variants", "[visitor][binary visitor]" ) {
+TEST_CASE( "const binary visitor works on const variants" NAME_EXT, "[visitor][binary visitor]" ) {
     const variant_type a = 7;
     const variant_type b = 3;
     const variant_type c = 7.1;
@@ -37,7 +34,7 @@ TEST_CASE( "const binary visitor works on const variants", "[visitor][binary vis
     REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
-TEST_CASE( "non-const binary visitor works on const variants", "[visitor][binary visitor]" ) {
+TEST_CASE( "non-const binary visitor works on const variants" NAME_EXT, "[visitor][binary visitor]" ) {
     const variant_type a = 7;
     const variant_type b = 3;
     const variant_type c = 7.1;
@@ -56,7 +53,7 @@ TEST_CASE( "non-const binary visitor works on const variants", "[visitor][binary
     REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
-TEST_CASE( "const binary visitor works on non-const variants", "[visitor][binary visitor]" ) {
+TEST_CASE( "const binary visitor works on non-const variants" NAME_EXT, "[visitor][binary visitor]" ) {
     variant_type a = 7;
     variant_type b = 3;
     variant_type c = 7.1;
@@ -75,7 +72,7 @@ TEST_CASE( "const binary visitor works on non-const variants", "[visitor][binary
     REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
-TEST_CASE( "non-const binary visitor works on non-const variants", "[visitor][binary visitor]" ) {
+TEST_CASE( "non-const binary visitor works on non-const variants" NAME_EXT, "[visitor][binary visitor]" ) {
     variant_type a = 7;
     variant_type b = 3;
     variant_type c = 7.1;
@@ -94,7 +91,7 @@ TEST_CASE( "non-const binary visitor works on non-const variants", "[visitor][bi
     REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
-TEST_CASE( "rvalue binary visitor works on const variants", "[visitor][binary visitor]" ) {
+TEST_CASE( "rvalue binary visitor works on const variants" NAME_EXT, "[visitor][binary visitor]" ) {
     const variant_type a = 7;
     const variant_type b = 3;
     const variant_type c = 7.1;
@@ -125,7 +122,7 @@ struct sum_mul_visitor
     }
 };
 
-TEST_CASE( "mutable binary visitor works", "[visitor][binary visitor]" ) {
+TEST_CASE( "mutable binary visitor works" NAME_EXT, "[visitor][binary visitor]" ) {
     const variant_type a = 2;
     const variant_type b = 3;
     const variant_type c = 0.1;
@@ -158,7 +155,7 @@ struct swap_visitor {
     }
 };
 
-TEST_CASE( "static mutating visitor on mutable variants works", "[visitor][binary visitor]" ) {
+TEST_CASE( "static mutating visitor on mutable variants works" NAME_EXT, "[visitor][binary visitor]" ) {
     variant_type a = 2;
     variant_type b = 3;
     variant_type c = 0.1;
