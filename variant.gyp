@@ -12,7 +12,8 @@
         "test/t/mutating_visitor.cpp",
         "test/t/optional.cpp",
         "test/t/recursive_wrapper.cpp",
-        "test/t/variant.cpp"
+        "test/t/variant.cpp",
+        "test/t/visitor.cpp"
       ],
       "xcode_settings": {
         "SDKROOT": "macosx",
