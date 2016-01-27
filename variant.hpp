@@ -593,11 +593,11 @@ public:
 
     // http://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
     template <typename T, class = typename std::enable_if<
-                          detail::is_valid_type<typename std::remove_reference<T>::type, Types...>::value>::type>
+                          detail::is_valid_type<T, Types...>::value>::type>
     VARIANT_INLINE variant(T && val) noexcept
-        : type_index(detail::value_traits<typename std::remove_reference<T>::type, Types...>::index)
+        : type_index(detail::value_traits<T, Types...>::index)
     {
-        constexpr std::size_t index = sizeof...(Types) - detail::value_traits<typename std::remove_reference<T>::type, Types...>::index - 1;
+        constexpr std::size_t index = sizeof...(Types) - detail::value_traits<T, Types...>::index - 1;
         using target_type = typename std::tuple_element<index, std::tuple<Types...>>::type;
         new (&data) target_type(std::forward<T>(val)); // nothrow
     }

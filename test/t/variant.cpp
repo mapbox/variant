@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <functional>
 #include <iterator>
+#include <functional>
 #include <limits>
 #include <memory>
 #include <ostream>
