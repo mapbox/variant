@@ -58,6 +58,12 @@ On Windows run `scripts/build-local.bat`.
   not possible). You might want to try `std::reference_wrapper` instead.
 
 
+## Deprecations
+
+* The included implementation of `optional` is deprecated and will be removed
+  in a future version. See https://github.com/mapbox/variant/issues/64.
+
+
 ## Benchmarks
 
 The benchmarks depend on:
