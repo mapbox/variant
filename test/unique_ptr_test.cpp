@@ -37,7 +37,7 @@ struct binary_op
     }
 };
 
-struct print : util::static_visitor<void>
+struct print
 {
     template <typename T>
     void operator()(T const& val) const
@@ -47,7 +47,7 @@ struct print : util::static_visitor<void>
 };
 
 
-struct test : util::static_visitor<std::string>
+struct test
 {
     template <typename T>
     std::string operator()(T const& obj) const
@@ -56,7 +56,7 @@ struct test : util::static_visitor<std::string>
     }
 };
 
-struct calculator : public util::static_visitor<int>
+struct calculator
 {
 public:
 
@@ -78,7 +78,7 @@ public:
     }
 };
 
-struct to_string : public util::static_visitor<std::string>
+struct to_string
 {
 public:
 

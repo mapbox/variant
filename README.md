@@ -62,6 +62,9 @@ On Windows run `scripts/build-local.bat`.
 
 * The included implementation of `optional` is deprecated and will be removed
   in a future version. See https://github.com/mapbox/variant/issues/64.
+* Old versions of the code needed visitors to derive from `static_visitor`.
+  This is not needed any more and marked as deprecated. The `static_visitor`
+  class will be removed in future versions.
 
 
 ## Benchmarks
