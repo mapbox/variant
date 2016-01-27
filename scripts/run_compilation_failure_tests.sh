@@ -14,7 +14,7 @@ fi
 
 exit_code=0
 for test_code in $DIR/*.cpp; do
-    name=`basename -s .cpp $test_code`
+    name=`basename $test_code .cpp`
 
     result=`${CXX} -std=c++11 -c -o /dev/null -I. ${CXXFLAGS} ${test_code} 2>&1`
     status=$?
