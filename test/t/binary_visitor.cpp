@@ -6,7 +6,7 @@
 #include "variant.hpp"
 #include "variant_io.hpp"
 
-using variant_type = mapbox::util::variant<bool, int, double>;
+using variant_type = mapbox::util::variant<bool, int, double, char>;
 
 struct add_visitor
 {
