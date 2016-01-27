@@ -19,7 +19,7 @@ using variant_internal_index_type = size_t;
 TEST_CASE( "size of variants" ) {
     constexpr const auto min_overhead = sizeof(variant_internal_index_type);
 
-    using std::max_align_t; // workaround for bug in GCC <= 4.8 where max_align_t is not in std
+    using namespace std; // workaround for bug in GCC <= 4.8 where max_align_t is not in std
     constexpr const auto max_overhead = alignof(max_align_t) + min_overhead;
 
     using v1 = mapbox::util::variant<int>;
