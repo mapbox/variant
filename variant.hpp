@@ -850,8 +850,7 @@ public:
         assert(valid() && rhs.valid());
         if (this->get_type_index() != rhs.get_type_index())
         {
-            return this->get_type_index() < rhs.get_type_index();
-            // ^^ borrowed from boost::variant
+            return this->which() < rhs.which();
         }
         detail::comparer<variant, detail::less_comp> visitor(*this);
         return visit(rhs, visitor);
