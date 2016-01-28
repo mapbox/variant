@@ -1,4 +1,6 @@
 
+// @EXPECTED: Variant can not hold reference types
+
 #include <variant.hpp>
 
 int main() {

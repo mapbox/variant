@@ -1,4 +1,6 @@
 
+// @EXPECTED: const int
+
 #include <variant.hpp>
 
 struct mutating_visitor

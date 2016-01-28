@@ -12,6 +12,12 @@ if [ `uname -s` = "Darwin" ]; then
     CXXFLAGS="$CXXFLAGS -stdlib=libc++"
 fi
 
+error_msg() {
+    if [ ! -z "$1" ]; then
+        printf 'output was:\n=======\n%s\n=======\n' "$1"
+    fi
+}
+
 exit_code=0
 for test_code in $DIR/*.cpp; do
     name=`basename $test_code .cpp`
@@ -19,22 +25,25 @@ for test_code in $DIR/*.cpp; do
     result=`${CXX} -std=c++11 -c -o /dev/null -I. ${CXXFLAGS} ${test_code} 2>&1`
     status=$?
 
-    pattern_file=$DIR/$name.pattern
-
     if [ $status = 1 ]; then
-        if echo $result | grep -q "`cat ${pattern_file}`"; then
+        expected=`sed -n -e '/@EXPECTED/s/.*: \+//p' ${test_code}`
+        if echo $result | grep -q "$expected"; then
             echo "$name [OK]"
         else
             echo "$name [FAILED - wrong error message]"
-            echo "compile error was:"
-            printf '%s\n' "$result"
+            echo "Expected error message: $expected"
+            error_msg "$result"
             exit_code=1
         fi
-    else
+    elif [ $status = 0 ]; then
         echo "$name [FAILED - compile was successful]"
+        error_msg "$result"
+        exit_code=1
+    else
+        echo "$name [FAILED - unknown error in compile]"
+        error_msg "$result"
         exit_code=1
     fi
-
 done
 
 exit ${exit_code}

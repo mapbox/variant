@@ -1,1 +1,0 @@
-First type in variant must be default constructible to allow default construction of variant

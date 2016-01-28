@@ -1,4 +1,6 @@
 
+// @EXPECTED: First type in variant must be default constructible to allow default construction of variant
+
 #include <variant.hpp>
 
 // Checks that the first type in a variant must be default constructible to

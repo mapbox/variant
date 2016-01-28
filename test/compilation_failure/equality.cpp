@@ -1,4 +1,6 @@
 
+// @EXPECTED:
+
 #include <variant.hpp>
 
 int main() {

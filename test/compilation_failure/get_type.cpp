@@ -1,4 +1,6 @@
 
+// @EXPECTED: enable_if
+
 #include <variant.hpp>
 
 int main() {
