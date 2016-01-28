@@ -57,7 +57,7 @@ struct string_to_number<bool>
     }
 };
 
-struct javascript_equal_visitor : util::static_visitor<bool>
+struct javascript_equal_visitor
 {
     template <typename T>
     bool operator()(T lhs, T rhs) const

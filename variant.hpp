@@ -13,6 +13,20 @@
 
 #include "recursive_wrapper.hpp"
 
+// [[deprecated]] is only available in C++14, use this for the time being
+#if __cplusplus <= 201103L
+# ifdef __GNUC__
+#  define MAPBOX_VARIANT_DEPRECATED __attribute__((deprecated))
+# elif defined(_MSC_VER)
+#  define MAPBOX_VARIANT_DEPRECATED __declspec(deprecated)
+# else
+#  define MAPBOX_VARIANT_DEPRECATED
+# endif
+#else
+#  define MAPBOX_VARIANT_DEPRECATED [[deprecated]]
+#endif
+
+
 #ifdef _MSC_VER
  // https://msdn.microsoft.com/en-us/library/bw1hbe6y.aspx
  #ifdef NDEBUG
@@ -51,7 +65,7 @@ public:
 }; // class bad_variant_access
 
 template <typename R = void>
-struct static_visitor
+struct MAPBOX_VARIANT_DEPRECATED static_visitor
 {
     using result_type = R;
 protected:

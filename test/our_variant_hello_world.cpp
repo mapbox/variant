@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-struct check : mapbox::util::static_visitor<>
+struct check
 {
     template <typename T>
     void operator()(T const& val) const
