@@ -1,4 +1,3 @@
-
 #include <cstdlib>
 #include <functional>
 #include <iostream>
@@ -59,13 +58,13 @@ int main()
     std::cerr << sizeof(test::polygon) << std::endl;
     std::cerr << sizeof(test::variant) << std::endl;
     test::point pt(123,456);
-    test::variant var = std::move(std::cref(pt));
+    test::variant var = std::cref(pt);
     util::apply_visitor(test::print(), var);
     test::line_string line;
     line.push_back(pt);
     line.push_back(pt);
     line.push_back(test::point(999,333));
-    var = std::move(std::cref(line));
+    var = std::cref(line);
     util::apply_visitor(test::print(), var);
     std::cerr << "Is line (cref) ? " << var.is<std::reference_wrapper<test::line_string const>>() << std::endl;
     auto const& line2 = var.get<test::line_string>(); // accessing underlying type of std::reference_wrapper<T>
