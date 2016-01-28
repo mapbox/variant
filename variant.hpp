@@ -112,9 +112,13 @@ struct convertible_type<T>
 template <typename T, typename... Types>
 struct value_traits
 {
-    static constexpr std::size_t direct_index = direct_type<T, Types...>::index;
-    static constexpr std::size_t index =
-        (direct_index == invalid_value) ? convertible_type<T, Types...>::index : direct_index;
+    using value_type = typename std::remove_reference<T>::type;
+    static constexpr std::size_t direct_index = direct_type<value_type, Types...>::index;
+    static constexpr bool is_direct = direct_index != invalid_value;
+    static constexpr std::size_t index = is_direct ? direct_index : convertible_type<value_type, Types...>::index;
+    static constexpr bool is_valid = index != invalid_value;
+    static constexpr std::size_t tindex = is_valid ? sizeof...(Types) - index : 0;
+    using target_type = typename std::tuple_element<tindex, std::tuple<void, Types...>>::type;
 };
 
 // check if T is in Types...
@@ -596,24 +600,24 @@ private:
 public:
 
     VARIANT_INLINE variant()
+        noexcept(std::is_nothrow_default_constructible<first_type>::value)
         : type_index(sizeof...(Types) - 1)
     {
         static_assert(std::is_default_constructible<first_type>::value, "First type in variant must be default constructible to allow default construction of variant");
         new (&data) first_type();
     }
 
-    VARIANT_INLINE variant(no_init)
+    VARIANT_INLINE variant(no_init) noexcept
         : type_index(detail::invalid_value) {}
 
     // http://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
-    template <typename T, class = typename std::enable_if<
-                          detail::is_valid_type<typename std::remove_reference<T>::type, Types...>::value>::type>
-    VARIANT_INLINE variant(T && val) noexcept
-        : type_index(detail::value_traits<typename std::remove_reference<T>::type, Types...>::index)
+    template <typename T, typename Traits = detail::value_traits<T, Types...>,
+                          typename Enable = typename std::enable_if<Traits::is_valid>::type>
+    VARIANT_INLINE variant(T && val)
+        noexcept(std::is_nothrow_constructible<typename Traits::target_type, T && >::value)
+        : type_index(Traits::index)
     {
-        constexpr std::size_t index = sizeof...(Types) - detail::value_traits<typename std::remove_reference<T>::type, Types...>::index - 1;
-        using target_type = typename std::tuple_element<index, std::tuple<Types...>>::type;
-        new (&data) target_type(std::forward<T>(val)); // nothrow
+        new (&data) typename Traits::target_type(std::forward<T>(val));
     }
 
     VARIANT_INLINE variant(variant<Types...> const& old)
@@ -622,7 +626,8 @@ public:
         helper_type::copy(old.type_index, &old.data, &data);
     }
 
-    VARIANT_INLINE variant(variant<Types...> && old) noexcept
+    VARIANT_INLINE variant(variant<Types...> && old)
+        noexcept(std::is_nothrow_move_constructible<std::tuple<Types...>>::value)
         : type_index(old.type_index)
     {
         helper_type::move(old.type_index, &old.data, &data);
@@ -849,7 +854,10 @@ public:
         return detail::binary_dispatcher<F, V, R, Types...>::apply(v0, v1, std::forward<F>(f));
     }
 
-    ~variant() noexcept
+    ~variant()
+#if !defined(__GNUC__) || (100 * __GNUC__ + __GNUC_MINOR__ >= 408)
+        noexcept(std::is_nothrow_destructible<std::tuple<Types...>>::value)
+#endif
     {
         helper_type::destroy(type_index, &data);
     }

@@ -247,6 +247,18 @@ TEST_CASE( "implicit conversion to unsigned char", "[variant][implicit conversio
 
 struct dummy {};
 
+TEST_CASE( "implicit conversion to a suitable type", "[variant][implicit conversion]" ) {
+    using mapbox::util::variant;
+    CHECK_NOTHROW((variant<dummy, float, std::string>(123)).get<float>());
+    CHECK_NOTHROW((variant<dummy, float, std::string>("foo")).get<std::string>());
+}
+
+TEST_CASE( "value_traits for non-convertible type", "[variant::detail]" ) {
+    namespace detail = mapbox::util::detail;
+    using target_type = detail::value_traits<dummy, int>::target_type;
+    CHECK((std::is_same<target_type, void>::value) == true);
+}
+
 TEST_CASE( "Type indexing should work with variants with duplicated types", "[variant::detail]" ) {
     // Index is in reverse order
     REQUIRE((mapbox::util::detail::value_traits<bool, bool, int, double, std::string>::index == 3));
