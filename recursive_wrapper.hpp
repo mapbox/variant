@@ -52,10 +52,7 @@ public:
         : p_(new T(operand)) {}
 
     recursive_wrapper(recursive_wrapper && operand)
-        : p_(operand.p_)
-    {
-        operand.p_ = nullptr;
-    }
+        : p_(new T(std::move(operand.get()))) {}
 
     recursive_wrapper(T && operand)
         : p_(new T(std::move(operand))) {}

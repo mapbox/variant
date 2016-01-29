@@ -74,21 +74,18 @@ TEST_CASE("recursive wrapper of int") {
 
 }
 
-// XXX !!! handling of move is inconsistent
 TEST_CASE("move of recursive wrapper") {
     rwi a{1};
 
-    SECTION("null out operand in move constructor") {
+    SECTION("move constructor") {
         rwi b{std::move(a)};
         REQUIRE(b.get() == 1);
-        REQUIRE(a.get_pointer() == nullptr);
     }
 
-    SECTION("swap with operand in operator=") {
+    SECTION("operator= on rvalue") {
         rwi b{2};
         b = std::move(a);
         REQUIRE(b.get() == 1);
-        REQUIRE(a.get() == 2);
     }
 
 }
