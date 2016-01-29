@@ -808,49 +808,37 @@ public:
 
     // visitor
     // unary
-    template <typename F, typename V>
+    template <typename F, typename V, typename R = typename detail::result_of_unary_visit<F, first_type>::type>
     auto VARIANT_INLINE
     static visit(V const& v, F && f)
-        -> decltype(detail::dispatcher<F, V,
-                    typename detail::result_of_unary_visit<F,
-                    first_type>::type, Types...>::apply_const(v, std::forward<F>(f)))
+        -> decltype(detail::dispatcher<F, V, R, Types...>::apply_const(v, std::forward<F>(f)))
     {
-        using R = typename detail::result_of_unary_visit<F, first_type>::type;
         return detail::dispatcher<F, V, R, Types...>::apply_const(v, std::forward<F>(f));
     }
     // non-const
-    template <typename F, typename V>
+    template <typename F, typename V, typename R = typename detail::result_of_unary_visit<F, first_type>::type>
     auto VARIANT_INLINE
     static visit(V & v, F && f)
-        -> decltype(detail::dispatcher<F, V,
-                    typename detail::result_of_unary_visit<F,
-                    first_type>::type, Types...>::apply(v, std::forward<F>(f)))
+        -> decltype(detail::dispatcher<F, V, R, Types...>::apply(v, std::forward<F>(f)))
     {
-        using R = typename detail::result_of_unary_visit<F, first_type>::type;
         return detail::dispatcher<F, V, R, Types...>::apply(v, std::forward<F>(f));
     }
 
     // binary
     // const
-    template <typename F, typename V>
+    template <typename F, typename V, typename R = typename detail::result_of_binary_visit<F, first_type>::type>
     auto VARIANT_INLINE
     static binary_visit(V const& v0, V const& v1, F && f)
-        -> decltype(detail::binary_dispatcher<F, V,
-                    typename detail::result_of_binary_visit<F,
-                    first_type>::type, Types...>::apply_const(v0, v1, std::forward<F>(f)))
+        -> decltype(detail::binary_dispatcher<F, V, R, Types...>::apply_const(v0, v1, std::forward<F>(f)))
     {
-        using R = typename detail::result_of_binary_visit<F, first_type>::type;
         return detail::binary_dispatcher<F, V, R, Types...>::apply_const(v0, v1, std::forward<F>(f));
     }
     // non-const
-    template <typename F, typename V>
+    template <typename F, typename V, typename R = typename detail::result_of_binary_visit<F, first_type>::type>
     auto VARIANT_INLINE
     static binary_visit(V& v0, V& v1, F && f)
-        -> decltype(detail::binary_dispatcher<F, V,
-                    typename detail::result_of_binary_visit<F,
-                    first_type>::type, Types...>::apply(v0, v1, std::forward<F>(f)))
+        -> decltype(detail::binary_dispatcher<F, V, R, Types...>::apply(v0, v1, std::forward<F>(f)))
     {
-        using R = typename detail::result_of_binary_visit<F, first_type>::type;
         return detail::binary_dispatcher<F, V, R, Types...>::apply(v0, v1, std::forward<F>(f));
     }
 
