@@ -206,8 +206,27 @@ TEST_CASE( "get with wrong type (here: int) should throw", "[variant]" ) {
     REQUIRE(var.is<double>());
     REQUIRE_FALSE(var.is<int>());
     REQUIRE(var.get<double>() == 5.0);
+    REQUIRE(mapbox::util::get<double>(var) == 5.0);
     REQUIRE_THROWS_AS({
         var.get<int>();
+    }, mapbox::util::bad_variant_access&);
+    REQUIRE_THROWS_AS({
+        mapbox::util::get<int>(var);
+    }, mapbox::util::bad_variant_access&);
+}
+
+TEST_CASE( "get on const varint with wrong type (here: int) should throw", "[variant]" ) {
+    using variant_type = mapbox::util::variant<int, double>;
+    const variant_type var = 5.0;
+    REQUIRE(var.is<double>());
+    REQUIRE_FALSE(var.is<int>());
+    REQUIRE(var.get<double>() == 5.0);
+    REQUIRE(mapbox::util::get<double>(var) == 5.0);
+    REQUIRE_THROWS_AS({
+        var.get<int>();
+    }, mapbox::util::bad_variant_access&);
+    REQUIRE_THROWS_AS({
+        mapbox::util::get<int>(var);
     }, mapbox::util::bad_variant_access&);
 }
 
@@ -390,15 +409,55 @@ TEST_CASE( "storing reference wrappers works" ) {
     int a = 1;
     variant_type v{std::ref(a)};
     REQUIRE(v.get<int>() == 1);
+    REQUIRE(mapbox::util::get<int>(v) == 1);
+    REQUIRE_THROWS_AS({
+        v.get<double>();
+    }, mapbox::util::bad_variant_access&);
+    REQUIRE_THROWS_AS({
+        mapbox::util::get<double>(v);
+    }, mapbox::util::bad_variant_access&);
     a = 2;
     REQUIRE(v.get<int>() == 2);
 
     double b = 3.141;
     v = std::ref(b);
     REQUIRE(v.get<double>() == Approx(3.141));
+    REQUIRE(mapbox::util::get<double>(v) == Approx(3.141));
+    REQUIRE_THROWS_AS({
+        v.get<int>();
+    }, mapbox::util::bad_variant_access&);
+    REQUIRE_THROWS_AS({
+        mapbox::util::get<int>(v);
+    }, mapbox::util::bad_variant_access&);
     b = 2.718;
     REQUIRE(v.get<double>() == Approx(2.718));
     a = 3;
     REQUIRE(v.get<double>() == Approx(2.718));
+}
+
+TEST_CASE( "storing reference wrappers to consts works" ) {
+    using variant_type = mapbox::util::variant<std::reference_wrapper<int const>, std::reference_wrapper<double const>>;
+
+    const int a = 1;
+    variant_type v{std::cref(a)};
+    REQUIRE(v.get<int>() == 1);
+    REQUIRE(mapbox::util::get<int const>(v) == 1);
+    REQUIRE_THROWS_AS({
+        v.get<double const>();
+    }, mapbox::util::bad_variant_access&);
+    REQUIRE_THROWS_AS({
+        mapbox::util::get<double const>(v);
+    }, mapbox::util::bad_variant_access&);
+
+    const double b = 3.141;
+    v = std::cref(b);
+    REQUIRE(v.get<double const>() == Approx(3.141));
+    REQUIRE(mapbox::util::get<double const>(v) == Approx(3.141));
+    REQUIRE_THROWS_AS({
+        v.get<int const>();
+    }, mapbox::util::bad_variant_access&);
+    REQUIRE_THROWS_AS({
+        mapbox::util::get<int const>(v);
+    }, mapbox::util::bad_variant_access&);
 }
 
