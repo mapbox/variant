@@ -36,7 +36,7 @@ implement the features that are actually needed in existing software. So being
 an "incomplete" implementation is just fine.
 
 Currently Mapbox variant doesn't try to be API compatible with the upcoming
-variant standard. Because the standard is not finished and it would be too much
+variant standard, because the standard is not finished and it would be too much
 work. But we'll revisit this decision in the future if needed.
 
 If Mapbox variant is not for you, have a look at [these other
