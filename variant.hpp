@@ -202,42 +202,39 @@ struct variant_helper;
 template <typename T, typename... Types>
 struct variant_helper<T, Types...>
 {
-    VARIANT_INLINE static void destroy(const std::size_t id, void * data)
+    VARIANT_INLINE static void destroy(const std::size_t type_index, void * data)
     {
-        if (id == sizeof...(Types))
+        if (type_index == sizeof...(Types))
         {
             reinterpret_cast<T*>(data)->~T();
         }
         else
         {
-            variant_helper<Types...>::destroy(id, data);
+            variant_helper<Types...>::destroy(type_index, data);
         }
     }
 
-    VARIANT_INLINE static void move(const std::size_t old_id, void * old_value, void * new_value)
+    VARIANT_INLINE static void move(const std::size_t old_type_index, void * old_value, void * new_value)
     {
-        if (old_id == sizeof...(Types))
+        if (old_type_index == sizeof...(Types))
         {
             new (new_value) T(std::move(*reinterpret_cast<T*>(old_value)));
-            //std::memcpy(new_value, old_value, sizeof(T));
-            // ^^  DANGER: this should only be considered for relocatable types e.g built-in types
-            // Also, I don't see any measurable performance benefit just yet
         }
         else
         {
-            variant_helper<Types...>::move(old_id, old_value, new_value);
+            variant_helper<Types...>::move(old_type_index, old_value, new_value);
         }
     }
 
-    VARIANT_INLINE static void copy(const std::size_t old_id, const void * old_value, void * new_value)
+    VARIANT_INLINE static void copy(const std::size_t old_type_index, const void * old_value, void * new_value)
     {
-        if (old_id == sizeof...(Types))
+        if (old_type_index == sizeof...(Types))
         {
             new (new_value) T(*reinterpret_cast<const T*>(old_value));
         }
         else
         {
-            variant_helper<Types...>::copy(old_id, old_value, new_value);
+            variant_helper<Types...>::copy(old_type_index, old_value, new_value);
         }
     }
 
