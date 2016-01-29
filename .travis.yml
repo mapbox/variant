@@ -4,32 +4,42 @@ sudo: false
 
 # Save common build configurations as shortcuts, so we can reference them later.
 addons_shortcuts:
+  addons_clang34: &clang34
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.4', 'boost-latest' ]
+      packages: [ 'clang-3.4', 'libboost1.55-all-dev' ]
   addons_clang35: &clang35
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5', 'boost-latest' ]
-      packages: [ 'clang-3.5', 'libstdc++-4.9-dev', 'libstdc++6', 'libllvm3.4', 'libboost1.55-all-dev' ]
+      packages: [ 'clang-3.5', 'libboost1.55-all-dev' ]
+  addons_clang36: &clang36
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6', 'boost-latest' ]
+      packages: [ 'clang-3.6', 'libboost1.55-all-dev' ]
+  addons_clang37: &clang37
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7', 'boost-latest' ]
+      packages: [ 'clang-3.7', 'libboost1.55-all-dev' ]
   addons_clang38: &clang38
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise', 'boost-latest' ]
-      packages: [ 'clang-3.8', 'libgcc-4.9-dev', 'libstdc++-4.9-dev', 'libstdc++6',
-                  'libllvm3.4', 'libclang-common-3.8-dev', 'libclang1-3.8', 'liblldb-3.8',
-                  'libllvm3.8', 'lldb-3.8', 'llvm-3.8', 'llvm-3.8-dev', 'llvm-3.8-runtime', 'libboost1.55-all-dev']
-  addons_gcc49: &gcc47
+      packages: [ 'clang-3.8', 'libboost1.55-all-dev']
+  addons_gcc47: &gcc47
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'boost-latest' ]
-      packages: [ 'g++-4.7', 'gcc-4.7', 'libboost1.55-all-dev' ]
-  addons_gcc49: &gcc48
+      packages: [ 'g++-4.7', 'libboost1.55-all-dev' ]
+  addons_gcc48: &gcc48
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'boost-latest' ]
-      packages: [ 'g++-4.8', 'gcc-4.8', 'libboost1.55-all-dev' ]
+      packages: [ 'g++-4.8', 'libboost1.55-all-dev' ]
   addons_gcc49: &gcc49
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'boost-latest' ]
-      packages: [ 'g++-4.9', 'gcc-4.9', 'libboost1.55-all-dev' ]
-  addons_gcc49: &gcc5
+      packages: [ 'g++-4.9', 'libboost1.55-all-dev' ]
+  addons_gcc5: &gcc5
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'boost-latest' ]
-      packages: [ 'g++-5', 'gcc-5', 'libboost1.55-all-dev' ]
+      packages: [ 'g++-5', 'libboost1.55-all-dev' ]
 
 matrix:
   include:
@@ -41,9 +51,21 @@ matrix:
       env: TEST_GYP_BUILD=True
       compiler: clang
     - os: linux
+      compiler: "clang34"
+      env: CXX=clang++-3.4 COVERAGE=True
+      addons: *clang34
+    - os: linux
       compiler: "clang35"
       env: CXX=clang++-3.5 COVERAGE=True
       addons: *clang35
+    - os: linux
+      compiler: "clang36"
+      env: CXX=clang++-3.6 COVERAGE=True
+      addons: *clang36
+    - os: linux
+      compiler: "clang37"
+      env: CXX=clang++-3.7 COVERAGE=True
+      addons: *clang37
     - os: linux
       compiler: "clang38"
       env: CXX=clang++-3.8
