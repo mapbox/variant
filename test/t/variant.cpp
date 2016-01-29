@@ -262,8 +262,11 @@ TEST_CASE( "value_traits for non-convertible type", "[variant::detail]" ) {
 TEST_CASE( "Type indexing should work with variants with duplicated types", "[variant::detail]" ) {
     // Index is in reverse order
     REQUIRE((mapbox::util::detail::value_traits<bool, bool, int, double, std::string>::index == 3));
+    REQUIRE((mapbox::util::detail::value_traits<bool, bool, int, double, int>::index == 3));
     REQUIRE((mapbox::util::detail::value_traits<int, bool, int, double, std::string>::index == 2));
+    REQUIRE((mapbox::util::detail::value_traits<int, bool, int, double, int>::index == 2));
     REQUIRE((mapbox::util::detail::value_traits<double, bool, int, double, std::string>::index == 1));
+    REQUIRE((mapbox::util::detail::value_traits<bool, bool, int, bool, std::string>::index == 3));
     REQUIRE((mapbox::util::detail::value_traits<std::string, bool, int, double, std::string>::index == 0));
     REQUIRE((mapbox::util::detail::value_traits<dummy, bool, int, double, std::string>::index == mapbox::util::detail::invalid_value));
     REQUIRE((mapbox::util::detail::value_traits<std::vector<int>, bool, int, double, std::string>::index == mapbox::util::detail::invalid_value));
