@@ -240,6 +240,50 @@ TEST_CASE( "get with any type should throw if not initialized", "[variant]" ) {
     }, mapbox::util::bad_variant_access&);
 }
 
+TEST_CASE( "no_init variant can be copied and moved from", "[variant]" ) {
+    using variant_type = mapbox::util::variant<int, double>;
+
+    variant_type v1{mapbox::util::no_init()};
+    variant_type v2{42};
+    variant_type v3{23};
+
+    REQUIRE(v2.get<int>() == 42);
+    v2 = v1;
+    REQUIRE_THROWS_AS({
+        v2.get<int>();
+    }, mapbox::util::bad_variant_access&);
+
+    REQUIRE(v3.get<int>() == 23);
+    v3 = std::move(v1);
+    REQUIRE_THROWS_AS({
+        v3.get<int>();
+    }, mapbox::util::bad_variant_access&);
+}
+
+TEST_CASE( "no_init variant can be copied and moved to", "[variant]" ) {
+    using variant_type = mapbox::util::variant<int, double>;
+
+    variant_type v1{42};
+    variant_type v2{mapbox::util::no_init()};
+    variant_type v3{mapbox::util::no_init()};
+
+    REQUIRE_THROWS_AS({
+        v2.get<int>();
+    }, mapbox::util::bad_variant_access&);
+
+    REQUIRE(v1.get<int>() == 42);
+    v2 = v1;
+    REQUIRE(v2.get<int>() == 42);
+    REQUIRE(v1.get<int>() == 42);
+
+    REQUIRE_THROWS_AS({
+        v3.get<int>();
+    }, mapbox::util::bad_variant_access&);
+
+    v3 = std::move(v1);
+    REQUIRE(v3.get<int>() == 42);
+}
+
 TEST_CASE( "implicit conversion", "[variant][implicit conversion]" ) {
     using variant_type = mapbox::util::variant<int>;
     variant_type var(5.0); // converted to int

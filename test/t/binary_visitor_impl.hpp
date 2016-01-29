@@ -16,9 +16,9 @@ struct add_visitor
 };
 
 TEST_CASE( "const binary visitor works on const variants" NAME_EXT, "[visitor][binary visitor]" ) {
-    const variant_type a = 7;
+    const variant_type a{7};
     const variant_type b = 3;
-    const variant_type c = 7.1;
+    const variant_type c{7.1};
     const variant_type d = 2.9;
 
     const add_visitor v;
