@@ -241,19 +241,6 @@ struct variant_helper<T, Types...>
         }
     }
 
-    VARIANT_INLINE static void direct_swap(const std::size_t id, void * lhs, void * rhs)
-    {
-        using std::swap; //enable ADL
-        if (id == sizeof...(Types))
-        {
-            // both lhs and rhs hold T
-            swap(*reinterpret_cast<T*>(lhs), *reinterpret_cast<T*>(rhs));
-        }
-        else
-        {
-            variant_helper<Types...>::direct_swap(id, lhs, rhs);
-        }
-    }
 };
 
 template <>
@@ -262,7 +249,6 @@ struct variant_helper<>
     VARIANT_INLINE static void destroy(const std::size_t, void *) {}
     VARIANT_INLINE static void move(const std::size_t, void *, void *) {}
     VARIANT_INLINE static void copy(const std::size_t, const void *, void *) {}
-    VARIANT_INLINE static void direct_swap(const std::size_t, void *, void *) {}
 };
 
 template <typename T>
