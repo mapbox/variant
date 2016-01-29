@@ -56,7 +56,6 @@ Tested with:
  - g++-4.8
  - g++-4.9
  - g++-5
- - clang++-3.4
  - clang++-3.5
  - clang++-3.6
  - clang++-3.7
