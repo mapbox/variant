@@ -418,6 +418,8 @@ TEST_CASE( "storing reference wrappers works" ) {
     }, mapbox::util::bad_variant_access&);
     a = 2;
     REQUIRE(v.get<int>() == 2);
+    v.get<int>() = 3;
+    REQUIRE(a == 3);
 
     double b = 3.141;
     v = std::ref(b);
@@ -433,15 +435,23 @@ TEST_CASE( "storing reference wrappers works" ) {
     REQUIRE(v.get<double>() == Approx(2.718));
     a = 3;
     REQUIRE(v.get<double>() == Approx(2.718));
+    v.get<double>() = 4.1;
+    REQUIRE(b == Approx(4.1));
+
+    REQUIRE_THROWS_AS({
+        v.get<int>() = 4;
+    }, mapbox::util::bad_variant_access&);
 }
 
 TEST_CASE( "storing reference wrappers to consts works" ) {
     using variant_type = mapbox::util::variant<std::reference_wrapper<int const>, std::reference_wrapper<double const>>;
 
-    const int a = 1;
+    int a = 1;
     variant_type v{std::cref(a)};
-    REQUIRE(v.get<int>() == 1);
+    REQUIRE(v.get<int const>() == 1);
+    REQUIRE(v.get<int>() == 1); // this works (see #81)
     REQUIRE(mapbox::util::get<int const>(v) == 1);
+//    REQUIRE(mapbox::util::get<int>(v) == 1); // this doesn't work (see #81)
     REQUIRE_THROWS_AS({
         v.get<double const>();
     }, mapbox::util::bad_variant_access&);
@@ -449,7 +459,7 @@ TEST_CASE( "storing reference wrappers to consts works" ) {
         mapbox::util::get<double const>(v);
     }, mapbox::util::bad_variant_access&);
 
-    const double b = 3.141;
+    double b = 3.141;
     v = std::cref(b);
     REQUIRE(v.get<double const>() == Approx(3.141));
     REQUIRE(mapbox::util::get<double const>(v) == Approx(3.141));
