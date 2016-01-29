@@ -50,7 +50,7 @@ Want to know more about the upcoming standard? Have a look at our
 
  - Compiler supporting `-std=c++11` or `-std=c++14`
 
-Tested with
+Tested with:
 
  - g++-4.7
  - g++-4.8
@@ -58,12 +58,10 @@ Tested with
  - g++-5
  - clang++-3.4
  - clang++-3.5
+ - clang++-3.6
+ - clang++-3.7
  - clang++-3.8
- - Visual C++ Compiler November 2013 CTP
- - Visual C++ Compiler 2014 CTP 4
-
-Note: get the "2013 Nov CTP" release at http://www.microsoft.com/en-us/download/details.aspx?id=41151 and the 2014 CTP at http://www.visualstudio.com/en-us/downloads/visual-studio-14-ctp-vs.aspx
-
+ - Visual Studio 2015
 
 ## Usage
 
