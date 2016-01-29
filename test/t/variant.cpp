@@ -279,7 +279,6 @@ TEST_CASE( "variant default constructor", "[variant][default constructor]" ) {
     using variant_type = mapbox::util::variant<int, double, std::string>;
     REQUIRE(variant_type{}.which() == 0);
     REQUIRE(variant_type{}.valid());
-    REQUIRE(variant_type{mapbox::util::no_init()}.get_type_index() == mapbox::util::detail::invalid_value);
     REQUIRE_FALSE(variant_type{mapbox::util::no_init()}.valid());
 }
 

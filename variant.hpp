@@ -782,7 +782,9 @@ public:
         }
     }
 
-    VARIANT_INLINE std::size_t get_type_index() const
+    // This function is deprecated because it returns an internal index field.
+    // Use which() instead.
+    VARIANT_INLINE MAPBOX_VARIANT_DEPRECATED std::size_t get_type_index() const
     {
         return type_index;
     }
