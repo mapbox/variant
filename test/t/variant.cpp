@@ -449,9 +449,9 @@ TEST_CASE( "storing reference wrappers to consts works" ) {
     int a = 1;
     variant_type v{std::cref(a)};
     REQUIRE(v.get<int const>() == 1);
-    REQUIRE(v.get<int>() == 1); // this works (see #81)
+    REQUIRE(v.get<int>() == 1); // this works (see #82)
     REQUIRE(mapbox::util::get<int const>(v) == 1);
-//    REQUIRE(mapbox::util::get<int>(v) == 1); // this doesn't work (see #81)
+//    REQUIRE(mapbox::util::get<int>(v) == 1); // this doesn't work (see #82)
     REQUIRE_THROWS_AS({
         v.get<double const>();
     }, mapbox::util::bad_variant_access&);
