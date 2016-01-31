@@ -820,7 +820,14 @@ public:
     }
 
     ~variant()
-#if !defined(__GNUC__) || (100 * __GNUC__ + __GNUC_MINOR__ >= 408)
+#if defined(__GNUC__) && (100 * __GNUC__ + __GNUC_MINOR__ < 408)
+        // GCC 4.7 doesn't have std::is_nothrow_destructible
+        //  https://github.com/mapbox/variant/pull/62#issuecomment-171836163
+#elif defined(_MSC_VER)
+        // MSVC crashes when overridden virtual destructor needs to destroy
+        // a variant containing an alternative with user-declared destructor
+        //  https://github.com/mapnik/mapnik/issues/3277#issuecomment-177471394
+#else
         noexcept(std::is_nothrow_destructible<std::tuple<Types...>>::value)
 #endif
     {
