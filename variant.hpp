@@ -26,7 +26,6 @@
 #  define MAPBOX_VARIANT_DEPRECATED [[deprecated]]
 #endif
 
-
 #ifdef _MSC_VER
  // https://msdn.microsoft.com/en-us/library/bw1hbe6y.aspx
  #ifdef NDEBUG
@@ -76,6 +75,28 @@ protected:
 namespace detail {
 
 static constexpr std::size_t invalid_value = std::size_t(-1);
+
+#if defined(__GNUC__) && (100 * __GNUC__ + __GNUC_MINOR__ < 408)
+    // GCC 4.7 doesn't have std::is_nothrow_destructible
+    //  https://github.com/mapbox/variant/pull/62#issuecomment-171836163
+    template <typename T>
+    struct is_nothrow_destructible
+    {
+        static constexpr bool value = noexcept(std::declval<T*>()->~T());
+    };
+#elif defined(_MSC_VER)
+    // MSVC 14.0 doesn't seem to allow it in exception-specification
+    // error C3672: pseudo-destructor expression can only be used as part of a function call
+    //  https://github.com/mapbox/variant/issues/86#issuecomment-177972362
+    template <typename T>
+    struct is_nothrow_destructible
+    {
+        static constexpr bool value = noexcept(delete std::declval<T*>());
+    };
+#else
+    template <typename T>
+    using is_nothrow_destructible = std::is_nothrow_destructible<T>;
+#endif
 
 template <typename T, typename... Types>
 struct direct_type;
@@ -819,10 +840,7 @@ public:
         return detail::binary_dispatcher<F, V, R, Types...>::apply(v0, v1, std::forward<F>(f));
     }
 
-    ~variant()
-#if !defined(__GNUC__) || (100 * __GNUC__ + __GNUC_MINOR__ >= 408)
-        noexcept(std::is_nothrow_destructible<std::tuple<Types...>>::value)
-#endif
+    ~variant() noexcept(detail::is_nothrow_destructible<std::tuple<Types...>>::value)
     {
         helper_type::destroy(type_index, &data);
     }
