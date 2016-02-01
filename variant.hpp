@@ -85,14 +85,25 @@ static constexpr std::size_t invalid_value = std::size_t(-1);
         static constexpr bool value = noexcept(std::declval<T*>()->~T());
     };
 #elif defined(_MSC_VER)
-    // MSVC 14.0 doesn't seem to allow it in exception-specification
-    // error C3672: pseudo-destructor expression can only be used as part of a function call
+    // Mysterious errors related to exception-specification on destructors
+    // were encountered when building mapnik, see:
+    //
+    //  https://github.com/mapnik/mapnik/issues/3277#issuecomment-177471394
     //  https://github.com/mapbox/variant/issues/86#issuecomment-177972362
+    //
+    // None of them occurred when building variant alone, and work-arounds
+    // like the one for GCC 4.7, despite the fact they work on MSVC when
+    // building variant alone, fail when building mapnik:
+    //
+    //  error C2541: 'delete': cannot delete objects that are not pointers
+    //  error C3672: pseudo-destructor expression can only be used as part of a function call
+    //
+    // I'm inclined to believe that std::is_nothrow_destructible itself is
+    // fine, and that it's some interaction of variant, recursive_wrapper,
+    // virtual destructors and maybe some compiler options mapnik uses that
+    // all combined cause crashes.
     template <typename T>
-    struct is_nothrow_destructible
-    {
-        static constexpr bool value = noexcept(delete std::declval<T*>());
-    };
+    using is_nothrow_destructible = std::is_nothrow_destructible<T>;
 #else
     template <typename T>
     using is_nothrow_destructible = std::is_nothrow_destructible<T>;
