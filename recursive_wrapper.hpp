@@ -18,13 +18,6 @@
 namespace mapbox { namespace util {
 
 template <typename T>
-struct recursive_wrapper_traits
-{
-    static constexpr bool is_nothrow_destructible = true;
-};
-
-
-template <typename T>
 class recursive_wrapper
 {
 
@@ -50,27 +43,7 @@ public:
      */
     recursive_wrapper() : p_(new T) {};
 
-    /*
-     * we cannot use `noexcept(std::is_nothrow_destructible<T>::value)`
-     *  here becase if T contains a variant with recursive_wrapper<T>,
-     *  there will be infinite recursion in ~variant() noexcept-specifier
-     * https://github.com/mapbox/variant/issues/86#issuecomment-178001768
-     *
-     * we cannot say `noexcept(true)`, because what if ~T() throws?
-     *
-     * and we cannot say `noexcept(false)` either, because that would
-     *  prevent having a member variable containing a recursive_wrapper
-     *  in a class with inherited noexcept(true) virtual destructor
-     *
-     * IMPORTANT: it it thus the user's responsibility to ensure that
-     *            recursive_wrapper_traits<T>::is_nothrow_destructible
-     *            matches the noexcept-specifier on ~T()
-     */
-    ~recursive_wrapper()
-        noexcept(recursive_wrapper_traits<T>::is_nothrow_destructible)
-    {
-        delete p_;
-    }
+    ~recursive_wrapper() noexcept { delete p_; };
 
     recursive_wrapper(recursive_wrapper const& operand)
         : p_(new T(operand.get())) {}
