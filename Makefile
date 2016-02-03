@@ -9,6 +9,9 @@ COMMON_FLAGS = -Wall -pedantic -Wextra -Wsign-compare -Wsign-conversion -Wshadow
 CXXFLAGS := $(CXXFLAGS)
 LDFLAGS := $(LDFLAGS)
 
+UNIT_TEST_SOURCES := $(wildcard test/t/*.cpp)
+UNIT_TEST_OBJECTS := $(patsubst test/t/%.cpp,out/%.o,$(UNIT_TEST_SOURCES))
+
 OS:=$(shell uname -s)
 ifeq ($(OS),Darwin)
 	CXXFLAGS += -stdlib=libc++
@@ -70,7 +73,7 @@ out/%.o: test/t/%.cpp Makefile optional.hpp recursive_wrapper.hpp variant.hpp va
 	mkdir -p ./out
 	$(CXX) -c -o $@ $< -I. -Itest/include $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)
 
-out/unit: out/unit.o out/binary_visitor_1.o out/binary_visitor_2.o out/binary_visitor_3.o out/binary_visitor_4.o out/binary_visitor_5.o out/binary_visitor_6.o out/issue21.o out/mutating_visitor.o out/optional.o out/recursive_wrapper.o out/sizeof.o out/unary_visitor.o out/variant.o
+out/unit: out/unit.o $(UNIT_TEST_OBJECTS)
 	mkdir -p ./out
 	$(CXX) -o $@ $^ $(LDFLAGS)
 

@@ -16,6 +16,7 @@
         "test/t/binary_visitor_6.cpp",
         "test/t/issue21.cpp",
         "test/t/mutating_visitor.cpp",
+        "test/t/noexcept.cpp",
         "test/t/optional.cpp",
         "test/t/recursive_wrapper.cpp",
         "test/t/sizeof.cpp",
