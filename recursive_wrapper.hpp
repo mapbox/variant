@@ -58,12 +58,14 @@ public:
         : p_(new T(std::move(operand))) {}
 
     inline recursive_wrapper & operator=(recursive_wrapper const& rhs)
+        noexcept(std::is_nothrow_copy_assignable<T>::value)
     {
         assign(rhs.get());
         return *this;
     }
 
     inline recursive_wrapper & operator=(T const& rhs)
+        noexcept(std::is_nothrow_copy_assignable<T>::value)
     {
         assign(rhs);
         return *this;
@@ -83,6 +85,7 @@ public:
     }
 
     recursive_wrapper & operator=(T && rhs)
+        noexcept(std::is_nothrow_move_assignable<T>::value)
     {
         get() = std::move(rhs);
         return *this;

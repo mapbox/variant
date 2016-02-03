@@ -596,6 +596,7 @@ public:
     }
 
     VARIANT_INLINE variant(variant<Types...> const& old)
+        noexcept(std::is_nothrow_copy_constructible<std::tuple<Types...>>::value)
         : type_index(old.type_index)
     {
         helper_type::copy(old.type_index, &old.data, &data);
@@ -608,52 +609,24 @@ public:
         helper_type::move(old.type_index, &old.data, &data);
     }
 
-private:
-    VARIANT_INLINE void copy_assign(variant<Types...> const& rhs)
-    {
-        helper_type::destroy(type_index, &data);
-        type_index = detail::invalid_value;
-        helper_type::copy(rhs.type_index, &rhs.data, &data);
-        type_index = rhs.type_index;
-    }
-
-    VARIANT_INLINE void move_assign(variant<Types...> && rhs)
-    {
-        helper_type::destroy(type_index, &data);
-        type_index = detail::invalid_value;
-        helper_type::move(rhs.type_index, &rhs.data, &data);
-        type_index = rhs.type_index;
-    }
-
 public:
-    VARIANT_INLINE variant<Types...>& operator=(variant<Types...> &&  other)
+    VARIANT_INLINE variant<Types...>& operator=(variant<Types...> && other)
+        noexcept(std::is_nothrow_move_constructible<std::tuple<Types...>>::value)
     {
-        move_assign(std::move(other));
+        helper_type::destroy(type_index, &data);
+        type_index = detail::invalid_value;
+        helper_type::move(other.type_index, &other.data, &data); // move-construction
+        type_index = other.type_index;
         return *this;
     }
 
     VARIANT_INLINE variant<Types...>& operator=(variant<Types...> const& other)
+        noexcept(std::is_nothrow_copy_constructible<std::tuple<Types...>>::value)
     {
-        copy_assign(other);
-        return *this;
-    }
-
-    // conversions
-    // move-assign
-    template <typename T>
-    VARIANT_INLINE variant<Types...>& operator=(T && rhs) noexcept
-    {
-        variant<Types...> temp(std::forward<T>(rhs));
-        move_assign(std::move(temp));
-        return *this;
-    }
-
-    // copy-assign
-    template <typename T>
-    VARIANT_INLINE variant<Types...>& operator=(T const& rhs)
-    {
-        variant<Types...> temp(rhs);
-        copy_assign(temp);
+        helper_type::destroy(type_index, &data);
+        type_index = detail::invalid_value;
+        helper_type::copy(other.type_index, &other.data, &data); // copy-construction
+        type_index = other.type_index;
         return *this;
     }
 
