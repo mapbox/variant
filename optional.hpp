@@ -8,10 +8,8 @@
 
 #include "variant.hpp"
 
-namespace mapbox
-{
-namespace util
-{
+namespace mapbox {
+namespace util {
 
 template <typename T>
 class optional
@@ -27,7 +25,7 @@ class optional
   public:
     optional() = default;
 
-    optional(optional const &rhs)
+    optional(optional const& rhs)
     {
         if (this != &rhs)
         { // protect against invalid self-assignment
@@ -35,23 +33,23 @@ class optional
         }
     }
 
-    optional(T const &v) { variant_ = v; }
+    optional(T const& v) { variant_ = v; }
 
     explicit operator bool() const noexcept { return variant_.template is<T>(); }
 
     T const& get() const { return variant_.template get<T>(); }
-    T & get() { return variant_.template get<T>(); }
+    T&       get() { return variant_.template get<T>(); }
 
     T const& operator*() const { return this->get(); }
     T operator*() { return this->get(); }
 
-    optional & operator=(T const &v)
+    optional& operator=(T const& v)
     {
         variant_ = v;
         return *this;
     }
 
-    optional & operator=(optional const &rhs)
+    optional& operator=(optional const& rhs)
     {
         if (this != &rhs)
         {
@@ -61,7 +59,7 @@ class optional
     }
 
     template <typename... Args>
-    void emplace(Args &&... args)
+    void emplace(Args&&... args)
     {
         variant_ = T{std::forward<Args>(args)...};
     }

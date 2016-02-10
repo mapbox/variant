@@ -20,18 +20,18 @@ struct sub;
 template <typename OpTag>
 struct binary_op;
 
-typedef util::variant<int ,
+typedef util::variant<int,
                       std::unique_ptr<binary_op<add>>,
-                      std::unique_ptr<binary_op<sub>>
-                      > expression;
+                      std::unique_ptr<binary_op<sub>>>
+    expression;
 
 template <typename Op>
 struct binary_op
 {
-    expression left;  // variant instantiated here...
+    expression left; // variant instantiated here...
     expression right;
 
-    binary_op(expression && lhs, expression && rhs)
+    binary_op(expression&& lhs, expression&& rhs)
         : left(std::move(lhs)), right(std::move(rhs))
     {
     }
@@ -46,7 +46,6 @@ struct print
     }
 };
 
-
 struct test
 {
     template <typename T>
@@ -58,8 +57,7 @@ struct test
 
 struct calculator
 {
-public:
-
+  public:
     int operator()(int value) const
     {
         return value;
@@ -67,21 +65,18 @@ public:
 
     int operator()(std::unique_ptr<binary_op<add>> const& binary) const
     {
-        return util::apply_visitor(calculator(), binary->left)
-            + util::apply_visitor(calculator(), binary->right);
+        return util::apply_visitor(calculator(), binary->left) + util::apply_visitor(calculator(), binary->right);
     }
 
     int operator()(std::unique_ptr<binary_op<sub>> const& binary) const
     {
-        return util::apply_visitor(calculator(), binary->left)
-            - util::apply_visitor(calculator(), binary->right);
+        return util::apply_visitor(calculator(), binary->left) - util::apply_visitor(calculator(), binary->right);
     }
 };
 
 struct to_string
 {
-public:
-
+  public:
     std::string operator()(int value) const
     {
         return std::to_string(value);
@@ -89,16 +84,13 @@ public:
 
     std::string operator()(std::unique_ptr<binary_op<add>> const& binary) const
     {
-        return util::apply_visitor(to_string(), binary->left) + std::string("+")
-            + util::apply_visitor(to_string(), binary->right);
+        return util::apply_visitor(to_string(), binary->left) + std::string("+") + util::apply_visitor(to_string(), binary->right);
     }
 
     std::string operator()(std::unique_ptr<binary_op<sub>> const& binary) const
     {
-        return util::apply_visitor(to_string(), binary->left) + std::string("-")
-            + util::apply_visitor(to_string(), binary->right);
+        return util::apply_visitor(to_string(), binary->left) + std::string("-") + util::apply_visitor(to_string(), binary->right);
     }
-
 };
 
 } // namespace test

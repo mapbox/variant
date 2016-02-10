@@ -3,15 +3,15 @@
 
 #include "optional.hpp"
 
-struct dummy {
+struct dummy
+{
     dummy(int _m_1, int _m_2) : m_1(_m_1), m_2(_m_2) {}
     int m_1;
     int m_2;
-
 };
 
-
-TEST_CASE( "optional can be instantiated with a POD type", "[optional]" ) {
+TEST_CASE("optional can be instantiated with a POD type", "[optional]")
+{
     mapbox::util::optional<int> dbl_opt;
 
     REQUIRE(!dbl_opt);
@@ -22,7 +22,8 @@ TEST_CASE( "optional can be instantiated with a POD type", "[optional]" ) {
     REQUIRE(*dbl_opt == 3);
 }
 
-TEST_CASE( "copy c'tor", "[optional]" ) {
+TEST_CASE("copy c'tor", "[optional]")
+{
     mapbox::util::optional<int> dbl_opt;
 
     REQUIRE(!dbl_opt);
@@ -35,7 +36,8 @@ TEST_CASE( "copy c'tor", "[optional]" ) {
     REQUIRE(*other == 3);
 }
 
-TEST_CASE( "const operator*, const get()", "[optional]" ) {
+TEST_CASE("const operator*, const get()", "[optional]")
+{
     const mapbox::util::optional<int> dbl_opt = 3;
 
     REQUIRE(dbl_opt);
@@ -47,7 +49,8 @@ TEST_CASE( "const operator*, const get()", "[optional]" ) {
     REQUIRE(pi2 == 3);
 }
 
-TEST_CASE( "non-const operator*, non-const get()", "[optional]" ) {
+TEST_CASE("non-const operator*, non-const get()", "[optional]")
+{
     mapbox::util::optional<int> dbl_opt = 3;
 
     REQUIRE(dbl_opt);
@@ -59,7 +62,8 @@ TEST_CASE( "non-const operator*, non-const get()", "[optional]" ) {
     REQUIRE(pi2 == 3);
 }
 
-TEST_CASE( "emplace initialization, reset", "[optional]" ) {
+TEST_CASE("emplace initialization, reset", "[optional]")
+{
     mapbox::util::optional<dummy> dummy_opt;
     REQUIRE(!dummy_opt);
 
@@ -73,11 +77,13 @@ TEST_CASE( "emplace initialization, reset", "[optional]" ) {
     REQUIRE(!dummy_opt);
 }
 
-TEST_CASE( "assignment", "[optional]") {
+TEST_CASE("assignment", "[optional]")
+{
     mapbox::util::optional<int> a;
     mapbox::util::optional<int> b;
 
-    a = 1; b = 3;
+    a = 1;
+    b = 3;
     REQUIRE(a.get() == 1);
     REQUIRE(b.get() == 3);
     b = a;
@@ -85,7 +91,8 @@ TEST_CASE( "assignment", "[optional]") {
     REQUIRE(b.get() == 1);
 }
 
-TEST_CASE( "self assignment", "[optional]") {
+TEST_CASE("self assignment", "[optional]")
+{
     mapbox::util::optional<int> a;
 
     a = 1;
@@ -93,4 +100,3 @@ TEST_CASE( "self assignment", "[optional]") {
     a = a;
     REQUIRE(a.get() == 1);
 }
-

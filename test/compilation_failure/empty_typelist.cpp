@@ -5,7 +5,7 @@
 
 // Empty type list should not work.
 
-int main() {
+int main()
+{
     mapbox::util::variant<> x;
 }
-

@@ -17,7 +17,9 @@ using namespace mapbox;
 namespace test {
 
 template <typename T>
-struct string_to_number {};
+struct string_to_number
+{
+};
 
 template <>
 struct string_to_number<double>
@@ -108,7 +110,6 @@ int main()
 
     std::cerr << v0 << " == " << v1 << " -> "
               << std::boolalpha << util::apply_visitor(test::javascript_equal_visitor(), v0, v1) << std::endl;
-
 
     std::vector<variant_type> vec;
 

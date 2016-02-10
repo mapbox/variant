@@ -10,12 +10,14 @@ struct add_visitor
     add_visitor() {}
 
     template <typename A, typename B>
-    double operator()(A a, B b) const {
+    double operator()(A a, B b) const
+    {
         return a + b;
     }
 };
 
-TEST_CASE( "const binary visitor works on const variants" NAME_EXT, "[visitor][binary visitor]" ) {
+TEST_CASE("const binary visitor works on const variants" NAME_EXT, "[visitor][binary visitor]")
+{
     const variant_type a{7};
     const variant_type b = 3;
     const variant_type c{7.1};
@@ -34,7 +36,8 @@ TEST_CASE( "const binary visitor works on const variants" NAME_EXT, "[visitor][b
     REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
-TEST_CASE( "non-const binary visitor works on const variants" NAME_EXT, "[visitor][binary visitor]" ) {
+TEST_CASE("non-const binary visitor works on const variants" NAME_EXT, "[visitor][binary visitor]")
+{
     const variant_type a = 7;
     const variant_type b = 3;
     const variant_type c = 7.1;
@@ -53,7 +56,8 @@ TEST_CASE( "non-const binary visitor works on const variants" NAME_EXT, "[visito
     REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
-TEST_CASE( "const binary visitor works on non-const variants" NAME_EXT, "[visitor][binary visitor]" ) {
+TEST_CASE("const binary visitor works on non-const variants" NAME_EXT, "[visitor][binary visitor]")
+{
     variant_type a = 7;
     variant_type b = 3;
     variant_type c = 7.1;
@@ -72,7 +76,8 @@ TEST_CASE( "const binary visitor works on non-const variants" NAME_EXT, "[visito
     REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
-TEST_CASE( "non-const binary visitor works on non-const variants" NAME_EXT, "[visitor][binary visitor]" ) {
+TEST_CASE("non-const binary visitor works on non-const variants" NAME_EXT, "[visitor][binary visitor]")
+{
     variant_type a = 7;
     variant_type b = 3;
     variant_type c = 7.1;
@@ -91,7 +96,8 @@ TEST_CASE( "non-const binary visitor works on non-const variants" NAME_EXT, "[vi
     REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(9.9));
 }
 
-TEST_CASE( "rvalue binary visitor works on const variants" NAME_EXT, "[visitor][binary visitor]" ) {
+TEST_CASE("rvalue binary visitor works on const variants" NAME_EXT, "[visitor][binary visitor]")
+{
     const variant_type a = 7;
     const variant_type b = 3;
     const variant_type c = 7.1;
@@ -115,14 +121,16 @@ struct sum_mul_visitor
     sum_mul_visitor() : sum(0.0) {}
 
     template <typename A, typename B>
-    double operator()(A a, B b) {
+    double operator()(A a, B b)
+    {
         double m = a * b;
         sum += m;
         return m;
     }
 };
 
-TEST_CASE( "mutable binary visitor works" NAME_EXT, "[visitor][binary visitor]" ) {
+TEST_CASE("mutable binary visitor works" NAME_EXT, "[visitor][binary visitor]")
+{
     const variant_type a = 2;
     const variant_type b = 3;
     const variant_type c = 0.1;
@@ -143,11 +151,13 @@ TEST_CASE( "mutable binary visitor works" NAME_EXT, "[visitor][binary visitor]" 
     REQUIRE(mapbox::util::apply_visitor(v, d, a) == Approx(0.4));
 }
 
-struct swap_visitor {
-    swap_visitor() {};
+struct swap_visitor
+{
+    swap_visitor(){};
 
     template <typename A, typename B>
-    void operator()(A& a, B& b) const {
+    void operator()(A& a, B& b) const
+    {
         using T = typename std::common_type<A, B>::type;
         T tmp = a;
         a = b;
@@ -155,7 +165,8 @@ struct swap_visitor {
     }
 };
 
-TEST_CASE( "static mutating visitor on mutable variants works" NAME_EXT, "[visitor][binary visitor]" ) {
+TEST_CASE("static mutating visitor on mutable variants works" NAME_EXT, "[visitor][binary visitor]")
+{
     variant_type a = 2;
     variant_type b = 3;
     variant_type c = 0.1;
@@ -163,29 +174,31 @@ TEST_CASE( "static mutating visitor on mutable variants works" NAME_EXT, "[visit
 
     const swap_visitor v;
 
-    SECTION("swap a and b") {
+    SECTION("swap a and b")
+    {
         mapbox::util::apply_visitor(v, a, b);
         REQUIRE(a.get<int>() == 3);
         REQUIRE(b.get<int>() == 2);
     }
 
-    SECTION("swap c and d") {
+    SECTION("swap c and d")
+    {
         mapbox::util::apply_visitor(v, c, d);
         REQUIRE(c.get<double>() == Approx(0.2));
         REQUIRE(d.get<double>() == Approx(0.1));
     }
 
-    SECTION("swap a and c") {
+    SECTION("swap a and c")
+    {
         mapbox::util::apply_visitor(v, a, c);
         REQUIRE(a.get<int>() == 0);
         REQUIRE(c.get<double>() == Approx(2.0));
     }
 
-    SECTION("swap c and a") {
+    SECTION("swap c and a")
+    {
         mapbox::util::apply_visitor(v, c, a);
         REQUIRE(a.get<int>() == 0);
         REQUIRE(c.get<double>() == Approx(2.0));
     }
-
 }
-

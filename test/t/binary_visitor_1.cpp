@@ -5,4 +5,3 @@
 using variant_type = mapbox::util::variant<int, double>;
 
 #include "binary_visitor_impl.hpp"
-

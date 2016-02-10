@@ -11,8 +11,8 @@ struct check
     }
 };
 
-
-int main() {
+int main()
+{
     typedef mapbox::util::variant<bool, int, double> variant_type;
     variant_type v(0);
     mapbox::util::apply_visitor(check(), v);

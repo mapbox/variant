@@ -8,24 +8,30 @@
 
 static int count;
 
-struct t1 {
+struct t1
+{
     int value;
-    t1(int v) : value(v) {
+    t1(int v) : value(v)
+    {
         ++count;
     }
-    ~t1() {
+    ~t1()
+    {
         --count;
     }
 };
 
-struct t2 {
+struct t2
+{
     int value;
-    t2(int v) : value(v) { // constructor fails
+    t2(int v) : value(v)
+    { // constructor fails
         throw std::runtime_error("fail");
     }
 };
 
-TEST_CASE( "set() works cleanly even if the constructor throws ", "[variant]" ) {
+TEST_CASE("set() works cleanly even if the constructor throws ", "[variant]")
+{
 
     using variant_type = mapbox::util::variant<t1, t2>;
 
@@ -39,6 +45,4 @@ TEST_CASE( "set() works cleanly even if the constructor throws ", "[variant]" ) 
         });
     }
     REQUIRE(count == 0);
-
 }
-

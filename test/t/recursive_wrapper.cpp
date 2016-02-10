@@ -11,9 +11,11 @@ using rwp = mapbox::util::recursive_wrapper<std::pair<int, int>>;
 
 static_assert(std::is_same<rwi::type, int>::value, "type check failed");
 
-TEST_CASE("recursive wrapper of int") {
+TEST_CASE("recursive wrapper of int")
+{
 
-    SECTION("construct with value") {
+    SECTION("construct with value")
+    {
         rwi a{7};
 
         REQUIRE(a.get() == 7);
@@ -41,16 +43,19 @@ TEST_CASE("recursive wrapper of int") {
         REQUIRE(b.get() == 10);
     }
 
-    SECTION("construct with const reference") {
+    SECTION("construct with const reference")
+    {
         int i = 7;
         rwi a{i};
 
         REQUIRE(a.get() == 7);
     }
 
-    SECTION("implicit conversion to reference of underlying type") {
+    SECTION("implicit conversion to reference of underlying type")
+    {
 
-        SECTION("const") {
+        SECTION("const")
+        {
             rwi const a{7};
             REQUIRE(a.get() == 7);
             REQUIRE(*a.get_pointer() == 7);
@@ -59,7 +64,8 @@ TEST_CASE("recursive wrapper of int") {
             REQUIRE(underlying == 7);
         }
 
-        SECTION("non const") {
+        SECTION("non const")
+        {
             rwi a{7};
             REQUIRE(a.get() == 7);
             REQUIRE(*a.get_pointer() == 7);
@@ -69,28 +75,29 @@ TEST_CASE("recursive wrapper of int") {
             a = 8;
             REQUIRE(underlying == 8);
         }
-
     }
-
 }
 
-TEST_CASE("move of recursive wrapper") {
+TEST_CASE("move of recursive wrapper")
+{
     rwi a{1};
 
-    SECTION("move constructor") {
+    SECTION("move constructor")
+    {
         rwi b{std::move(a)};
         REQUIRE(b.get() == 1);
     }
 
-    SECTION("operator= on rvalue") {
+    SECTION("operator= on rvalue")
+    {
         rwi b{2};
         b = std::move(a);
         REQUIRE(b.get() == 1);
     }
-
 }
 
-TEST_CASE("swap") {
+TEST_CASE("swap")
+{
     rwi a{1};
     rwi b{2};
 
@@ -104,15 +111,18 @@ TEST_CASE("swap") {
     REQUIRE(b.get() == 1);
 }
 
-TEST_CASE("recursive wrapper of pair<int, int>") {
+TEST_CASE("recursive wrapper of pair<int, int>")
+{
 
-    SECTION("default constructed") {
+    SECTION("default constructed")
+    {
         rwp a;
         REQUIRE(a.get().first == 0);
         REQUIRE(a.get().second == 0);
     }
 
-    SECTION("construct with value") {
+    SECTION("construct with value")
+    {
         rwp a{std::make_pair(1, 2)};
 
         REQUIRE(a.get().first == 1);
@@ -143,9 +153,6 @@ TEST_CASE("recursive wrapper of pair<int, int>") {
         b = std::move(c);
         REQUIRE(b.get().first == 5);
         REQUIRE(b.get().second == 6);
-//        REQUIRE(c.get_pointer() == nullptr);
-
+        //        REQUIRE(c.get_pointer() == nullptr);
     }
-
 }
-

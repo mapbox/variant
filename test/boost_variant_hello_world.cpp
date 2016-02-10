@@ -11,8 +11,8 @@ struct check : boost::static_visitor<>
     }
 };
 
-
-int main() {
+int main()
+{
     typedef boost::variant<bool, int, double> variant_type;
     variant_type v(0);
     boost::apply_visitor(check(), v);

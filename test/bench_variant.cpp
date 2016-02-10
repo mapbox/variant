@@ -8,8 +8,8 @@
 #include <utility>
 #include <vector>
 
-#include <boost/variant.hpp>
 #include <boost/timer/timer.hpp>
+#include <boost/variant.hpp>
 
 #include "variant.hpp"
 
@@ -25,11 +25,11 @@ namespace test {
 template <typename V>
 struct Holder
 {
-    typedef V value_type;
+    typedef V               value_type;
     std::vector<value_type> data;
 
     template <typename T>
-    void append_move(T && obj)
+    void append_move(T&& obj)
     {
         data.emplace_back(std::forward<T>(obj));
     }
@@ -52,33 +52,32 @@ struct print
     }
 };
 
-
 template <typename V>
 struct dummy : boost::static_visitor<>
 {
-    dummy(V & v)
+    dummy(V& v)
         : v_(v) {}
 
     template <typename T>
-    void operator()(T && val) const
+    void operator()(T&& val) const
     {
         v_ = std::move(val);
     }
-    V & v_;
+    V& v_;
 };
 
 template <typename V>
 struct dummy2
 {
-    dummy2(V & v)
+    dummy2(V& v)
         : v_(v) {}
 
     template <typename T>
-    void operator()(T && val) const
+    void operator()(T&& val) const
     {
         v_ = std::move(val);
     }
-    V & v_;
+    V& v_;
 };
 
 void run_boost_test(std::size_t runs)
@@ -156,32 +155,31 @@ int main(int argc, char** argv)
     {
         {
             typedef std::vector<std::unique_ptr<std::thread>> thread_group;
-            typedef thread_group::value_type value_type;
-            thread_group tg;
+            typedef thread_group::value_type                  value_type;
+            thread_group                                      tg;
             std::cerr << "custom variant: ";
             boost::timer::auto_cpu_timer timer;
             for (std::size_t i = 0; i < THREADS; ++i)
             {
                 tg.emplace_back(new std::thread(run_variant_test, NUM_RUNS));
             }
-            std::for_each(tg.begin(), tg.end(), [](value_type & t) {if (t->joinable()) t->join();});
+            std::for_each(tg.begin(), tg.end(), [](value_type& t) {if (t->joinable()) t->join(); });
         }
 
         {
             typedef std::vector<std::unique_ptr<std::thread>> thread_group;
-            typedef thread_group::value_type value_type;
-            thread_group tg;
+            typedef thread_group::value_type                  value_type;
+            thread_group                                      tg;
             std::cerr << "boost variant: ";
             boost::timer::auto_cpu_timer timer;
             for (std::size_t i = 0; i < THREADS; ++i)
             {
                 tg.emplace_back(new std::thread(run_boost_test, NUM_RUNS));
             }
-            std::for_each(tg.begin(), tg.end(), [](value_type & t) {if (t->joinable()) t->join();});
+            std::for_each(tg.begin(), tg.end(), [](value_type& t) {if (t->joinable()) t->join(); });
         }
     }
 #endif
-
 
     return EXIT_SUCCESS;
 }
