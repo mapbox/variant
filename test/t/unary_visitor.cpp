@@ -120,7 +120,7 @@ TEST_CASE("changes in visitor should be visible", "[visitor][unary visitor]")
 TEST_CASE("changes in const visitor (with mutable internals) should be visible", "[visitor][unary visitor]")
 {
     using variant_type = const mapbox::util::variant<int, std::string, double>;
-    variant_type       v{"foo"};
+    variant_type v{"foo"};
     const total_sizeof ts;
     REQUIRE(mapbox::util::apply_visitor(ts, v) == sizeof(std::string));
     REQUIRE(ts.result() == sizeof(std::string));

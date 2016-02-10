@@ -26,7 +26,7 @@ std::basic_ostream<C, T>& operator<<(std::basic_ostream<C, T>& os, std::nullptr_
 TEST_CASE("variant can be moved into vector", "[variant]")
 {
     using variant_type = mapbox::util::variant<bool, std::string>;
-    variant_type              v(std::string("test"));
+    variant_type v(std::string("test"));
     std::vector<variant_type> vec;
     vec.emplace_back(std::move(v));
     REQUIRE(v.get<std::string>() != std::string("test"));
@@ -388,7 +388,7 @@ TEST_CASE("variant printer", "[visitor][unary visitor][printer]")
 {
     using variant_type = mapbox::util::variant<int, double, std::string>;
     std::vector<variant_type> var = {2.1, 123, "foo", 456};
-    std::stringstream         out;
+    std::stringstream out;
     std::copy(var.begin(), var.end(), std::ostream_iterator<variant_type>(out, ","));
     out << var[2];
     REQUIRE(out.str() == "2.1,123,foo,456,foo");
@@ -494,7 +494,7 @@ TEST_CASE("storing reference wrappers works")
 {
     using variant_type = mapbox::util::variant<std::reference_wrapper<int>, std::reference_wrapper<double>>;
 
-    int          a = 1;
+    int a = 1;
     variant_type v{std::ref(a)};
     REQUIRE(v.get<int>() == 1);
     REQUIRE(mapbox::util::get<int>(v) == 1);
@@ -540,7 +540,7 @@ TEST_CASE("storing reference wrappers to consts works")
 {
     using variant_type = mapbox::util::variant<std::reference_wrapper<int const>, std::reference_wrapper<double const>>;
 
-    int          a = 1;
+    int a = 1;
     variant_type v{std::cref(a)};
     REQUIRE(v.get<int const>() == 1);
     REQUIRE(v.get<int>() == 1); // this works (see #82)

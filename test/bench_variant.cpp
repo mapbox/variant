@@ -25,7 +25,7 @@ namespace test {
 template <typename V>
 struct Holder
 {
-    typedef V               value_type;
+    typedef V value_type;
     std::vector<value_type> data;
 
     template <typename T>
@@ -155,8 +155,8 @@ int main(int argc, char** argv)
     {
         {
             typedef std::vector<std::unique_ptr<std::thread>> thread_group;
-            typedef thread_group::value_type                  value_type;
-            thread_group                                      tg;
+            typedef thread_group::value_type value_type;
+            thread_group tg;
             std::cerr << "custom variant: ";
             boost::timer::auto_cpu_timer timer;
             for (std::size_t i = 0; i < THREADS; ++i)
@@ -168,8 +168,8 @@ int main(int argc, char** argv)
 
         {
             typedef std::vector<std::unique_ptr<std::thread>> thread_group;
-            typedef thread_group::value_type                  value_type;
-            thread_group                                      tg;
+            typedef thread_group::value_type value_type;
+            thread_group tg;
             std::cerr << "boost variant: ";
             boost::timer::auto_cpu_timer timer;
             for (std::size_t i = 0; i < THREADS; ++i)

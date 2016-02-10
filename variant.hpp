@@ -115,9 +115,9 @@ struct value_traits
 {
     using value_type = typename std::remove_reference<T>::type;
     static constexpr std::size_t direct_index = direct_type<value_type, Types...>::index;
-    static constexpr bool        is_direct = direct_index != invalid_value;
+    static constexpr bool is_direct = direct_index != invalid_value;
     static constexpr std::size_t index = is_direct ? direct_index : convertible_type<value_type, Types...>::index;
-    static constexpr bool        is_valid = index != invalid_value;
+    static constexpr bool is_valid = index != invalid_value;
     static constexpr std::size_t tindex = is_valid ? sizeof...(Types)-index : 0;
     using target_type = typename std::tuple_element<tindex, std::tuple<void, Types...>>::type;
 };
@@ -565,7 +565,7 @@ class variant
     using helper_type = detail::variant_helper<Types...>;
 
     std::size_t type_index;
-    data_type   data;
+    data_type data;
 
   public:
     VARIANT_INLINE variant() noexcept(std::is_nothrow_default_constructible<first_type>::value)

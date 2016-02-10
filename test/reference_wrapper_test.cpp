@@ -59,7 +59,7 @@ int main()
 {
     std::cerr << sizeof(test::polygon) << std::endl;
     std::cerr << sizeof(test::variant) << std::endl;
-    test::point   pt(123, 456);
+    test::point pt(123, 456);
     test::variant var = std::cref(pt);
     util::apply_visitor(test::print(), var);
     test::line_string line;

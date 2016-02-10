@@ -29,7 +29,7 @@ TEST_CASE("variant visitation", "[visitor][unary visitor]")
 {
     mapbox::util::variant<int, double, std::string> var(123);
     REQUIRE(var.get<int>() == 123);
-    int                         val = 456;
+    int val = 456;
     const mutating_visitor<int> visitor(val);
     mapbox::util::apply_visitor(visitor, var);
     REQUIRE(var.get<int>() == 456);

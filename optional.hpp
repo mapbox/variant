@@ -38,7 +38,7 @@ class optional
     explicit operator bool() const noexcept { return variant_.template is<T>(); }
 
     T const& get() const { return variant_.template get<T>(); }
-    T&       get() { return variant_.template get<T>(); }
+    T& get() { return variant_.template get<T>(); }
 
     T const& operator*() const { return this->get(); }
     T operator*() { return this->get(); }

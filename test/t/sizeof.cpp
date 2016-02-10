@@ -10,8 +10,8 @@
 
 struct some_struct
 {
-    int         a;
-    bool        b;
+    int a;
+    bool b;
     std::string c;
 };
 
