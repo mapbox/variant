@@ -13,33 +13,36 @@
 
 #include "recursive_wrapper.hpp"
 
+// clang-format off
 // [[deprecated]] is only available in C++14, use this for the time being
 #if __cplusplus <= 201103L
-#ifdef __GNUC__
-#define MAPBOX_VARIANT_DEPRECATED __attribute__((deprecated))
-#elif defined(_MSC_VER)
-#define MAPBOX_VARIANT_DEPRECATED __declspec(deprecated)
+# ifdef __GNUC__
+#  define MAPBOX_VARIANT_DEPRECATED __attribute__((deprecated))
+# elif defined(_MSC_VER)
+#  define MAPBOX_VARIANT_DEPRECATED __declspec(deprecated)
+# else
+#  define MAPBOX_VARIANT_DEPRECATED
+# endif
 #else
-#define MAPBOX_VARIANT_DEPRECATED
-#endif
-#else
-#define MAPBOX_VARIANT_DEPRECATED [[deprecated]]
+#  define MAPBOX_VARIANT_DEPRECATED [[deprecated]]
 #endif
 
+
 #ifdef _MSC_VER
-// https://msdn.microsoft.com/en-us/library/bw1hbe6y.aspx
-#ifdef NDEBUG
-#define VARIANT_INLINE __forceinline
+ // https://msdn.microsoft.com/en-us/library/bw1hbe6y.aspx
+ #ifdef NDEBUG
+  #define VARIANT_INLINE __forceinline
+ #else
+  #define VARIANT_INLINE __declspec(noinline)
+ #endif
 #else
-#define VARIANT_INLINE __declspec(noinline)
+ #ifdef NDEBUG
+  #define VARIANT_INLINE inline __attribute__((always_inline))
+ #else
+  #define VARIANT_INLINE __attribute__((noinline))
+ #endif
 #endif
-#else
-#ifdef NDEBUG
-#define VARIANT_INLINE inline __attribute__((always_inline))
-#else
-#define VARIANT_INLINE __attribute__((noinline))
-#endif
-#endif
+// clang-format on
 
 #define VARIANT_MAJOR_VERSION 1
 #define VARIANT_MINOR_VERSION 1
@@ -56,9 +59,11 @@ class bad_variant_access : public std::runtime_error
 {
 
   public:
-    explicit bad_variant_access(const std::string& what_arg) : runtime_error(what_arg) {}
+    explicit bad_variant_access(const std::string& what_arg)
+        : runtime_error(what_arg) {}
 
-    explicit bad_variant_access(const char* what_arg) : runtime_error(what_arg) {}
+    explicit bad_variant_access(const char* what_arg)
+        : runtime_error(what_arg) {}
 
 }; // class bad_variant_access
 
