@@ -44,7 +44,7 @@ class recursive_wrapper
     recursive_wrapper()
         : p_(new T){};
 
-    ~recursive_wrapper() noexcept { delete p_; };
+    ~recursive_wrapper() { delete p_; };
 
     recursive_wrapper(recursive_wrapper const& operand)
         : p_(new T(operand.get())) {}
