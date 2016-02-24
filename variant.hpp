@@ -67,6 +67,10 @@ class bad_variant_access : public std::runtime_error
 
 }; // class bad_variant_access
 
+struct no_init
+{
+};
+
 template <typename R = void>
 struct MAPBOX_VARIANT_DEPRECATED static_visitor
 {
@@ -289,6 +293,24 @@ struct unwrapper<std::reference_wrapper<T>>
     }
 };
 
+template <typename R, typename F, typename Enable = void>
+struct dispatch_no_init
+{
+    VARIANT_INLINE static R apply(F&&)
+    {
+        throw bad_variant_access("apply_visitor on uninitialized variant");
+    }
+};
+
+template <typename R, typename F>
+struct dispatch_no_init<R, F, decltype(void(std::declval<F>()()))>
+{
+    VARIANT_INLINE static R apply(F&& f)
+    {
+        return f();
+    }
+};
+
 template <typename F, typename V, typename R, typename... Types>
 struct dispatcher;
 
@@ -320,17 +342,17 @@ struct dispatcher<F, V, R, T, Types...>
     }
 };
 
-template <typename F, typename V, typename R, typename T>
-struct dispatcher<F, V, R, T>
+template <typename F, typename V, typename R>
+struct dispatcher<F, V, R>
 {
-    VARIANT_INLINE static R apply_const(V const& v, F&& f)
+    VARIANT_INLINE static R apply_const(V const&, F&& f)
     {
-        return f(unwrapper<T>::apply_const(v.template get<T>()));
+        return dispatch_no_init<R, F>::apply(std::forward<F>(f));
     }
 
-    VARIANT_INLINE static R apply(V& v, F&& f)
+    VARIANT_INLINE static R apply(V&, F&& f)
     {
-        return f(unwrapper<T>::apply(v.template get<T>()));
+        return dispatch_no_init<R, F>::apply(std::forward<F>(f));
     }
 };
 
@@ -550,10 +572,6 @@ struct static_none_of : std::is_same<std::tuple<std::false_type, typename Predic
 };
 
 } // namespace detail
-
-struct no_init
-{
-};
 
 template <typename... Types>
 class variant
