@@ -634,22 +634,12 @@ class variant
         return *this;
     }
 
-    // conversions
-    // move-assign
+    // conversion assign
     template <typename T>
     VARIANT_INLINE variant<Types...>& operator=(T&& rhs) noexcept
     {
         variant<Types...> temp(std::forward<T>(rhs));
         move_assign(std::move(temp));
-        return *this;
-    }
-
-    // copy-assign
-    template <typename T>
-    VARIANT_INLINE variant<Types...>& operator=(T const& rhs)
-    {
-        variant<Types...> temp(rhs);
-        copy_assign(temp);
         return *this;
     }
 
