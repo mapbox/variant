@@ -125,3 +125,25 @@ TEST_CASE("changes in const visitor (with mutable internals) should be visible",
     REQUIRE(mapbox::util::apply_visitor(ts, v) == sizeof(std::string));
     REQUIRE(ts.result() == sizeof(std::string));
 }
+
+struct is_uninitialized_visitor
+{
+    bool operator() () const { return true; }
+
+    template <typename T>
+    bool operator() (T const& ) const { return false; }
+};
+
+TEST_CASE("apply_visitor on uninitialized variant", "[visitor][unary visitor]")
+{
+    namespace mu = mapbox::util;
+    using variant_type = mu::variant<int, std::string, double>;
+    variant_type v{mu::no_init()};
+
+    // total_sizeof doesn't have operator()()
+    CHECK_THROWS_AS(mu::apply_visitor(total_sizeof(), v), mu::bad_variant_access);
+
+    // is_uninitialied_visitor has operator()()
+    REQUIRE_NOTHROW(mu::apply_visitor(is_uninitialized_visitor(), v));
+    CHECK(mu::apply_visitor(is_uninitialized_visitor(), v) == true);
+}
