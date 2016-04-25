@@ -131,5 +131,5 @@ script:
     make coverage;
     ./out/cov-test;
     cp unit*gc* test/;
-    ./.local/bin/cpp-coveralls --gcov /usr/bin/llvm-cov-3.7 -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp --gcov-options '\-lp';
+    ./.local/bin/cpp-coveralls --gcov /usr/bin/llvm-cov-3.7 -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp;
    fi
