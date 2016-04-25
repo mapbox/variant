@@ -1,4 +1,4 @@
-language: c
+language: generic
 
 sudo: false
 
@@ -7,7 +7,7 @@ addons_shortcuts:
   addons_clang35: &clang35
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5', 'boost-latest' ]
-      packages: [ 'clang-3.5', 'libboost1.55-all-dev' ]
+      packages: [ 'clang-3.5', 'llvm-3.5-dev', 'libboost1.55-all-dev' ]
   addons_clang36: &clang36
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6', 'boost-latest' ]
@@ -15,12 +15,12 @@ addons_shortcuts:
   addons_clang37: &clang37
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7', 'boost-latest' ]
-      packages: [ 'clang-3.7', 'llvm-3.7-dev', 'libboost1.55-all-dev' ]
+      packages: [ 'clang-3.7', 'libboost1.55-all-dev' ]
   addons_clang38: &clang38
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8', 'boost-latest' ]
       packages: [ 'clang-3.8', 'libboost1.55-all-dev']
-  addons_clang38: &clang38
+  addons_clang39: &clang39
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise', 'boost-latest' ]
       packages: [ 'clang-3.9', 'libboost1.55-all-dev']
@@ -52,7 +52,7 @@ matrix:
       compiler: clang
     - os: linux
       compiler: "clang35"
-      env: CXX=clang++-3.5
+      env: CXX=clang++-3.5 COVERAGE=True
       addons: *clang35
     - os: linux
       compiler: "clang36"
@@ -60,7 +60,7 @@ matrix:
       addons: *clang36
     - os: linux
       compiler: "clang37"
-      env: CXX=clang++-3.7 COVERAGE=True
+      env: CXX=clang++-3.7
       addons: *clang37
     - os: linux
       compiler: "clang38"
@@ -70,10 +70,11 @@ matrix:
       compiler: "clang38"
       env: CXX=clang++-3.8 CXX_STD=c++14
       addons: *clang38
-    - os: linux
-      compiler: "clang39"
-      env: CXX=clang++-3.9
-      addons: *clang39
+    # not whitelisted yet: https://github.com/travis-ci/apt-package-whitelist/issues/2764
+    #- os: linux
+    #  compiler: "clang39"
+    #  env: CXX=clang++-3.9
+    #  addons: *clang39
     - os: linux
       compiler: "gcc47"
       env: CXX=g++-4.7
@@ -131,5 +132,5 @@ script:
     make coverage;
     ./out/cov-test;
     cp unit*gc* test/;
-    ./.local/bin/cpp-coveralls --gcov /usr/bin/llvm-cov-3.7 -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp;
+    ./.local/bin/cpp-coveralls --gcov /usr/bin/llvm-cov-3.5 --gcov-options '\-lp' -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp;
    fi
