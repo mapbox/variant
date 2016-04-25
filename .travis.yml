@@ -15,7 +15,7 @@ addons_shortcuts:
   addons_clang37: &clang37
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7', 'boost-latest' ]
-      packages: [ 'clang-3.7', 'libboost1.55-all-dev' ]
+      packages: [ 'clang-3.7', 'llvm-3.7-dev', 'libboost1.55-all-dev' ]
   addons_clang38: &clang38
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise', 'boost-latest' ]
@@ -123,5 +123,5 @@ script:
     make coverage;
     ./out/cov-test;
     cp unit*gc* test/;
-    ./.local/bin/cpp-coveralls -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp --gcov-options '\-lp';
+    ./.local/bin/cpp-coveralls --gcov /usr/bin/llvm-cov-3.7 -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp --gcov-options '\-lp';
    fi
