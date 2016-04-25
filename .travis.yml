@@ -18,8 +18,12 @@ addons_shortcuts:
       packages: [ 'clang-3.7', 'llvm-3.7-dev', 'libboost1.55-all-dev' ]
   addons_clang38: &clang38
     apt:
-      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise', 'boost-latest' ]
+      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8', 'boost-latest' ]
       packages: [ 'clang-3.8', 'libboost1.55-all-dev']
+  addons_clang38: &clang38
+    apt:
+      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise', 'boost-latest' ]
+      packages: [ 'clang-3.9', 'libboost1.55-all-dev']
   addons_gcc47: &gcc47
     apt:
       sources: [ 'ubuntu-toolchain-r-test', 'boost-latest' ]
@@ -66,6 +70,10 @@ matrix:
       compiler: "clang38"
       env: CXX=clang++-3.8 CXX_STD=c++14
       addons: *clang38
+    - os: linux
+      compiler: "clang39"
+      env: CXX=clang++-3.9
+      addons: *clang39
     - os: linux
       compiler: "gcc47"
       env: CXX=g++-4.7
