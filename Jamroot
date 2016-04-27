@@ -19,7 +19,7 @@ exe variant-test
     <include>$(BOOST_DIR)/include
     <include>./
     #<define>SINGLE_THREADED
-    <variant>release:<cxxflags>-march=native
+    <variant>release:<cxxflags>"-march=native -Wweak-vtables"
     ;
 
 
