@@ -11,7 +11,7 @@
 #include <typeinfo>
 #include <utility>
 
-#include "recursive_wrapper.hpp"
+#include <mapbox/recursive_wrapper.hpp>
 
 // clang-format off
 // [[deprecated]] is only available in C++14, use this for the time being

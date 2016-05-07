@@ -6,7 +6,7 @@
 #include <utility>
 #include <vector>
 
-#include "variant.hpp"
+#include <mapbox/variant.hpp>
 
 using namespace mapbox;
 

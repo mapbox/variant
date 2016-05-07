@@ -7,7 +7,7 @@
 
 #include <boost/timer/timer.hpp>
 
-#include "variant.hpp"
+#include <mapbox/variant.hpp>
 
 using namespace mapbox;
 
