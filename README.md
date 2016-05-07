@@ -1,6 +1,6 @@
 # Mapbox Variant
 
-An alternative to `boost::variant` for C++11.
+An alternative to `boost::variant` for C++11 and C++14
 
 [![Build Status](https://secure.travis-ci.org/mapbox/variant.svg)](https://travis-ci.org/mapbox/variant)
 [![Build status](https://ci.appveyor.com/api/projects/status/v9tatx21j1k0fcgy)](https://ci.appveyor.com/project/Mapbox/variant)
