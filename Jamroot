@@ -1,4 +1,4 @@
-# Inofficial and incomplete build file using Boost build system.
+# Unofficial and incomplete build file using Boost build system.
 # You should use make unless you know what you are doing.
 
 local BOOST_DIR = "/usr/local" ;
