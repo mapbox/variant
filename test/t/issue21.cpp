@@ -1,8 +1,8 @@
 
 #include "catch.hpp"
 
-#include "variant.hpp"
-#include "variant_io.hpp"
+#include <mapbox/variant.hpp>
+#include <mapbox/variant_io.hpp>
 
 // https://github.com/mapbox/variant/issues/21
 

@@ -3,7 +3,7 @@
 
 #include <iosfwd>
 
-#include "variant.hpp"
+#include <mapbox/variant.hpp>
 
 namespace mapbox {
 namespace util {

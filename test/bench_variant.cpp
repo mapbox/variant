@@ -1,4 +1,3 @@
-
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
@@ -11,7 +10,7 @@
 #include <boost/timer/timer.hpp>
 #include <boost/variant.hpp>
 
-#include "variant.hpp"
+#include <mapbox/variant.hpp>
 
 #define TEXT_SHORT "Test"
 #define TEXT_LONG "Testing various variant implementations with a longish string ........................................."
