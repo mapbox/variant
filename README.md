@@ -93,15 +93,6 @@ On Windows run `scripts/build-local.bat`.
 
 ## Benchmarks
 
-The benchmarks depend on:
-
- - Boost headers (for benchmarking against `boost::variant`)
- - Boost built with `--with-timer` (used for benchmark timing)
-
-On Unix systems set your boost includes and libs locations and run `make test`:
-
-    export LDFLAGS='-L/opt/boost/lib'
-    export CXXFLAGS='-I/opt/boost/include'
     make bench
 
 
