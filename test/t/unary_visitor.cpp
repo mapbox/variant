@@ -34,7 +34,7 @@ TEST_CASE("non-const visitor works on const variants", "[visitor][unary visitor]
     using variant_type = const mapbox::util::variant<int, double, std::string>;
     variant_type var1(123);
     variant_type var2(3.2);
-    variant_type var3("foo");
+    variant_type var3(std::string("foo"));
     REQUIRE(var1.get<int>() == 123);
     REQUIRE(var2.get<double>() == Approx(3.2));
     REQUIRE(var3.get<std::string>() == "foo");
@@ -51,7 +51,7 @@ TEST_CASE("const visitor works on const variants", "[visitor][unary visitor]")
     using variant_type = const mapbox::util::variant<int, double, std::string>;
     variant_type var1(123);
     variant_type var2(3.2);
-    variant_type var3("foo");
+    variant_type var3(std::string("foo"));
     REQUIRE(var1.get<int>() == 123);
     REQUIRE(var2.get<double>() == Approx(3.2));
     REQUIRE(var3.get<std::string>() == "foo");
@@ -68,7 +68,7 @@ TEST_CASE("rvalue visitor works on const variants", "[visitor][unary visitor]")
     using variant_type = const mapbox::util::variant<int, double, std::string>;
     variant_type var1(123);
     variant_type var2(3.2);
-    variant_type var3("foo");
+    variant_type var3(std::string("foo"));
     REQUIRE(var1.get<int>() == 123);
     REQUIRE(var2.get<double>() == Approx(3.2));
     REQUIRE(var3.get<std::string>() == "foo");
@@ -84,7 +84,7 @@ TEST_CASE("visitor works on rvalue variants", "[visitor][unary visitor]")
 
     REQUIRE(mapbox::util::apply_visitor(some_visitor{1}, variant_type{123}) == 124);
     REQUIRE(mapbox::util::apply_visitor(some_visitor{1}, variant_type{3.2}) == 4);
-    REQUIRE(mapbox::util::apply_visitor(some_visitor{1}, variant_type{"foo"}) == 0);
+    REQUIRE(mapbox::util::apply_visitor(some_visitor{1}, variant_type{std::string("foo")}) == 0);
 }
 
 struct total_sizeof
@@ -120,7 +120,7 @@ TEST_CASE("changes in visitor should be visible", "[visitor][unary visitor]")
 TEST_CASE("changes in const visitor (with mutable internals) should be visible", "[visitor][unary visitor]")
 {
     using variant_type = const mapbox::util::variant<int, std::string, double>;
-    variant_type v{"foo"};
+    variant_type v{std::string("foo")};
     const total_sizeof ts;
     REQUIRE(mapbox::util::apply_visitor(ts, v) == sizeof(std::string));
     REQUIRE(ts.result() == sizeof(std::string));

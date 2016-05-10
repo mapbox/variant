@@ -4,6 +4,8 @@
 #include <mapbox/variant.hpp>
 #include <mapbox/variant_io.hpp>
 
+#include <iostream>
+
 // https://github.com/mapbox/variant/issues/21
 
 static int count;
@@ -12,6 +14,10 @@ struct t1
 {
     int value;
     t1(int v) : value(v)
+    {
+        ++count;
+    }
+    t1(t1&& o) : value(o.value)
     {
         ++count;
     }
@@ -37,7 +43,7 @@ TEST_CASE("set() works cleanly even if the constructor throws ", "[variant]")
 
     count = 0;
     {
-        variant_type v{42};
+        variant_type v{t1(42)};
         REQUIRE(v.is<t1>());
         REQUIRE(v.get<t1>().value == 42);
         REQUIRE_THROWS({
