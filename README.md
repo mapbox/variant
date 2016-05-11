@@ -55,11 +55,12 @@ Tested with:
  - g++-4.7
  - g++-4.8
  - g++-4.9
- - g++-5
+ - g++-5.2.0
  - clang++-3.5
  - clang++-3.6
  - clang++-3.7
  - clang++-3.8
+ - clang++-3.9
  - Visual Studio 2015
 
 ## Usage
