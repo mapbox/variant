@@ -118,7 +118,7 @@ struct convertible_type<T>
 template <typename T, typename... Types>
 struct value_traits
 {
-    using value_type = typename std::remove_reference<T>::type;
+    using value_type = typename std::decay<T>::type;
     static constexpr std::size_t direct_index = direct_type<value_type, Types...>::index;
     static constexpr bool is_direct = direct_index != invalid_value;
     static constexpr std::size_t index = is_direct ? direct_index : convertible_type<value_type, Types...>::index;
@@ -584,8 +584,9 @@ class variant
         : type_index(detail::invalid_value) {}
 
     // http://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
-    template <typename T, typename Traits = detail::value_traits<T, Types...>,
-              typename Enable = typename std::enable_if<Traits::is_valid>::type>
+    template <typename T,
+              typename Traits = detail::value_traits<T, Types...>,
+              typename Enable = typename std::enable_if<Traits::is_direct>::type>
     VARIANT_INLINE variant(T&& val) noexcept(std::is_nothrow_constructible<typename Traits::target_type, T&&>::value)
         : type_index(Traits::index)
     {
@@ -636,7 +637,9 @@ class variant
 
     // conversions
     // move-assign
-    template <typename T>
+    template <typename T,
+              typename Traits = detail::value_traits<T, Types...>,
+              typename Enable = typename std::enable_if<Traits::is_direct>::type>
     VARIANT_INLINE variant<Types...>& operator=(T&& rhs) noexcept
     {
         variant<Types...> temp(std::forward<T>(rhs));
@@ -645,7 +648,9 @@ class variant
     }
 
     // copy-assign
-    template <typename T>
+    template <typename T,
+              typename Traits = detail::value_traits<T, Types...>,
+              typename Enable = typename std::enable_if<Traits::is_direct>::type>
     VARIANT_INLINE variant<Types...>& operator=(T const& rhs)
     {
         variant<Types...> temp(rhs);

@@ -313,44 +313,16 @@ TEST_CASE("no_init variant can be copied and moved to", "[variant]")
     REQUIRE(v3.get<int>() == 42);
 }
 
-TEST_CASE("implicit conversion", "[variant][implicit conversion]")
+TEST_CASE("no implicit conversion", "[variant][implicit conversion]")
 {
     using variant_type = mapbox::util::variant<int>;
-    variant_type var(5.0); // converted to int
-    REQUIRE(var.get<int>() == 5);
-    var = 6.0; // works for operator=, too
-    REQUIRE(var.get<int>() == 6);
-}
-
-TEST_CASE("implicit conversion to first type in variant type list", "[variant][implicit conversion]")
-{
-    using variant_type = mapbox::util::variant<long, char>;
-    variant_type var = 5.0; // converted to long
-    REQUIRE(var.get<long>() == 5);
-    REQUIRE_THROWS_AS({
-        var.get<char>();
-    },
-                      mapbox::util::bad_variant_access&);
-}
-
-TEST_CASE("implicit conversion to unsigned char", "[variant][implicit conversion]")
-{
-    using variant_type = mapbox::util::variant<unsigned char>;
-    variant_type var = 100.0;
-    CHECK(var.get<unsigned char>() == static_cast<unsigned char>(100.0));
-    CHECK(var.get<unsigned char>() == static_cast<unsigned char>(static_cast<unsigned int>(100.0)));
+    REQUIRE((!std::is_constructible<variant_type, double>::value));
+    REQUIRE((!std::is_assignable<variant_type, double>::value));
 }
 
 struct dummy
 {
 };
-
-TEST_CASE("implicit conversion to a suitable type", "[variant][implicit conversion]")
-{
-    using mapbox::util::variant;
-    CHECK_NOTHROW((variant<dummy, float, std::string>(123)).get<float>());
-    CHECK_NOTHROW((variant<dummy, float, std::string>("foo")).get<std::string>());
-}
 
 TEST_CASE("value_traits for non-convertible type", "[variant::detail]")
 {
@@ -387,7 +359,7 @@ TEST_CASE("variant default constructor", "[variant][default constructor]")
 TEST_CASE("variant printer", "[visitor][unary visitor][printer]")
 {
     using variant_type = mapbox::util::variant<int, double, std::string>;
-    std::vector<variant_type> var = {2.1, 123, "foo", 456};
+    std::vector<variant_type> var = {2.1, 123, std::string("foo"), 456};
     std::stringstream out;
     std::copy(var.begin(), var.end(), std::ostream_iterator<variant_type>(out, ","));
     out << var[2];
@@ -400,8 +372,8 @@ TEST_CASE("swapping variants should do the right thing", "[variant]")
     variant_type a = 7;
     variant_type b = 3;
     variant_type c = 3.141;
-    variant_type d = "foo";
-    variant_type e = "a long string that is longer than small string optimization";
+    variant_type d = std::string("foo");
+    variant_type e = std::string("a long string that is longer than small string optimization");
 
     using std::swap;
     swap(a, b);
@@ -436,7 +408,7 @@ TEST_CASE("variant should work with equality operators")
     variant_type a{1};
     variant_type b{1};
     variant_type c{2};
-    variant_type s{"foo"};
+    variant_type s{std::string("foo")};
 
     REQUIRE(a == a);
     REQUIRE(a == b);
@@ -458,8 +430,8 @@ TEST_CASE("variant should work with comparison operators")
     variant_type a{1};
     variant_type b{1};
     variant_type c{2};
-    variant_type s{"foo"};
-    variant_type t{"bar"};
+    variant_type s{std::string("foo")};
+    variant_type t{std::string("bar")};
 
     REQUIRE_FALSE(a < a);
     REQUIRE_FALSE(a < b);
