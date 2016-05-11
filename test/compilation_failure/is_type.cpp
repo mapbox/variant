@@ -1,4 +1,4 @@
-// @EXPECTED: invalid type in T in `is<T>()` for this variant
+// @EXPECTED:
 
 #include <mapbox/variant.hpp>
 
