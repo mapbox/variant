@@ -568,3 +568,11 @@ TEST_CASE("storing reference wrappers to consts works")
     },
                       mapbox::util::bad_variant_access&);
 }
+
+TEST_CASE("recursive wrapper")
+{
+    using variant_type = mapbox::util::variant<mapbox::util::recursive_wrapper<int>>;
+    variant_type v(1);
+    REQUIRE(v.is<int>());
+    REQUIRE(v.get<int>() == 1);
+}

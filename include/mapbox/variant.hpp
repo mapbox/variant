@@ -653,11 +653,18 @@ class variant
         return *this;
     }
 
-    template <typename T>
+    template <typename T, typename std::enable_if<
+                          (detail::direct_type<T, Types...>::index != detail::invalid_value)>::type* = nullptr>
     VARIANT_INLINE bool is() const
     {
-        static_assert(detail::has_type<T, Types...>::value, "invalid type in T in `is<T>()` for this variant");
         return type_index == detail::direct_type<T, Types...>::index;
+    }
+
+    template <typename T,typename std::enable_if<
+                         (detail::direct_type<recursive_wrapper<T>, Types...>::index != detail::invalid_value)>::type* = nullptr>
+    VARIANT_INLINE bool is() const
+    {
+        return type_index == detail::direct_type<recursive_wrapper<T>, Types...>::index;
     }
 
     VARIANT_INLINE bool valid() const
