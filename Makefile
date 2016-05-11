@@ -11,12 +11,6 @@ COMMON_FLAGS = -Wall -pedantic -Wextra -Wsign-compare -Wsign-conversion -Wshadow
 CXXFLAGS := $(CXXFLAGS)
 LDFLAGS := $(LDFLAGS)
 
-OS:=$(shell uname -s)
-ifeq ($(OS),Darwin)
-  CXXFLAGS += -stdlib=libc++
-  LDFLAGS += -stdlib=libc++ -F/ -framework CoreFoundation
-endif
-
 ALL_HEADERS = $(shell find include/mapbox/ '(' -name '*.hpp' ')')
 
 all: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_wrapper_test out/binary_visitor_test
