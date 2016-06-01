@@ -751,6 +751,13 @@ class variant
         return static_cast<int>(sizeof...(Types)-type_index - 1);
     }
 
+    template <typename T, typename std::enable_if<
+                              (detail::direct_type<T, Types...>::index != detail::invalid_value)>::type* = nullptr>
+    VARIANT_INLINE static constexpr int which() noexcept
+    {
+        return static_cast<int>(sizeof...(Types)-detail::direct_type<T, Types...>::index - 1);
+    }
+
     // visitor
     // unary
     template <typename F, typename V, typename R = typename detail::result_of_unary_visit<F, first_type>::type>
