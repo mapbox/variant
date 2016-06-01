@@ -127,35 +127,6 @@ struct value_traits
     using target_type = typename std::tuple_element<tindex, std::tuple<void, Types...>>::type;
 };
 
-// check if T is in Types...
-template <typename T, typename... Types>
-struct has_type;
-
-template <typename T, typename First, typename... Types>
-struct has_type<T, First, Types...>
-{
-    static constexpr bool value = std::is_same<T, First>::value || has_type<T, Types...>::value;
-};
-
-template <typename T>
-struct has_type<T> : std::false_type
-{
-};
-
-template <typename T, typename... Types>
-struct is_valid_type;
-
-template <typename T, typename First, typename... Types>
-struct is_valid_type<T, First, Types...>
-{
-    static constexpr bool value = std::is_convertible<T, First>::value || is_valid_type<T, Types...>::value;
-};
-
-template <typename T>
-struct is_valid_type<T> : std::false_type
-{
-};
-
 template <typename T, typename R = void>
 struct enable_if_type
 {
