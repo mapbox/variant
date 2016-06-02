@@ -870,13 +870,13 @@ auto VARIANT_INLINE apply_visitor(F&& f, V& v0, V& v1) -> decltype(V::binary_vis
 
 // getter interface
 template <typename ResultType, typename T>
-ResultType& get(T& var)
+auto get(T& var)->decltype(var.template get<ResultType>())
 {
     return var.template get<ResultType>();
 }
 
 template <typename ResultType, typename T>
-ResultType const& get(T const& var)
+auto get(T const& var)->decltype(var.template get<ResultType>())
 {
     return var.template get<ResultType>();
 }
