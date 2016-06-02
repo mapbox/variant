@@ -22,7 +22,7 @@ class optional
 
     variant<none_type, T> variant_;
 
-  public:
+public:
     optional() = default;
 
     optional(optional const& rhs)
