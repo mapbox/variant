@@ -44,6 +44,11 @@
 #endif
 // clang-format on
 
+// Exceptions
+#if defined( __EXCEPTIONS) || defined( _MSC_VER)
+#define HAS_EXCEPTIONS
+#endif
+
 #define VARIANT_MAJOR_VERSION 1
 #define VARIANT_MINOR_VERSION 1
 #define VARIANT_PATCH_VERSION 0
@@ -660,7 +665,7 @@ public:
         return *reinterpret_cast<T*>(&data);
     }
 
-#ifdef __EXCEPTIONS
+#ifdef HAS_EXCEPTIONS
     // get<T>()
     template <typename T, typename std::enable_if<
                           (detail::direct_type<T, Types...>::index != detail::invalid_value)>::type* = nullptr>
@@ -684,7 +689,7 @@ public:
         return *reinterpret_cast<T const*>(&data);
     }
 
-#ifdef __EXCEPTIONS
+#ifdef HAS_EXCEPTIONS
     template <typename T, typename std::enable_if<
                           (detail::direct_type<T, Types...>::index != detail::invalid_value)>::type* = nullptr>
     VARIANT_INLINE T const& get() const
@@ -708,7 +713,7 @@ public:
         return (*reinterpret_cast<recursive_wrapper<T>*>(&data)).get();
     }
 
-#ifdef __EXCEPTIONS
+#ifdef HAS_EXCEPTIONS
     // get<T>() - T stored as recursive_wrapper<T>
     template <typename T, typename std::enable_if<
                           (detail::direct_type<recursive_wrapper<T>, Types...>::index != detail::invalid_value)>::type* = nullptr>
@@ -732,7 +737,7 @@ public:
         return (*reinterpret_cast<recursive_wrapper<T> const*>(&data)).get();
     }
 
-#ifdef __EXCEPTIONS
+#ifdef HAS_EXCEPTIONS
     template <typename T, typename std::enable_if<
                           (detail::direct_type<recursive_wrapper<T>, Types...>::index != detail::invalid_value)>::type* = nullptr>
     VARIANT_INLINE T const& get() const
@@ -756,7 +761,7 @@ public:
         return (*reinterpret_cast<std::reference_wrapper<T>*>(&data)).get();
     }
 
-#ifdef __EXCEPTIONS
+#ifdef HAS_EXCEPTIONS
     // get<T>() - T stored as std::reference_wrapper<T>
     template <typename T, typename std::enable_if<
                           (detail::direct_type<std::reference_wrapper<T>, Types...>::index != detail::invalid_value)>::type* = nullptr>
@@ -780,7 +785,7 @@ public:
         return (*reinterpret_cast<std::reference_wrapper<T const> const*>(&data)).get();
     }
 
-#ifdef __EXCEPTIONS
+#ifdef HAS_EXCEPTIONS
     template <typename T, typename std::enable_if<
                           (detail::direct_type<std::reference_wrapper<T const>, Types...>::index != detail::invalid_value)>::type* = nullptr>
     VARIANT_INLINE T const& get() const
@@ -927,7 +932,7 @@ auto VARIANT_INLINE apply_visitor(F&& f, V& v0, V& v1) -> decltype(V::binary_vis
 
 // getter interface
 
-#ifdef __EXCEPTIONS
+#ifdef HAS_EXCEPTIONS
 template <typename ResultType, typename T>
 auto get(T& var)->decltype(var.template get<ResultType>())
 {
@@ -941,7 +946,7 @@ ResultType& get_unchecked(T& var)
     return var.template get_unchecked<ResultType>();
 }
 
-#ifdef __EXCEPTIONS
+#ifdef HAS_EXCEPTIONS
 template <typename ResultType, typename T>
 auto get(T const& var)->decltype(var.template get<ResultType>())
 {
