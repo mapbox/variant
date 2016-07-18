@@ -576,3 +576,18 @@ TEST_CASE("recursive wrapper")
     REQUIRE(v.is<int>());
     REQUIRE(v.get<int>() == 1);
 }
+
+
+TEST_CASE("variant : direct_type helper should match T, references (T&)  and const references (T const&) to the original type T)")
+{
+    using value = mapbox::util::variant<bool, std::uint64_t>;
+
+    std::uint64_t u(1234);
+    REQUIRE(value(u).is<std::uint64_t>()); // matches T
+
+    std::uint64_t& ur(u);
+    REQUIRE(value(ur).is<std::uint64_t>()); // matches T&
+
+    std::uint64_t const& ucr(u);
+    REQUIRE(value(ucr).is<std::uint64_t>()); // matches T const&
+}
