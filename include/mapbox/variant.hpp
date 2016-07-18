@@ -123,7 +123,7 @@ struct convertible_type<T>
 template <typename T, typename... Types>
 struct value_traits
 {
-    using value_type = typename std::remove_reference<T>::type;
+    using value_type = typename std::remove_const<typename std::remove_reference<T>::type>::type;
     static constexpr std::size_t direct_index = direct_type<value_type, Types...>::index;
     static constexpr bool is_direct = direct_index != invalid_value;
     static constexpr std::size_t index = is_direct ? direct_index : convertible_type<value_type, Types...>::index;
