@@ -120,13 +120,30 @@ struct convertible_type<T>
     static constexpr std::size_t index = invalid_value;
 };
 
+
+template <typename T, typename... Types>
+struct count_convertibles;
+
+template <typename T, typename First, typename... Types>
+struct count_convertibles<T, First, Types...>
+{
+    static constexpr std::size_t value = (std::is_convertible<T, First>::value ? 1 : 0) + count_convertibles<T,Types...>::value;
+};
+
+template <typename T>
+struct count_convertibles<T>
+{
+    static constexpr std::size_t value = 0;
+};
+
 template <typename T, typename... Types>
 struct value_traits
 {
     using value_type = typename std::remove_const<typename std::remove_reference<T>::type>::type;
     static constexpr std::size_t direct_index = direct_type<value_type, Types...>::index;
     static constexpr bool is_direct = direct_index != invalid_value;
-    static constexpr std::size_t index = is_direct ? direct_index : convertible_type<value_type, Types...>::index;
+    static constexpr std::size_t index = is_direct ? direct_index : count_convertibles<value_type, Types...>::value == 1
+        ? convertible_type<value_type, Types...>::index : invalid_value;
     static constexpr bool is_valid = index != invalid_value;
     static constexpr std::size_t tindex = is_valid ? sizeof...(Types)-index : 0;
     using target_type = typename std::tuple_element<tindex, std::tuple<void, Types...>>::type;
