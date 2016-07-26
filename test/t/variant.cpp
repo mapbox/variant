@@ -325,7 +325,7 @@ TEST_CASE("implicit conversion", "[variant][implicit conversion]")
 TEST_CASE("implicit conversion to first type in variant type list", "[variant][implicit conversion]")
 {
     using variant_type = mapbox::util::variant<long, char>;
-    variant_type var = 5.0; // converted to long
+    variant_type var = 5l; // converted to long
     REQUIRE(var.get<long>() == 5);
     REQUIRE_THROWS_AS({
         var.get<char>();
