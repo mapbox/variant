@@ -65,8 +65,7 @@ Tested with:
 
 ## Usage
 
-There is nothing to build, just include `variant.hpp` and
-`recursive_wrapper.hpp` in your project. Include `variant_io.hpp` if you need
+There is nothing to build, just include `variant.hpp` in your project. Include `variant_io.hpp` if you need
 the `operator<<` overload for variant.
 
 
