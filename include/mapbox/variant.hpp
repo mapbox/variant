@@ -103,6 +103,26 @@ struct direct_type<T>
     static constexpr std::size_t index = invalid_value;
 };
 
+#if __cpp_lib_logical_traits >= 201510L
+
+using std::disjunction;
+
+#else
+
+template <typename...>
+struct disjunction : std::false_type {};
+
+template <typename B1>
+struct disjunction<B1> : B1 {};
+
+template <typename B1, typename B2>
+struct disjunction<B1, B2> : std::conditional<B1::value, B1, B2>::type {};
+
+template <typename B1, typename... Bs>
+struct disjunction<B1, Bs...> : std::conditional<B1::value, B1, disjunction<Bs...>>::type {};
+
+#endif
+
 template <typename T, typename... Types>
 struct convertible_type;
 
@@ -110,7 +130,7 @@ template <typename T, typename First, typename... Types>
 struct convertible_type<T, First, Types...>
 {
     static constexpr std::size_t index = std::is_convertible<T, First>::value
-        ? sizeof...(Types)
+        ? disjunction<std::is_convertible<T, Types>...>::value ? invalid_value : sizeof...(Types)
         : convertible_type<T, Types...>::index;
 };
 
@@ -120,30 +140,13 @@ struct convertible_type<T>
     static constexpr std::size_t index = invalid_value;
 };
 
-
-template <typename T, typename... Types>
-struct count_convertibles;
-
-template <typename T, typename First, typename... Types>
-struct count_convertibles<T, First, Types...>
-{
-    static constexpr std::size_t value = (std::is_convertible<T, First>::value ? 1 : 0) + count_convertibles<T,Types...>::value;
-};
-
-template <typename T>
-struct count_convertibles<T>
-{
-    static constexpr std::size_t value = 0;
-};
-
 template <typename T, typename... Types>
 struct value_traits
 {
     using value_type = typename std::remove_const<typename std::remove_reference<T>::type>::type;
     static constexpr std::size_t direct_index = direct_type<value_type, Types...>::index;
     static constexpr bool is_direct = direct_index != invalid_value;
-    static constexpr std::size_t index = is_direct ? direct_index : count_convertibles<value_type, Types...>::value == 1
-        ? convertible_type<value_type, Types...>::index : invalid_value;
+    static constexpr std::size_t index = is_direct ? direct_index : convertible_type<value_type, Types...>::index;
     static constexpr bool is_valid = index != invalid_value;
     static constexpr std::size_t tindex = is_valid ? sizeof...(Types)-index : 0;
     using target_type = typename std::tuple_element<tindex, std::tuple<void, Types...>>::type;
@@ -528,20 +531,6 @@ private:
     Variant const& lhs_;
 };
 
-// True if Predicate matches for all of the types Ts
-template <template <typename> class Predicate, typename... Ts>
-struct static_all_of : std::is_same<std::tuple<std::true_type, typename Predicate<Ts>::type...>,
-                                    std::tuple<typename Predicate<Ts>::type..., std::true_type>>
-{
-};
-
-// True if Predicate matches for none of the types Ts
-template <template <typename> class Predicate, typename... Ts>
-struct static_none_of : std::is_same<std::tuple<std::false_type, typename Predicate<Ts>::type...>,
-                                     std::tuple<typename Predicate<Ts>::type..., std::false_type>>
-{
-};
-
 } // namespace detail
 
 struct no_init
@@ -552,7 +541,7 @@ template <typename... Types>
 class variant
 {
     static_assert(sizeof...(Types) > 0, "Template parameter type list of variant can not be empty");
-    static_assert(detail::static_none_of<std::is_reference, Types...>::value, "Variant can not hold reference types. Maybe use std::reference?");
+    static_assert(!detail::disjunction<std::is_reference<Types>...>::value, "Variant can not hold reference types. Maybe use std::reference_wrapper?");
 
 private:
     static const std::size_t data_size = detail::static_max<sizeof(Types)...>::value;
