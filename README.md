@@ -68,6 +68,13 @@ Tested with:
 There is nothing to build, just include `variant.hpp` in your project. Include `variant_io.hpp` if you need
 the `operator<<` overload for variant.
 
+### Usage with Boost.Spirit
+If you want to use MapBox.Variant with the [Boost.Spirit](http://www.boost.org/doc/libs/release/libs/spirit/doc/html/index.html) library, you can simply use the following supporting headers : 
+
+  * `#include <mapbox/boost_spirit_qi.hpp>`
+  * `#include <mapbox/boost_spirit_karma.hpp>`
+
+Examples are available here : [Boost.Spirit.Qi](test/boost_spirit_qi.cpp), [Boost.Spirit.Karma](test/boost_spirit_karma.cpp).
 
 ## Unit Tests
 
