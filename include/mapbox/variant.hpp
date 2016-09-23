@@ -547,6 +547,7 @@ private:
     static const std::size_t data_size = detail::static_max<sizeof(Types)...>::value;
     static const std::size_t data_align = detail::static_max<alignof(Types)...>::value;
 public:
+    struct adapted_variant_tag;
     using types = std::tuple<Types...>;
 private:
     using first_type = typename std::tuple_element<0, types>::type;
