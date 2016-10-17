@@ -546,8 +546,11 @@ class variant
 private:
     static const std::size_t data_size = detail::static_max<sizeof(Types)...>::value;
     static const std::size_t data_align = detail::static_max<alignof(Types)...>::value;
-
-    using first_type = typename std::tuple_element<0, std::tuple<Types...>>::type;
+public:
+    struct adapted_variant_tag;
+    using types = std::tuple<Types...>;
+private:
+    using first_type = typename std::tuple_element<0, types>::type;
     using data_type = typename std::aligned_storage<data_size, data_align>::type;
     using helper_type = detail::variant_helper<Types...>;
 
@@ -580,7 +583,7 @@ public:
         helper_type::copy(old.type_index, &old.data, &data);
     }
 
-    VARIANT_INLINE variant(variant<Types...>&& old) noexcept(std::is_nothrow_move_constructible<std::tuple<Types...>>::value)
+    VARIANT_INLINE variant(variant<Types...>&& old) noexcept(std::is_nothrow_move_constructible<types>::value)
         : type_index(old.type_index)
     {
         helper_type::move(old.type_index, &old.data, &data);
