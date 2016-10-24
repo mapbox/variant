@@ -570,7 +570,7 @@ public:
 
     // http://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
     template <typename T, typename Traits = detail::value_traits<T, Types...>,
-              typename Enable = typename std::enable_if<Traits::is_valid>::type>
+              typename Enable = typename std::enable_if<Traits::is_valid && !std::is_same<variant<Types...>, typename Traits::value_type>::value>::type >
     VARIANT_INLINE variant(T&& val) noexcept(std::is_nothrow_constructible<typename Traits::target_type, T&&>::value)
         : type_index(Traits::index)
     {
