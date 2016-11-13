@@ -13,7 +13,7 @@ LDFLAGS := $(LDFLAGS)
 
 ALL_HEADERS = $(shell find include/mapbox/ '(' -name '*.hpp' ')')
 
-all: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_wrapper_test out/binary_visitor_test
+all: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_wrapper_test out/binary_visitor_test out/lambda_overload_test
 
 mason_packages:
 	git submodule update --init .mason
@@ -46,6 +46,10 @@ out/recursive_wrapper_test: Makefile mason_packages test/recursive_wrapper_test.
 out/binary_visitor_test: Makefile mason_packages test/binary_visitor_test.cpp
 	mkdir -p ./out
 	$(CXX) -o out/binary_visitor_test test/binary_visitor_test.cpp -I./include -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_FLAGS)
+
+out/lambda_overload_test: Makefile mason_packages test/lambda_overload_test.cpp
+	mkdir -p ./out
+	$(CXX) -o out/lambda_overload_test test/lambda_overload_test.cpp -I./include -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_FLAGS)
 
 bench: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_wrapper_test out/binary_visitor_test
 	./out/bench-variant 100000
