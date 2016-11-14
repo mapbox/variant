@@ -10,26 +10,22 @@ struct visitor;
 template <typename Fn>
 struct visitor<Fn> : Fn
 {
-    using type = Fn;
-
     using Fn::operator();
 
     visitor(Fn fn) : Fn(fn) {}
 };
 
 template <typename Fn, typename... Fns>
-struct visitor<Fn, Fns...> : Fn, visitor<Fns...>::type
+struct visitor<Fn, Fns...> : Fn, visitor<Fns...>
 {
-    using type = visitor;
-
     using Fn::operator();
-    using visitor<Fns...>::type::operator();
+    using visitor<Fns...>::operator();
 
-    visitor(Fn fn, Fns... fns) : Fn(fn), visitor<Fns...>::type(fns...) {}
+    visitor(Fn fn, Fns... fns) : Fn(fn), visitor<Fns...>(fns...) {}
 };
 
 template <typename... Fns>
-typename visitor<Fns...>::type make_visitor(Fns... fns)
+visitor<Fns...> make_visitor(Fns... fns)
 {
     return visitor<Fns...>(fns...);
 }
