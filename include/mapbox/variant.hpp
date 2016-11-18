@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <typeinfo>
 #include <utility>
+#include <functional>
 
 #include <mapbox/recursive_wrapper.hpp>
 
@@ -531,6 +532,16 @@ private:
     Variant const& lhs_;
 };
 
+// hashing visitor
+struct hasher
+{
+    template <typename T>
+    std::size_t operator()(const T& hashable) const
+    {
+        return std::hash<T>{}(hashable);
+    }
+};
+
 } // namespace detail
 
 struct no_init
@@ -970,5 +981,16 @@ ResultType const& get_unchecked(T const& var)
 }
 } // namespace util
 } // namespace mapbox
+
+// hashable iff underlying types are hashable
+namespace std {
+template <typename... Types>
+struct hash< ::mapbox::util::variant<Types...>> {
+    std::size_t operator()(const ::mapbox::util::variant<Types...>& v) const noexcept
+    {
+        return ::mapbox::util::apply_visitor(::mapbox::util::detail::hasher{}, v);
+    }
+};
+}
 
 #endif // MAPBOX_UTIL_VARIANT_HPP
