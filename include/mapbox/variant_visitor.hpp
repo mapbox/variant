@@ -10,6 +10,7 @@ struct visitor;
 template <typename Fn>
 struct visitor<Fn> : Fn
 {
+    using type = Fn;
     using Fn::operator();
 
     visitor(Fn fn) : Fn(fn) {}
@@ -18,6 +19,7 @@ struct visitor<Fn> : Fn
 template <typename Fn, typename... Fns>
 struct visitor<Fn, Fns...> : Fn, visitor<Fns...>
 {
+    using type = visitor;
     using Fn::operator();
     using visitor<Fns...>::operator();
 
