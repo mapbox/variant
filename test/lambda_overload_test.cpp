@@ -55,8 +55,8 @@ void test_singleton_variant()
     apply_visitor(make_visitor([](int) {}), singleton);
 }
 
-#ifdef HAS_CPP14_SUPPORT
 void test_lambda_overloads_sfinae()
+#ifdef HAS_CPP14_SUPPORT
 {
     variant<int, float, std::vector<int>> var;
 
@@ -76,17 +76,52 @@ void test_lambda_overloads_sfinae()
     var = std::vector<int>{4, 5, 6};
     apply_visitor(visitor, var);
 }
+#else
+{
+}
 #endif
+
+void test_match_singleton()
+{
+    variant<int> singleton = 5;
+    singleton.match([](int) {});
+}
+
+void test_match_overloads()
+{
+    Either<Error, Response> rv;
+
+    rv = Response{};
+
+    rv.match([](Response) { std::cout << "Response\n"; }, //
+             [](Error) { std::cout << "Error\n"; });      //
+}
+
+void test_match_overloads_capture()
+{
+    Either<Error, Response> rv;
+
+    rv = Error{};
+
+    int ok = 0;
+    int err = 0;
+
+    rv.match([&](Response) { ok += 1; }, //
+             [&](Error) { err += 1; });  //
+
+    std::cout << "Got " << ok << " ok, " << err << " err" << std::endl;
+}
 
 int main()
 {
     test_lambda_overloads();
     test_singleton_variant();
     test_lambda_overloads_capture();
-
-#ifdef HAS_CPP14_SUPPORT
     test_lambda_overloads_sfinae();
-#endif
+
+    test_match_singleton();
+    test_match_overloads();
+    test_match_overloads_capture();
 }
 
 #undef HAS_CPP14_SUPPORT
