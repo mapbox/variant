@@ -58,6 +58,8 @@
 #define VARIANT_VERSION (VARIANT_MAJOR_VERSION * 100000) + (VARIANT_MINOR_VERSION * 100) + (VARIANT_PATCH_VERSION)
 
 namespace mapbox {
+
+inline
 namespace util {
 
 // XXX This should derive from std::logic_error instead of std::runtime_error.

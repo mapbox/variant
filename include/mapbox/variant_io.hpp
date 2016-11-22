@@ -6,6 +6,8 @@
 #include <mapbox/variant.hpp>
 
 namespace mapbox {
+
+inline
 namespace util {
 
 namespace detail {

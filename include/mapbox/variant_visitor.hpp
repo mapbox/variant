@@ -2,6 +2,8 @@
 #define MAPBOX_UTIL_VARIANT_VISITOR_HPP
 
 namespace mapbox {
+
+inline
 namespace util {
 
 template <typename... Fns>
