@@ -21,7 +21,7 @@ matrix:
     # clang++ 3.9 via mason with -fsanitize=address
     - os: linux
       compiler: "clang++-39-mason"
-      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=address" LDFLAGS="-fsanitize=address"
+      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer -fno-common" LDFLAGS="-fsanitize=address" ASAN_OPTIONS=check_initialization_order=1:detect_stack_use_after_return=1
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]

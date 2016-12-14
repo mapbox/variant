@@ -6,7 +6,7 @@ CXX_STD ?= c++11
 
 BOOST_FLAGS = `$(MASON) cflags boost $(BOOST_VERSION)`
 RELEASE_FLAGS = -O3 -DNDEBUG -march=native -DSINGLE_THREADED -fvisibility-inlines-hidden -fvisibility=hidden
-DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions
+DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions -fno-omit-frame-pointer
 COMMON_FLAGS = -Wall -pedantic -Wextra -Wsign-compare -Wsign-conversion -Wshadow -Wunused-parameter -std=$(CXX_STD)
 CXXFLAGS := $(CXXFLAGS)
 LDFLAGS := $(LDFLAGS)
