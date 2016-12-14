@@ -1,10 +1,10 @@
 MASON = .mason/mason
-BOOST_VERSION = boost 1.60.0
+BOOST_VERSION = 1.62.0
 
 CXX := $(CXX)
 CXX_STD ?= c++11
 
-BOOST_FLAGS = `$(MASON) cflags $(BOOST_VERSION)`
+BOOST_FLAGS = `$(MASON) cflags boost $(BOOST_VERSION)`
 RELEASE_FLAGS = -O3 -DNDEBUG -march=native -DSINGLE_THREADED -fvisibility-inlines-hidden
 DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions
 COMMON_FLAGS = -Wall -pedantic -Wextra -Wsign-compare -Wsign-conversion -Wshadow -Wunused-parameter -std=$(CXX_STD)
@@ -19,7 +19,7 @@ $(MASON):
 	git submodule update --init .mason
 
 mason_packages/headers/boost: $(MASON)
-	$(MASON) install $(BOOST_VERSION)
+	$(MASON) install boost $(BOOST_VERSION)
 
 ./deps/gyp:
 	git clone --depth 1 https://chromium.googlesource.com/external/gyp.git ./deps/gyp
@@ -85,9 +85,9 @@ coverage:
 sizes: Makefile
 	mkdir -p ./out
 	@$(CXX) -o ./out/our_variant_hello_world.out include/mapbox/variant.hpp -I./include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./out/our_variant_hello_world.out
-	@$(CXX) -o ./out/boost_variant_hello_world.out `$(MASON) prefix boost 1.60.0`/include/boost/variant.hpp -I./include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(BOOST_FLAGS) &&  du -h ./out/boost_variant_hello_world.out
+	@$(CXX) -o ./out/boost_variant_hello_world.out `$(MASON) prefix boost $(BOOST_VERSION)`/include/boost/variant.hpp -I./include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(BOOST_FLAGS) &&  du -h ./out/boost_variant_hello_world.out
 	@$(CXX) -o ./out/our_variant_hello_world ./test/our_variant_hello_world.cpp -I./include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) &&  du -h ./out/our_variant_hello_world
-	@$(CXX) -o ./out/boost_variant_hello_world ./test/boost_variant_hello_world.cpp -I./include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS)  $(BOOST_FLAGS) &&  du -h ./out/boost_variant_hello_world
+	@$(CXX) -o ./out/boost_variant_hello_world ./test/boost_variant_hello_world.cpp -I./include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(BOOST_FLAGS) &&  du -h ./out/boost_variant_hello_world
 
 profile: out/bench-variant-debug
 	mkdir -p profiling/
