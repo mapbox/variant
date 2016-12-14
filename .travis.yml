@@ -4,106 +4,157 @@ sudo: false
 
 matrix:
   include:
-    - os: osx
-      osx_image: xcode7
-      env: TEST_GYP_BUILD=True
-      compiler: clang
-    - os: osx
-      osx_image: xcode8
-      env: TEST_GYP_BUILD=True
-      compiler: clang
+    # clang++ 3.9 via mason with -flto
     - os: linux
-      compiler: "clang35"
-      env: CXX=clang++-3.5 COVERAGE=True
-      addons:
-        apt:
-          sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5' ]
-          packages: [ 'clang-3.5' ]
-    - os: linux
-      compiler: "clang36"
-      env: CXX=clang++-3.6
-      addons:
-        apt:
-          sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6' ]
-          packages: [ 'clang-3.6' ]
-    - os: linux
-      compiler: "clang37"
-      env: CXX=clang++-3.7
-      addons:
-        apt:
-          sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7' ]
-          packages: [ 'clang-3.7' ]
-    - os: linux
-      compiler: "clang38"
-      env: CXX=clang++-3.8
-      addons:
-        apt:
-          sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
-          packages: [ 'clang-3.8' ]
-    - os: linux
-      compiler: "clang38"
-      env: CXX=clang++-3.8 CXX_STD=c++14
-      addons:
-        apt:
-          sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
-          packages: [ 'clang-3.8' ]
-    # blocked by https://github.com/travis-ci/apt-source-whitelist/issues/300
-    #- os: linux
-    #  compiler: "clang39"
-    #  env: CXX=clang++-3.9
-    #  addons:
-    #    apt:
-    #      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.9' ]
-    #      packages: [ 'clang-3.9' ]
-    - os: linux
-      compiler: "gcc47"
-      env: CXX=g++-4.7
+      compiler: "clang++-39-mason"
+      env: CXX=clang++-3.9
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
-          packages: [ 'g++-4.7' ]
+          packages: [ 'libstdc++-4.9-dev' ]
+      before_install:
+        - git submodule update --init
+        - ./.mason/mason install clang++ 3.9.0
+        - export PATH=$(./.mason/mason prefix clang++ 3.9.0)/bin:${PATH}
+        - export CXXFLAGS="-flto"
+        - ./.mason/mason install binutils 2.27
+        - export PATH=$(./.mason/mason prefix binutils 2.27)/bin:${PATH}
+    # clang++ 3.9 via mason with -fsanitize=address
     - os: linux
-      compiler: "gcc48"
-      env: CXX=g++-4.8
+      compiler: "clang++-39-mason"
+      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=address"
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
-          packages: [ 'g++-4.8' ]
+          packages: [ 'libstdc++-4.9-dev' ]
+      before_install:
+        - git submodule update --init
+        - ./.mason/mason install clang++ 3.9.0
+        - export PATH=$(./.mason/mason prefix clang++ 3.9.0)/bin:${PATH}
+    # clang++ 3.9 via mason with -fsanitize=undefined
     - os: linux
-      compiler: "gcc49"
-      env: CXX=g++-4.9
+      compiler: "clang++-39-mason"
+      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=undefined"
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
-          packages: [ 'g++-4.9' ]
+          packages: [ 'libstdc++-4.9-dev' ]
+      before_install:
+        - git submodule update --init
+        - ./.mason/mason install clang++ 3.9.0
+        - export PATH=$(./.mason/mason prefix clang++ 3.9.0)/bin:${PATH}
+    # clang++ 3.9 via mason with -fsanitize=integer
     - os: linux
-      compiler: "gcc49"
-      env: CXX=g++-4.9 CXX_STD=c++14
+      compiler: "clang++-39-mason"
+      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=integer"
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
-          packages: [ 'g++-4.9' ]
-    - os: linux
-      compiler: "gcc5"
-      env: CXX=g++-5 CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0"
-      addons:
-        apt:
-          sources: [ 'ubuntu-toolchain-r-test' ]
-          packages: [ 'g++-5' ]
-    - os: linux
-      compiler: "gcc5"
-      env: CXX=g++-5 CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=1"
-      addons:
-        apt:
-          sources: [ 'ubuntu-toolchain-r-test' ]
-          packages: [ 'g++-5' ]
-    - os: linux
-      compiler: "gcc6"
-      env: CXX=g++-6
-      addons:
-        apt:
-          sources: [ 'ubuntu-toolchain-r-test' ]
-          packages: [ 'g++-6' ]
+          packages: [ 'libstdc++-4.9-dev' ]
+      before_install:
+        - git submodule update --init
+        - ./.mason/mason install clang++ 3.9.0
+        - export PATH=$(./.mason/mason prefix clang++ 3.9.0)/bin:${PATH}
+    # - os: osx
+    #   osx_image: xcode7
+    #   env: TEST_GYP_BUILD=True
+    #   compiler: clang
+    # - os: osx
+    #   osx_image: xcode8
+    #   env: TEST_GYP_BUILD=True
+    #   compiler: clang
+    # - os: linux
+    #   compiler: "clang35"
+    #   env: CXX=clang++-3.5 COVERAGE=True
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5' ]
+    #       packages: [ 'clang-3.5' ]
+    # - os: linux
+    #   compiler: "clang36"
+    #   env: CXX=clang++-3.6
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6' ]
+    #       packages: [ 'clang-3.6' ]
+    # - os: linux
+    #   compiler: "clang37"
+    #   env: CXX=clang++-3.7
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.7' ]
+    #       packages: [ 'clang-3.7' ]
+    # - os: linux
+    #   compiler: "clang38"
+    #   env: CXX=clang++-3.8
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
+    #       packages: [ 'clang-3.8' ]
+    # - os: linux
+    #   compiler: "clang38"
+    #   env: CXX=clang++-3.8 CXX_STD=c++14
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
+    #       packages: [ 'clang-3.8' ]
+    # # blocked by https://github.com/travis-ci/apt-source-whitelist/issues/300
+    # #- os: linux
+    # #  compiler: "clang39"
+    # #  env: CXX=clang++-3.9
+    # #  addons:
+    # #    apt:
+    # #      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.9' ]
+    # #      packages: [ 'clang-3.9' ]
+    # - os: linux
+    #   compiler: "gcc47"
+    #   env: CXX=g++-4.7
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test' ]
+    #       packages: [ 'g++-4.7' ]
+    # - os: linux
+    #   compiler: "gcc48"
+    #   env: CXX=g++-4.8
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test' ]
+    #       packages: [ 'g++-4.8' ]
+    # - os: linux
+    #   compiler: "gcc49"
+    #   env: CXX=g++-4.9
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test' ]
+    #       packages: [ 'g++-4.9' ]
+    # - os: linux
+    #   compiler: "gcc49"
+    #   env: CXX=g++-4.9 CXX_STD=c++14
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test' ]
+    #       packages: [ 'g++-4.9' ]
+    # - os: linux
+    #   compiler: "gcc5"
+    #   env: CXX=g++-5 CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=0"
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test' ]
+    #       packages: [ 'g++-5' ]
+    # - os: linux
+    #   compiler: "gcc5"
+    #   env: CXX=g++-5 CXXFLAGS="-D_GLIBCXX_USE_CXX11_ABI=1"
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test' ]
+    #       packages: [ 'g++-5' ]
+    # - os: linux
+    #   compiler: "gcc6"
+    #   env: CXX=g++-6
+    #   addons:
+    #     apt:
+    #       sources: [ 'ubuntu-toolchain-r-test' ]
+    #       packages: [ 'g++-6' ]
 
 install:
  - echo ${CXX}
