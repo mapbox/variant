@@ -47,13 +47,29 @@ matrix:
         apt:
           sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8' ]
           packages: [ 'clang-3.8' ]
+    # blocked by https://github.com/travis-ci/apt-source-whitelist/issues/300
+    #- os: linux
+    #  compiler: "clang39"
+    #  env: CXX=clang++-3.9
+    #  addons:
+    #    apt:
+    #      sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.9' ]
+    #      packages: [ 'clang-3.9' ]
+    # clang++ 3.9 via mason with -flto
     - os: linux
-      compiler: "clang39"
-      env: CXX=clang++-3.9
+      compiler: "clang++-39-mason"
+      env: CXX=clang++3.9
       addons:
         apt:
-          sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.9' ]
-          packages: [ 'clang-3.9' ]
+          sources: [ 'ubuntu-toolchain-r-test' ]
+          packages: [ 'libstdc++-4.9-dev' ]
+      before_install:
+        - git submodule update --init
+        - ./.mason/mason install clang++ 3.9.0
+        - export CXX=$(./.mason/mason prefix clang++ 3.9.0)/bin:${PATH}
+        - export CXXFLAGS="-flto"
+        - ./.mason/mason install binutils 2.27
+        - export PATH=$(./.mason/mason prefix binutils 2.27)/bin:${PATH}
     - os: linux
       compiler: "gcc47"
       env: CXX=g++-4.7
@@ -104,7 +120,7 @@ matrix:
           sources: [ 'ubuntu-toolchain-r-test' ]
           packages: [ 'g++-6' ]
 
-before_install:
+install:
  - echo ${CXX}
  - if [[ $(uname -s) == 'Linux' ]]; then
      export PYTHONPATH=$(pwd)/.local/lib/python2.7/site-packages;
@@ -115,7 +131,7 @@ before_install:
      PYTHONUSERBASE=$(pwd)/.local pip install --user cpp-coveralls;
    fi
 
-install:
+script:
  - make test
  - make bench
  - make sizes
@@ -125,7 +141,7 @@ install:
      make gyp;
    fi
 
-script:
+after_script:
  - if [[ ${COVERAGE:-0} == 'True' ]]; then
     make clean;
     make coverage;
