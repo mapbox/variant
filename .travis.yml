@@ -7,7 +7,7 @@ matrix:
     # clang++ 3.9 via mason with -flto
     - os: linux
       compiler: "clang++-39-mason"
-      env: CXX=clang++-3.9 CXXFLAGS="-flto" LDFLAGS="-flto"
+      env: CXX=clang++-3.9 CXXFLAGS="-flto -fsanitize=cfi -fvisibility=hidden" LDFLAGS="-flto -fsanitize=cfi -fvisibility=hidden"
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
@@ -46,6 +46,18 @@ matrix:
     - os: linux
       compiler: "clang++-39-mason"
       env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=integer" LDFLAGS="-fsanitize=integer"
+      addons:
+        apt:
+          sources: [ 'ubuntu-toolchain-r-test' ]
+          packages: [ 'libstdc++-4.9-dev' ]
+      before_install:
+        - git submodule update --init
+        - ./.mason/mason install clang++ 3.9.0
+        - export PATH=$(./.mason/mason prefix clang++ 3.9.0)/bin:${PATH}
+    # clang++ 3.9 via mason with -fsanitize=safe-stack
+    - os: linux
+      compiler: "clang++-39-mason"
+      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=safe-stack" LDFLAGS="-fsanitize=safe-stack"
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
