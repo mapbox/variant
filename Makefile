@@ -15,8 +15,10 @@ ALL_HEADERS = $(shell find include/mapbox/ '(' -name '*.hpp' ')')
 
 all: out/bench-variant out/unique_ptr_test out/unique_ptr_test out/recursive_wrapper_test out/binary_visitor_test out/lambda_overload_test out/hashable_test
 
-mason_packages:
+$(MASON):
 	git submodule update --init .mason
+
+mason_packages/headers/boost: $(MASON)
 	$(MASON) install $(BOOST_VERSION)
 
 ./deps/gyp:
@@ -27,31 +29,31 @@ gyp: ./deps/gyp
 	make V=1 -C ./out tests
 	./out/Release/tests
 
-out/bench-variant-debug: Makefile mason_packages test/bench_variant.cpp
+out/bench-variant-debug: Makefile mason_packages/headers/boost test/bench_variant.cpp
 	mkdir -p ./out
 	$(CXX) -o out/bench-variant-debug test/bench_variant.cpp -I./include -Itest/include -pthreads $(DEBUG_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_FLAGS)
 
-out/bench-variant: Makefile mason_packages test/bench_variant.cpp
+out/bench-variant: Makefile mason_packages/headers/boost test/bench_variant.cpp
 	mkdir -p ./out
 	$(CXX) -o out/bench-variant test/bench_variant.cpp -I./include -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_FLAGS)
 
-out/unique_ptr_test: Makefile mason_packages test/unique_ptr_test.cpp
+out/unique_ptr_test: Makefile mason_packages/headers/boost test/unique_ptr_test.cpp
 	mkdir -p ./out
 	$(CXX) -o out/unique_ptr_test test/unique_ptr_test.cpp -I./include -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_FLAGS)
 
-out/recursive_wrapper_test: Makefile mason_packages test/recursive_wrapper_test.cpp
+out/recursive_wrapper_test: Makefile mason_packages/headers/boost test/recursive_wrapper_test.cpp
 	mkdir -p ./out
 	$(CXX) -o out/recursive_wrapper_test test/recursive_wrapper_test.cpp -I./include -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_FLAGS)
 
-out/binary_visitor_test: Makefile mason_packages test/binary_visitor_test.cpp
+out/binary_visitor_test: Makefile mason_packages/headers/boost test/binary_visitor_test.cpp
 	mkdir -p ./out
 	$(CXX) -o out/binary_visitor_test test/binary_visitor_test.cpp -I./include -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_FLAGS)
 
-out/lambda_overload_test: Makefile mason_packages test/lambda_overload_test.cpp
+out/lambda_overload_test: Makefile mason_packages/headers/boost test/lambda_overload_test.cpp
 	mkdir -p ./out
 	$(CXX) -o out/lambda_overload_test test/lambda_overload_test.cpp -I./include -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_FLAGS)
 
-out/hashable_test: Makefile mason_packages test/hashable_test.cpp
+out/hashable_test: Makefile mason_packages/headers/boost test/hashable_test.cpp
 	mkdir -p ./out
 	$(CXX) -o out/hashable_test test/hashable_test.cpp -I./include -Itest/include $(RELEASE_FLAGS) $(COMMON_FLAGS) $(CXXFLAGS) $(LDFLAGS) $(BOOST_FLAGS)
 
