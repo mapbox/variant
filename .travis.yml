@@ -7,7 +7,7 @@ matrix:
     # clang++ 3.9 via mason with -flto
     - os: linux
       compiler: "clang++-39-mason"
-      env: CXX=clang++-3.9
+      env: CXX=clang++-3.9 CXXFLAGS="-flto" LDFLAGS="-flto"
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
@@ -16,13 +16,12 @@ matrix:
         - git submodule update --init
         - ./.mason/mason install clang++ 3.9.0
         - export PATH=$(./.mason/mason prefix clang++ 3.9.0)/bin:${PATH}
-        - export CXXFLAGS="-flto"
         - ./.mason/mason install binutils 2.27
         - export PATH=$(./.mason/mason prefix binutils 2.27)/bin:${PATH}
     # clang++ 3.9 via mason with -fsanitize=address
     - os: linux
       compiler: "clang++-39-mason"
-      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=address"
+      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=address" LDFLAGS="-fsanitize=address"
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
@@ -34,7 +33,7 @@ matrix:
     # clang++ 3.9 via mason with -fsanitize=undefined
     - os: linux
       compiler: "clang++-39-mason"
-      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=undefined"
+      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=undefined" LDFLAGS="-fsanitize=undefined"
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
@@ -46,7 +45,7 @@ matrix:
     # clang++ 3.9 via mason with -fsanitize=integer
     - os: linux
       compiler: "clang++-39-mason"
-      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=integer"
+      env: CXX=clang++-3.9 CXXFLAGS="-fsanitize=integer" LDFLAGS="-fsanitize=integer"
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
