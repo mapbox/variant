@@ -107,9 +107,22 @@ struct direct_type<T>
 
 #if __cpp_lib_logical_traits >= 201510L
 
+using std::conjunction;
 using std::disjunction;
 
 #else
+
+template <typename...>
+struct conjunction : std::true_type {};
+
+template <typename B1>
+struct conjunction<B1> : B1 {};
+
+template <typename B1, typename B2>
+struct conjunction<B1, B2> : std::conditional<B1::value, B2, B1>::type {};
+
+template <typename B1, typename... Bs>
+struct conjunction<B1, Bs...> : std::conditional<B1::value, conjunction<Bs...>, B1>::type {};
 
 template <typename...>
 struct disjunction : std::false_type {};
@@ -595,7 +608,8 @@ public:
         helper_type::copy(old.type_index, &old.data, &data);
     }
 
-    VARIANT_INLINE variant(variant<Types...>&& old) noexcept(std::is_nothrow_move_constructible<types>::value)
+    VARIANT_INLINE variant(variant<Types...>&& old)
+        noexcept(detail::conjunction<std::is_nothrow_move_constructible<Types>...>::value)
         : type_index(old.type_index)
     {
         helper_type::move(old.type_index, &old.data, &data);
