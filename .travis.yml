@@ -139,6 +139,14 @@ install:
    fi
 
 script:
+ # Build in Release
+ - make test
+ - make bench
+ - make sizes
+ - scripts/run_compilation_failure_tests.sh
+ - make clean;
+ # Build in Debug
+ - export BUILDTYPE=Debug
  - make test
  - make bench
  - make sizes
