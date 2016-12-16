@@ -7,18 +7,28 @@ CXX_STD ?= c++11
 BOOST_ROOT = $(shell $(MASON) prefix boost $(BOOST_VERSION))
 BOOST_FLAGS = -isystem $(BOOST_ROOT)/include/
 RELEASE_FLAGS = -O3 -DNDEBUG -march=native -DSINGLE_THREADED -fvisibility-inlines-hidden -fvisibility=hidden
-DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions -fno-omit-frame-pointer
+DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions -fno-omit-frame-pointer -fstack-protector-strong -fPIE -D_FORTIFY_SOURCE=2 -fwrapv -Wstack-protector -Wformat -Wformat-security -Wpointer-sign
 COMMON_FLAGS = -Wall -Werror -pedantic -Wextra -Wno-unsequenced -Wsign-compare -Wsign-conversion -Wshadow  -Wunused-parameter -std=$(CXX_STD)
 CXXFLAGS := $(CXXFLAGS)
 LDFLAGS := $(LDFLAGS)
 
 export BUILDTYPE ?= Release
 
-ifeq ($(BUILDTYPE),Release)
-	FINAL_CXXFLAGS := $(COMMON_FLAGS) $(RELEASE_FLAGS) $(CXXFLAGS)
-else
-	FINAL_CXXFLAGS := $(COMMON_FLAGS) $(DEBUG_FLAGS) $(CXXFLAGS)
+OS := $(shell uname -s)
+ifeq ($(OS), Linux)
+  EXTRA_FLAGS = -pthreads
 endif
+ifeq ($(OS), Darwin)
+  EXTRA_FLAGS = -mmacosx-version-min=10.8
+endif
+
+
+ifeq ($(BUILDTYPE),Release)
+	FINAL_CXXFLAGS := $(COMMON_FLAGS) $(RELEASE_FLAGS) $(CXXFLAGS) $(EXTRA_FLAGS)
+else
+	FINAL_CXXFLAGS := $(COMMON_FLAGS) $(DEBUG_FLAGS) $(CXXFLAGS) $(EXTRA_FLAGS)
+endif
+
 
 
 ALL_HEADERS = $(shell find include/mapbox/ '(' -name '*.hpp' ')')
@@ -41,7 +51,7 @@ gyp: ./deps/gyp
 
 out/bench-variant-debug: Makefile mason_packages/headers/boost test/bench_variant.cpp
 	mkdir -p ./out
-	$(CXX) -o out/bench-variant-debug test/bench_variant.cpp -I./include -isystem test/include -pthreads $(FINAL_CXXFLAGS) $(LDFLAGS) $(BOOST_FLAGS)
+	$(CXX) -o out/bench-variant-debug test/bench_variant.cpp -I./include -isystem test/include $(FINAL_CXXFLAGS) $(LDFLAGS) $(BOOST_FLAGS)
 
 out/bench-variant: Makefile mason_packages/headers/boost test/bench_variant.cpp
 	mkdir -p ./out
