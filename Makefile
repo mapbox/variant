@@ -16,7 +16,7 @@ export BUILDTYPE ?= Release
 
 OS := $(shell uname -s)
 ifeq ($(OS), Linux)
-  EXTRA_FLAGS = -pthreads
+  #EXTRA_FLAGS = -pthreads
 endif
 ifeq ($(OS), Darwin)
   EXTRA_FLAGS = -mmacosx-version-min=10.8
