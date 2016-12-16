@@ -93,7 +93,7 @@ matrix:
           packages: [ 'clang-3.7' ]
     - os: linux
       compiler: "gcc47"
-      env: CXX=g++-4.7
+      env: CXX=g++-4.7 CXXFLAGS="-Wno-parentheses"
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
