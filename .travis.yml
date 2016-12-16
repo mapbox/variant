@@ -76,7 +76,7 @@ matrix:
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5' ]
-          packages: [ 'clang-3.5' ]
+          packages: [ 'clang-3.5', 'libstdc++-4.9-dev' ]
     - os: linux
       compiler: "clang36"
       env: CXX=clang++-3.6
@@ -93,7 +93,7 @@ matrix:
           packages: [ 'clang-3.7' ]
     - os: linux
       compiler: "gcc47"
-      env: CXX=g++-4.7
+      env: CXX=g++-4.7 CXXFLAGS="-Wno-parentheses"
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
@@ -139,6 +139,14 @@ install:
    fi
 
 script:
+ # Build in Release
+ - make test
+ - make bench
+ - make sizes
+ - scripts/run_compilation_failure_tests.sh
+ - make clean;
+ # Build in Debug
+ - export BUILDTYPE=Debug
  - make test
  - make bench
  - make sizes
