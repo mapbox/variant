@@ -7,15 +7,11 @@ CXX_STD ?= c++11
 BOOST_ROOT = $(shell $(MASON) prefix boost $(BOOST_VERSION))
 BOOST_FLAGS = -isystem $(BOOST_ROOT)/include/
 RELEASE_FLAGS = -O3 -DNDEBUG -march=native -DSINGLE_THREADED -fvisibility-inlines-hidden -fvisibility=hidden
-DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions -fno-omit-frame-pointer -fPIE -D_FORTIFY_SOURCE=2 -fwrapv -Wformat -Wformat-security
+DEBUG_FLAGS = -O0 -g -DDEBUG -fno-inline-functions -fno-omit-frame-pointer -fPIE
+WARNING_FLAGS = -Werror -Wall -Wextra -pedantic \
+		-Wformat=2 -Wsign-conversion -Wshadow -Wunused-parameter
+
 COMMON_FLAGS = -std=$(CXX_STD)
-
-WARNING_FLAGS = -Wall -Werror -pedantic -Wextra -Wsign-compare -Wsign-conversion -Wshadow -Wunused-parameter
-CLANG_WARNING_FLAGS = -Wno-unsequenced -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-exit-time-destructors
-ifneq (,$(findstring clang,$(CXX)))
-    WARNING_FLAGS += $(CLANG_WARNING_FLAGS)
-endif
-
 COMMON_FLAGS += $(WARNING_FLAGS)
 
 CXXFLAGS := $(CXXFLAGS)
