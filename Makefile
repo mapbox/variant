@@ -24,7 +24,10 @@ ifeq ($(OS), Linux)
   EXTRA_FLAGS = -pthread
 endif
 ifeq ($(OS), Darwin)
-  EXTRA_FLAGS = -mmacosx-version-min=10.8
+  OSX_OLDEST_SUPPORTED ?= 10.7
+  # we need to explicitly ask for libc++ otherwise the
+  # default will flip back to libstdc++ for mmacosx-version-min < 10.9
+  EXTRA_FLAGS = -stdlib=libc++ -mmacosx-version-min=$(OSX_OLDEST_SUPPORTED)
 endif
 
 
