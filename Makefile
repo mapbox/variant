@@ -55,7 +55,7 @@ mason_packages/headers/boost: $(MASON)
 gyp: ./deps/gyp
 	deps/gyp/gyp --depth=. -Goutput_dir=./ --generator-output=./out -f make
 	make V=1 -C ./out tests
-	./out/Release/tests
+	./out/$(BUILDTYPE)/tests
 
 out/bench-variant-debug: Makefile mason_packages/headers/boost test/bench_variant.cpp
 	mkdir -p ./out
