@@ -46,7 +46,7 @@ Response ret = makeRequest();
 To see which type the `Response` holds you pattern match on the variant unwrapping the underlying value:
 
 ```c++
-ret.match([] (Result r) { print(r.object); }
+ret.match([] (Result r) { print(r.object); },
           [] (Error e)  { print(e.message); });
 ```
 
