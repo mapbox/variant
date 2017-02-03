@@ -93,6 +93,36 @@ struct to_string
     }
 };
 
+template <typename Op, typename Node = binary_op<Op>>
+std::unique_ptr<Node> make_binary(expression&& lhs, expression&& rhs)
+{
+    return std::unique_ptr<Node>(new Node(std::move(lhs), std::move(rhs)));
+}
+
+void bench_large_expression(std::size_t num)
+{
+    std::cerr << "----- sum of " << num << " ones -----" << std::endl;
+    expression sum = 0;
+    {
+        std::cerr << "construction ";
+        auto_cpu_timer t;
+        for (std::size_t i = 0; i < num; ++i)
+        {
+            sum = make_binary<add>(std::move(sum), 1);
+        }
+    }
+    int total = 0;
+    {
+        std::cerr << "calculation ";
+        auto_cpu_timer t;
+        for (std::size_t i = 0; i < num; ++i)
+        {
+            total += util::apply_visitor(calculator(), sum);
+        }
+    }
+    std::cerr << "total=" << total << std::endl;
+}
+
 } // namespace test
 
 int main(int argc, char** argv)
@@ -105,8 +135,8 @@ int main(int argc, char** argv)
 
     const std::size_t NUM_ITER = static_cast<std::size_t>(std::stol(argv[1]));
 
-    test::expression sum(std::unique_ptr<test::binary_op<test::add>>(new test::binary_op<test::add>(2, 3)));
-    test::expression result(std::unique_ptr<test::binary_op<test::sub>>(new test::binary_op<test::sub>(std::move(sum), 4)));
+    test::expression sum = test::make_binary<test::add>(2, 3);
+    test::expression result = test::make_binary<test::sub>(std::move(sum), 4);
 
     std::cerr << "TYPE OF RESULT-> " << util::apply_visitor(test::test(), result) << std::endl;
 
@@ -121,6 +151,9 @@ int main(int argc, char** argv)
     std::cerr << "total=" << total << std::endl;
 
     std::cerr << util::apply_visitor(test::to_string(), result) << "=" << util::apply_visitor(test::calculator(), result) << std::endl;
+
+    test::bench_large_expression(1000);
+    test::bench_large_expression(5000);
 
     return EXIT_SUCCESS;
 }
