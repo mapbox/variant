@@ -565,9 +565,10 @@ struct no_init {};
 template <typename... Types>
 class variant
 {
-    static_assert(sizeof...(Types) > 0, "Template parameter type list of variant can not be empty");
+    static_assert(sizeof...(Types) > 0, "Template parameter type list of variant can not be empty.");
     static_assert(!detail::disjunction<std::is_reference<Types>...>::value, "Variant can not hold reference types. Maybe use std::reference_wrapper?");
-    static_assert(sizeof...(Types) < std::numeric_limits<type_index_t>::max(), "Internal index type must be able to accommodate all alternatives");
+    static_assert(!detail::disjunction<std::is_array<Types>...>::value, "Variant can not hold array types.");
+    static_assert(sizeof...(Types) < std::numeric_limits<type_index_t>::max(), "Internal index type must be able to accommodate all alternatives.");
 private:
     static const std::size_t data_size = detail::static_max<sizeof(Types)...>::value;
     static const std::size_t data_align = detail::static_max<alignof(Types)...>::value;
