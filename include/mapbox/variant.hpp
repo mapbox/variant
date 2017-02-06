@@ -84,7 +84,15 @@ protected:
     ~static_visitor() {}
 };
 
+#if !defined(MAPBOX_VARIANT_MINIMIZE_SIZE)
 using type_index_t = unsigned int;
+#else
+#if defined(MAPBOX_VARIANT_OPTIMIZE_FOR_SPEED)
+using type_index_t = std::uint_fast8_t;
+#else
+using type_index_t = std::uint_least8_t;
+#endif
+#endif
 
 namespace detail {
 
@@ -587,7 +595,7 @@ public:
     VARIANT_INLINE variant() noexcept(std::is_nothrow_default_constructible<first_type>::value)
         : type_index(sizeof...(Types)-1)
     {
-        static_assert(std::is_default_constructible<first_type>::value, "First type in variant must be default constructible to allow default construction of variant");
+        static_assert(std::is_default_constructible<first_type>::value, "First type in variant must be default constructible to allow default construction of variant.");
         new (&data) first_type();
     }
 
