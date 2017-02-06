@@ -11,6 +11,7 @@
 #include <typeinfo>
 #include <utility>
 #include <functional>
+#include <limits>
 
 #include <mapbox/recursive_wrapper.hpp>
 #include <mapbox/variant_visitor.hpp>
