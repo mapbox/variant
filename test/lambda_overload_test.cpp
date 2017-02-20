@@ -112,6 +112,37 @@ void test_match_overloads_capture()
     std::cout << "Got " << ok << " ok, " << err << " err" << std::endl;
 }
 
+// See #140
+void test_match_overloads_otherwise()
+#ifdef HAS_CPP14_SUPPORT
+{
+
+    struct Center
+    {
+    };
+    struct Indent
+    {
+    };
+    struct Justify
+    {
+    };
+    struct None
+    {
+    };
+
+    using Properties = mapbox::util::variant<Center, Indent, Justify, None>;
+
+    Properties props = Justify{};
+
+    props.match([&](Center) { std::cout << "Center\n"; },     //
+                [&](Indent) { std::cout << "Indent\n"; },     //
+                [&](auto&&) { std::cout << "Otherwise\n"; }); //
+}
+#else
+{
+}
+#endif
+
 int main()
 {
     test_lambda_overloads();
@@ -122,6 +153,7 @@ int main()
     test_match_singleton();
     test_match_overloads();
     test_match_overloads_capture();
+    test_match_overloads_otherwise();
 }
 
 #undef HAS_CPP14_SUPPORT
