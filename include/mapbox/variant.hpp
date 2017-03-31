@@ -178,34 +178,16 @@ struct value_traits
     using target_type = typename std::tuple_element<tindex, std::tuple<void, Types...>>::type;
 };
 
-template <typename T, typename R = void>
-struct enable_if_type
-{
-    using type = R;
-};
-
-template <typename F, typename V, typename Enable = void>
+template <typename F, typename V>
 struct result_of_unary_visit
 {
-    using type = typename std::result_of<F(V&)>::type;
+    using type = decltype(::std::declval<F>()(::std::declval<V>()));
 };
 
 template <typename F, typename V>
-struct result_of_unary_visit<F, V, typename enable_if_type<typename F::result_type>::type>
-{
-    using type = typename F::result_type;
-};
-
-template <typename F, typename V, typename Enable = void>
 struct result_of_binary_visit
 {
-    using type = typename std::result_of<F(V&, V&)>::type;
-};
-
-template <typename F, typename V>
-struct result_of_binary_visit<F, V, typename enable_if_type<typename F::result_type>::type>
-{
-    using type = typename F::result_type;
+    using type = decltype(::std::declval<F>()(::std::declval<V>(), (void)::std::declval<V>()));
 };
 
 template <type_index_t arg1, type_index_t... others>
