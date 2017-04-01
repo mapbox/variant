@@ -163,8 +163,8 @@ void test_match_move_out_of_variant()
 
     mapbox::util::variant<T1, T2> v = T1{};
 
-    v.match([](T1&&) {},  // Consume T1 by value
-            [](T2&&) {}); // Consume T2 by value
+    std::move(v).match([](T1&&) {},  // Consume T1 by value
+                       [](T2&&) {}); // Consume T2 by value
 }
 
 int main()
