@@ -166,5 +166,5 @@ after_script:
     make coverage;
     ./out/cov-test;
     cp unit*gc* test/;
-    ./.local/bin/cpp-coveralls --gcov /usr/bin/llvm-cov-3.5 --gcov-options '\-lp' -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp;
+    ./.local/bin/cpp-coveralls --gcov /usr/bin/llvm-cov-3.5 --gcov-options '\-lp' -i optional.hpp -i recursive_wrapper.hpp -i variant.hpp -i variant_io.hpp variant_cast.hpp;
    fi
