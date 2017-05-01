@@ -170,9 +170,12 @@ template <typename T, typename... Types>
 struct value_traits
 {
     using value_type = typename std::remove_const<typename std::remove_reference<T>::type>::type;
+    using value_type_wrapper = recursive_wrapper<value_type>;
     static constexpr type_index_t direct_index = direct_type<value_type, Types...>::index;
     static constexpr bool is_direct = direct_index != invalid_value;
-    static constexpr type_index_t index = is_direct ? direct_index : convertible_type<value_type, Types...>::index;
+    static constexpr type_index_t index_direct_or_wrapper = is_direct ? direct_index : direct_type<value_type_wrapper, Types...>::index;
+    static constexpr bool is_direct_or_wrapper = index_direct_or_wrapper != invalid_value;
+    static constexpr type_index_t index = is_direct_or_wrapper ? index_direct_or_wrapper : convertible_type<value_type, Types...>::index;
     static constexpr bool is_valid = index != invalid_value;
     static constexpr type_index_t tindex = is_valid ? sizeof...(Types)-index : 0;
     using target_type = typename std::tuple_element<tindex, std::tuple<void, Types...>>::type;
