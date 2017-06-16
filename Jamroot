@@ -1,78 +1,65 @@
 # Unofficial and incomplete build file using Boost build system.
 # You should use make unless you know what you are doing.
 
+import os ;
+
 local BOOST_DIR = "/usr/local" ;
 
 #using clang : : ;
+
+local cxx_std = [ os.environ CXX_STD ] ;
+if ! $(cxx_std)
+{
+    cxx_std = c++11 ;
+}
 
 lib system : : <name>boost_system <search>$(BOOST_DIR)/lib ;
 lib timer : chrono : <name>boost_timer <search>$(BOOST_DIR)/lib ;
 lib chrono : system : <name>boost_chrono <search>$(BOOST_DIR)/lib ;
 
-exe variant-test
-    :
-    test/bench_variant.cpp
-    .//system
-    .//timer
-    .//chrono
-    :
-    <include>$(BOOST_DIR)/include
-    <include>./include
-    <include>./test/include
-    #<define>SINGLE_THREADED
-    <variant>release:<cxxflags>"-march=native -Wweak-vtables"
+project mapbox_variant
+    : requirements
+      <cxxflags>-std=$(cxx_std)
+      <include>$(BOOST_DIR)/include
+      <include>./include
+      <include>./test/include
+      <library>system
+      <library>timer
+      <library>chrono
+      <variant>release:<cxxflags>-march=native
     ;
 
+exe variant-test
+    : test/bench_variant.cpp
+    : #<define>SINGLE_THREADED
+      <variant>release:<cxxflags>-Wweak-vtables
+    ;
+explicit variant-test ;
 
 exe binary-visitor-test
-    :
-    test/binary_visitor_test.cpp
-    .//system
-    .//timer
-    .//chrono
-    :
-    <include>$(BOOST_DIR)/include
-    <include>./include
-    <include>./test/include
-    <variant>release:<cxxflags>-march=native
+    : test/binary_visitor_test.cpp
     ;
+explicit binary-visitor-test ;    
 
 exe recursive-wrapper-test
-    :
-    test/recursive_wrapper_test.cpp
-    .//system
-    .//timer
-    .//chrono
-    :
-    <include>$(BOOST_DIR)/include
-    <include>./include
-    <include>./test/include
-    <variant>release:<cxxflags>-march=native
+    : test/recursive_wrapper_test.cpp
     ;
+explicit recursive-wrapper-test ;
 
 exe unique-ptr-test
-    :
-    test/unique_ptr_test.cpp
-    .//system
-    .//timer
-    .//chrono
-    :
-    <include>$(BOOST_DIR)/include
-    <include>./include
-    <include>./test/include
-    <variant>release:<cxxflags>-march=native
+    : test/unique_ptr_test.cpp
     ;
-
+explicit unique-ptr-test ;
 
 exe reference_wrapper_test
-    :
-    test/reference_wrapper_test.cpp
-    .//system
-    .//timer
-    .//chrono
-    :
-    <include>$(BOOST_DIR)/include
-    <include>./include
-    <include>./test/include
-    <variant>release:<cxxflags>-march=native
+    : test/reference_wrapper_test.cpp
     ;
+explicit reference_wrapper_test ;    
+
+install out
+    : variant-test
+      binary-visitor-test
+      recursive-wrapper-test
+      unique-ptr-test
+      reference_wrapper_test
+    ;   
