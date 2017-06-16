@@ -31,46 +31,31 @@ project mapbox_variant
       <threading>single
     ;
 
-exe variant-test
-    : test/bench_variant.cpp
+rule exe-test ( name : reqs * : deps * )
+{
+    exe $(name)
+        : test/$(name).cpp
+        : $(reqs)
+        : $(deps)
+        ;
+    explicit $(name) ;
+}
+
+exe-test bench_variant
     : <variant>release:<cxxflags>-Wweak-vtables
     ;
-explicit variant-test ;
 
-exe binary-visitor-test
-    : test/binary_visitor_test.cpp
-    ;
-explicit binary-visitor-test ;    
-
-exe recursive-wrapper-test
-    : test/recursive_wrapper_test.cpp
-    ;
-explicit recursive-wrapper-test ;
-
-exe unique-ptr-test
-    : test/unique_ptr_test.cpp
-    ;
-explicit unique-ptr-test ;
-
-exe reference_wrapper_test
-    : test/reference_wrapper_test.cpp
-    ;
-explicit reference_wrapper_test ;    
-
-exe lambda_overload_test
-    : test/lambda_overload_test.cpp
-    ;
-explicit lambda_overload_test ;
-
-exe hashable_test
-    : test/hashable_test.cpp
-    ;
-explicit hashable_test ;
+exe-test binary_visitor_test ;
+exe-test recursive_wrapper_test ;
+exe-test unique_ptr_test ;
+exe-test reference_wrapper_test ;
+exe-test lambda_overload_test ;
+exe-test hashable_test ;
 
 install out
-    : variant-test
-      binary-visitor-test
-      unique-ptr-test
+    : bench_variant
+      binary_visitor_test
+      unique_ptr_test
       reference_wrapper_test
       lambda_overload_test
       hashable_test
