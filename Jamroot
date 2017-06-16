@@ -3,7 +3,11 @@
 
 import os ;
 
-local BOOST_DIR = "/usr/local" ;
+local boost_dir = [ os.environ BOOST_DIR ] ;
+if ! $(boost_dir)
+{
+    boost_dir = "/usr/local" ;
+}
 
 #using clang : : ;
 
@@ -16,19 +20,20 @@ if ! $(cxx_std)
 project mapbox_variant
     : requirements
       <cxxflags>-std=$(cxx_std)
-      <include>$(BOOST_DIR)/include
+      <include>$(boost_dir)/include
       <include>include
       <include>test/include
       <variant>release:<cxxflags>-march=native
+      <threading>single:<define>SINGLE_THREADED
     : default-build
       <variant>release
       <optimization>speed
+      <threading>single
     ;
 
 exe variant-test
     : test/bench_variant.cpp
-    : #<define>SINGLE_THREADED
-      <variant>release:<cxxflags>-Wweak-vtables
+    : <variant>release:<cxxflags>-Wweak-vtables
     ;
 explicit variant-test ;
 
@@ -52,10 +57,21 @@ exe reference_wrapper_test
     ;
 explicit reference_wrapper_test ;    
 
+exe lambda_overload_test
+    : test/lambda_overload_test.cpp
+    ;
+explicit lambda_overload_test ;
+
+exe hashable_test
+    : test/hashable_test.cpp
+    ;
+explicit hashable_test ;
+
 install out
     : variant-test
       binary-visitor-test
-      recursive-wrapper-test
       unique-ptr-test
       reference_wrapper_test
+      lambda_overload_test
+      hashable_test
     ;   
