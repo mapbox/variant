@@ -13,20 +13,16 @@ if ! $(cxx_std)
     cxx_std = c++11 ;
 }
 
-lib system : : <name>boost_system <search>$(BOOST_DIR)/lib ;
-lib timer : chrono : <name>boost_timer <search>$(BOOST_DIR)/lib ;
-lib chrono : system : <name>boost_chrono <search>$(BOOST_DIR)/lib ;
-
 project mapbox_variant
     : requirements
       <cxxflags>-std=$(cxx_std)
       <include>$(BOOST_DIR)/include
-      <include>./include
-      <include>./test/include
-      <library>system
-      <library>timer
-      <library>chrono
+      <include>include
+      <include>test/include
       <variant>release:<cxxflags>-march=native
+    : default-build
+      <variant>release
+      <optimization>speed
     ;
 
 exe variant-test
