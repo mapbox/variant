@@ -85,6 +85,9 @@ void test_match_singleton()
 {
     variant<int> singleton = 5;
     singleton.match([](int) {});
+    
+    auto lambda = [](int) {};
+    singleton.match(lambda);
 }
 
 void test_match_overloads()
@@ -111,6 +114,47 @@ void test_match_overloads_capture()
 
     std::cout << "Got " << ok << " ok, " << err << " err" << std::endl;
 }
+
+struct MovableOnly
+{
+    MovableOnly() = default;
+    MovableOnly(MovableOnly&&) = default;
+};
+
+struct MovableCopyable
+{
+    MovableCopyable() = default;
+    MovableCopyable(MovableCopyable&&) = default;
+    MovableCopyable(const MovableCopyable&) = default;
+};
+
+void test_match_overloads_init_capture()
+#ifdef HAS_CPP14_SUPPORT
+{
+    Either<Error, Response> rv;
+
+    rv = Error{};
+
+    rv.match([p = MovableOnly{}](auto&&) {});
+    {
+        auto lambda = [p = MovableCopyable{}](auto&&) {};
+        rv.match(lambda);
+    
+        rv.match([p = MovableOnly{}](Response) { std::cout << "Response\n"; },
+                 [p = MovableOnly{}](Error) { std::cout << "Error\n"; });
+    }    
+    {
+        auto lambda = [](Error) { std::cout << "Error\n"; };
+        rv.match([p = MovableOnly{}](Response) { std::cout << "Response\n"; },
+                 lambda);
+        rv.match(lambda,
+                 [p = MovableOnly{}](Response) { std::cout << "Response\n"; });
+    }
+}
+#else
+{
+}
+#endif
 
 // See #140
 void test_match_overloads_otherwise()
@@ -153,6 +197,7 @@ int main()
     test_match_singleton();
     test_match_overloads();
     test_match_overloads_capture();
+    test_match_overloads_init_capture();
     test_match_overloads_otherwise();
 }
 
