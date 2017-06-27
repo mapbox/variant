@@ -118,14 +118,20 @@ void test_match_overloads_capture()
 struct MovableOnly
 {
     MovableOnly() = default;
+    
     MovableOnly(MovableOnly&&) = default;
+    MovableOnly& operator=(MovableOnly&&) = default;
 };
 
 struct MovableCopyable
 {
     MovableCopyable() = default;
+    
     MovableCopyable(MovableCopyable&&) = default;
+    MovableCopyable& operator=(MovableCopyable&&) = default;
+    
     MovableCopyable(const MovableCopyable&) = default;
+    MovableCopyable& operator=(const MovableCopyable&) = default;
 };
 
 void test_match_overloads_init_capture()
