@@ -12,7 +12,8 @@ Variant's basic building blocks are:
 - `variant<Ts...>` - a type-safe representation for sum-types / discriminated unions
 - `recursive_wrapper<T>` - a helper type to represent recursive "tree-like" variants
 - `apply_visitor(visitor, myVariant)` - to invoke a custom visitor on the variant's underlying type
-- `get<T>()` - a function to directly unwrap a variant's underlying type
+- `bool is<T>()` - a function to test for a specific underlying type `T`
+- `T get<T>()` - a function to directly unwrap a variant's underlying type
 - `.match([](Type){})` - a variant convenience member function taking an arbitrary number of lambdas creating a visitor behind the scenes and applying it to the variant
 
 
