@@ -159,6 +159,7 @@ script:
      make clean;
      make gyp;
    fi
+ - ./scripts/clang-tidy.sh
 
 after_script:
  - if [[ ${COVERAGE:-0} == 'True' ]]; then
