@@ -4,7 +4,7 @@
 
 Released: January 7, 2017
 
-(d2588a8)
+(d2588a8f1d6b5d480d228e6d8a906ce634bdea9a)
 
 * add package.json for publishing to npm [view commit](http://github.com/mapbox/variant/commit/cb5635ba2556d76aaba97e4d0fc14b82b48f8b61)
 * test with clang 3.9 and g++-6 [view commit](http://github.com/mapbox/variant/commit/efa75df2735d3f5a5fa2646528d4006bf9b5b3dc)
@@ -46,7 +46,7 @@ Released: January 7, 2017
 
 Released: December 21, 2016
 
-(02bd1ac)
+(02bd1ac4c07e6db9fe0f01267853e43b41637b74)
 
 * Provides Convenient Lambda Overload Visitor Interface, resolves #113. [view commit](http://github.com/mapbox/variant/commit/d09188640b6d5a637f391108f849a962d02dbb40)
 * Removes ::type Usage [view commit](http://github.com/mapbox/variant/commit/2275a61974aaf117fa8d08c08d640ffd05935db8)
@@ -64,7 +64,7 @@ Released: December 21, 2016
 
 Released: October 24, 2016
 
-(a5a79a5)
+(a5a79a594f39d705a7ef969f54a0743516f0bc6d)
 
 * use C++17 disjunction for no-references and one-convertible tests [view commit](http://github.com/mapbox/variant/commit/2c7ddecdb7ec3b1c1a6bc1797528375e513b7ab0)
 * Merge pull request #116 from lightmare/disjunction [view commit](http://github.com/mapbox/variant/commit/8e2f6964157885f1655c1673d65f3aea9b90fe18)
@@ -80,7 +80,7 @@ Released: October 24, 2016
 
 Released: July 26, 2016
 
-(388376a)
+(388376ac9f0102feba2d2122873b08e15a66a879)
 
 * Re-implement type matching logic to reject ambigious conversions [view commit](http://github.com/mapbox/variant/commit/71ac8fdf96e547dca34fe58c5cd8d1dce2ef0dac)
 * update tests [view commit](http://github.com/mapbox/variant/commit/8be6a2aa8f85e1455198eff31a577a1fb95e1d46)
@@ -92,13 +92,13 @@ Released: July 26, 2016
 
 Released: July 18, 2016
 
-(c511b2f)
+(c511b2f34d966c09e02a1b833db33a9a1f9b2196)
 
 ## 1.1.0
 
 Released: February 11, 2016
 
-(5aab5df)
+(5aab5df0dc899b484c04ce9c649645787ee0bc5c)
 
 * remove erroneous `;` ref #96 [view commit](http://github.com/mapbox/variant/commit/3f025adbf599d8dd9bfca02d45b37e49a2cae841)
 * fix coverage to avoid warning: unit.gcno:version '402*', prefer '406*' [view commit](http://github.com/mapbox/variant/commit/b0ee4729bfc9ea649abe40f279de384df75b79d1)
@@ -142,7 +142,7 @@ Released: February 11, 2016
 
 Released: April 1, 2015
 
-(bf485df)
+(bf485dfb59aef26f3ef2183d7c8c1111ad97062b)
 
 * Initial commit [view commit](http://github.com/mapbox/variant/commit/9b82890ea11742eafd686f44b8cc7075029dbd7b)
 * initial import [view commit](http://github.com/mapbox/variant/commit/bb95645b86a8fe427df9af799ecd139e4fab38ef)
