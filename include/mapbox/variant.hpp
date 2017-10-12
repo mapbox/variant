@@ -858,7 +858,7 @@ public:
 
     VARIANT_INLINE int which() const noexcept
     {
-        return static_cast<int>(sizeof...(Types)-type_index - 1);
+        return static_cast<int>(sizeof...(Types) - type_index - 1);
     }
 
     template <typename T, typename std::enable_if<
@@ -1023,6 +1023,32 @@ ResultType const& get_unchecked(T const& var)
 {
     return var.template get_unchecked<ResultType>();
 }
+
+// variant_alternative
+template <std::size_t Index, typename...Types>
+struct variant_alternative {};
+
+template <std::size_t Index, typename First, typename...Types>
+struct variant_alternative<Index, First, Types...>
+{
+    using type = typename std::conditional<(sizeof...(Types) == Index),
+                                           First,
+                                           typename variant_alternative<Index, Types...>::type>::type;
+};
+
+template <std::size_t Index>
+struct variant_alternative<Index>
+{
+    using type = void;
+};
+
+template <std::size_t Index, typename...Types>
+struct variant_alternative<Index, variant<Types...>>
+{
+    using type = typename variant_alternative< sizeof...(Types) - Index - 1, Types...>::type;
+};
+
+
 } // namespace util
 } // namespace mapbox
 
@@ -1035,6 +1061,7 @@ struct hash< ::mapbox::util::variant<Types...>> {
         return ::mapbox::util::apply_visitor(::mapbox::util::detail::hasher{}, v);
     }
 };
+
 }
 
 #endif // MAPBOX_UTIL_VARIANT_HPP
