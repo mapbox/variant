@@ -11,11 +11,10 @@ TEST_CASE("variant alternative", "[types]")
     using type_0 = mapbox::util::variant_alternative<0, variant_type>::type;
     using type_1 = mapbox::util::variant_alternative<1, variant_type>::type;
     using type_2 = mapbox::util::variant_alternative<2, variant_type>::type;
-
+    //using type_3 = mapbox::util::variant_alternative<3, variant_type>::type; // compile error
     constexpr bool check_0 = std::is_same<int, type_0>::value;
     constexpr bool check_1 = std::is_same<double, type_1>::value;
     constexpr bool check_2 = std::is_same<std::string, type_2>::value;
-
     CHECK(check_0);
     CHECK(check_1);
     CHECK(check_2);

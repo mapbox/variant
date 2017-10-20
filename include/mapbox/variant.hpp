@@ -1025,29 +1025,21 @@ ResultType const& get_unchecked(T const& var)
 }
 
 // variant_alternative
-template <std::size_t Index, typename...Types>
-struct variant_alternative {};
+template <std::size_t Index, typename T>
+struct variant_alternative;
 
 template <std::size_t Index, typename First, typename...Types>
-struct variant_alternative<Index, First, Types...>
+struct variant_alternative<Index, variant<First, Types...>>
+    : variant_alternative<Index - 1, variant<Types...>>
 {
-    using type = typename std::conditional<(sizeof...(Types) == Index),
-                                           First,
-                                           typename variant_alternative<Index, Types...>::type>::type;
+    static_assert(sizeof...(Types) > Index -1 , "Index out of range");
 };
 
-template <std::size_t Index>
-struct variant_alternative<Index>
+template <typename First, typename...Types>
+struct variant_alternative<0, variant<First, Types...>>
 {
-    using type = void;
+    using type = First;
 };
-
-template <std::size_t Index, typename...Types>
-struct variant_alternative<Index, variant<Types...>>
-{
-    using type = typename variant_alternative< sizeof...(Types) - Index - 1, Types...>::type;
-};
-
 
 } // namespace util
 } // namespace mapbox
