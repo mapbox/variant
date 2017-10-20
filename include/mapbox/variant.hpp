@@ -1028,6 +1028,15 @@ ResultType const& get_unchecked(T const& var)
 template <std::size_t Index, typename T>
 struct variant_alternative;
 
+#if (__clang__)
+#if (__has_builtin(__type_pack_element))
+template <std::size_t Index, typename ...Types>
+struct variant_alternative<Index, variant<Types...>>
+{
+    using type = __type_pack_element<Index, Types...>;
+};
+#endif
+#else
 template <std::size_t Index, typename First, typename...Types>
 struct variant_alternative<Index, variant<First, Types...>>
     : variant_alternative<Index - 1, variant<Types...>>
@@ -1043,6 +1052,7 @@ struct variant_alternative<0, variant<First, Types...>>
 
 template <size_t Index, typename T>
 using variant_alternative_t = typename variant_alternative<Index, T>::type;
+#endif
 
 } // namespace util
 } // namespace mapbox
