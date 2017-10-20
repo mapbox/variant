@@ -1028,15 +1028,19 @@ ResultType const& get_unchecked(T const& var)
 template <std::size_t Index, typename T>
 struct variant_alternative;
 
-#if (__clang__)
-#if (__has_builtin(__type_pack_element))
+#if defined(__clang__)
+#if __has_builtin(__type_pack_element)
+#define has_type_pack_element
+#endif
+#endif
+
+#if defined(has_type_pack_element)
 template <std::size_t Index, typename ...Types>
 struct variant_alternative<Index, variant<Types...>>
 {
     static_assert(sizeof...(Types) > Index , "Index out of range");
     using type = __type_pack_element<Index, Types...>;
 };
-#endif
 #else
 template <std::size_t Index, typename First, typename...Types>
 struct variant_alternative<Index, variant<First, Types...>>
@@ -1051,9 +1055,11 @@ struct variant_alternative<0, variant<First, Types...>>
     using type = First;
 };
 
+#endif
+
 template <size_t Index, typename T>
 using variant_alternative_t = typename variant_alternative<Index, T>::type;
-#endif
+
 
 } // namespace util
 } // namespace mapbox
