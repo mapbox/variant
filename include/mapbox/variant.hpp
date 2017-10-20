@@ -1033,6 +1033,7 @@ struct variant_alternative;
 template <std::size_t Index, typename ...Types>
 struct variant_alternative<Index, variant<Types...>>
 {
+    static_assert(sizeof...(Types) > Index , "Index out of range");
     using type = __type_pack_element<Index, Types...>;
 };
 #endif
