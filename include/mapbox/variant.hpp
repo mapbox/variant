@@ -1041,6 +1041,9 @@ struct variant_alternative<0, variant<First, Types...>>
     using type = First;
 };
 
+template <size_t Index, typename T>
+using variant_alternative_t = typename variant_alternative<Index, T>::type;
+
 } // namespace util
 } // namespace mapbox
 
