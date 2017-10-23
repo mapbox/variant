@@ -1023,6 +1023,29 @@ ResultType const& get_unchecked(T const& var)
 {
     return var.template get_unchecked<ResultType>();
 }
+// variant_size
+template <typename T>
+struct variant_size;
+
+//variable templates is c++14
+//template <typename T>
+//constexpr std::size_t variant_size_v = variant_size<T>::value;
+
+template <typename T>
+struct variant_size<const T>
+    : variant_size<T> {};
+
+template <typename T>
+struct variant_size<volatile T>
+    : variant_size<T> {};
+
+template <typename T>
+struct variant_size<const volatile T>
+    : variant_size<T> {};
+
+template <typename... Types>
+struct variant_size<variant<Types...>>
+    : std::integral_constant<std::size_t, sizeof...(Types)> {};
 
 // variant_alternative
 template <std::size_t Index, typename T>
@@ -1060,6 +1083,17 @@ struct variant_alternative<0, variant<First, Types...>>
 template <size_t Index, typename T>
 using variant_alternative_t = typename variant_alternative<Index, T>::type;
 
+template <size_t Index, typename T>
+struct variant_alternative<Index, const T>
+    : std::add_const<variant_alternative<Index, T>> {};
+
+template <size_t Index, typename T>
+struct variant_alternative<Index, volatile T>
+    : std::add_volatile<variant_alternative<Index, T>> {};
+
+template <size_t Index, typename T>
+struct variant_alternative<Index, const volatile T>
+    : std::add_cv<variant_alternative<Index, T>> {};
 
 } // namespace util
 } // namespace mapbox

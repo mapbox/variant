@@ -5,7 +5,7 @@
 
 #include <string>
 
-TEST_CASE("variant alternative", "[types]")
+TEST_CASE("variant_alternative", "[types]")
 {
     using variant_type =  mapbox::util::variant<int, double, std::string>;
     using type_0 = mapbox::util::variant_alternative<0, variant_type>::type;
@@ -18,4 +18,14 @@ TEST_CASE("variant alternative", "[types]")
     CHECK(check_0);
     CHECK(check_1);
     CHECK(check_2);
+}
+
+TEST_CASE("variant_size", "[types]")
+{
+    constexpr auto value_0 = mapbox::util::variant_size<mapbox::util::variant<>>::value;
+    constexpr auto value_1 = mapbox::util::variant_size<mapbox::util::variant<int>>::value;
+    constexpr auto value_2 = mapbox::util::variant_size<mapbox::util::variant<int, std::string>>::value;
+    CHECK(value_0 == 0);
+    CHECK(value_1 == 1);
+    CHECK(value_2 == 2);
 }
