@@ -9,6 +9,8 @@
 #include <mapbox/variant.hpp>
 
 namespace mapbox {
+
+inline
 namespace util {
 
 template <typename T>

@@ -9,10 +9,10 @@ An header-only alternative to `boost::variant` for C++11 and C++14
 ## Introduction
 
 Variant's basic building blocks are:
-- `variant<Ts...>` - a type-safe representation for sum-types / discriminated unions
-- `recursive_wrapper<T>` - a helper type to represent recursive "tree-like" variants
-- `apply_visitor(visitor, myVariant)` - to invoke a custom visitor on the variant's underlying type
-- `get<T>()` - a function to directly unwrap a variant's underlying type
+- `mapbox::variant<Ts...>` - a type-safe representation for sum-types / discriminated unions
+- `mapbox::recursive_wrapper<T>` - a helper type to represent recursive "tree-like" variants
+- `mapbox::apply_visitor(visitor, myVariant)` - to invoke a custom visitor on the variant's underlying type
+- `mapbox::get<T>()` - a function to directly unwrap a variant's underlying type
 - `.match([](Type){})` - a variant convenience member function taking an arbitrary number of lambdas creating a visitor behind the scenes and applying it to the variant
 
 
@@ -34,7 +34,7 @@ struct Error {
 You can represent this at type level using a variant which is either an `Error` or a `Result`:
 
 ```c++
-using Response = variant<Error, Result>;
+using Response = mapbox::variant<Error, Result>;
 
 Response makeRequest() {
   return Error{501, "Not Implemented"};
@@ -87,7 +87,7 @@ struct Object { unordered_map<string, ?> values; };
 
 This works for primitive types but how do we represent recursive types such as `Array` which can hold multiple elements and `Array` itself, too?
 
-For these use cases Variant provides a `recursive_wrapper` helper type which lets you express recursive Variants.
+For these use cases Variant provides a `mapbox::recursive_wrapper` helper type which lets you express recursive Variants.
 
 ```c++
 struct String { string value; };
@@ -100,7 +100,8 @@ struct Null   { };
 struct Array;
 struct Object;
 
-using Value = variant<String, Number, True, False, Null, recursive_wrapper<Array>, recursive_wrapper<Object>>;
+using Value = mapbox::variant<String, Number, True, False, Null,
+                              mapbox::recursive_wrapper<Array>, mapbox::recursive_wrapper<Object>>;
 
 struct Array {
   vector<Value> values;
@@ -134,13 +135,13 @@ json.match([] (Null) { print("null"); },
            ...);
 ```
 
-To summarize: use `recursive_wrapper` to represent recursive "tree-like" representations:
+To summarize: use `mapbox::recursive_wrapper` to represent recursive "tree-like" representations:
 
 ```c++
 struct Empty { };
 struct Node;
 
-using Tree = variant<Empty, recursive_wrapper<Node>>;
+using Tree = mapbox::variant<Empty, mapbox::recursive_wrapper<Node>>;
 
 struct Node {
   uint64_t value;
@@ -154,12 +155,12 @@ We recommend creating a new type for all but basic variant usage:
 
 ```c++
 // the compiler can't tell the following two apart
-using APIResult = variant<Error, Result>;
-using FilesystemResult = variant<Error, Result>;
+using APIResult = mapbox::variant<Error, Result>;
+using FilesystemResult = mapbox::variant<Error, Result>;
 
 // new type
-struct APIResult : variant<Error, Result> {
-  using Base = variant<Error, Result>;
+struct APIResult : mapbox::variant<Error, Result> {
+  using Base = mapbox::variant<Error, Result>;
   using Base::Base;
 }
 ```
@@ -245,6 +246,8 @@ On Windows run `scripts/build-local.bat`.
 * Old versions of the code needed visitors to derive from `static_visitor`.
   This is not needed any more and marked as deprecated. The `static_visitor`
   class will be removed in future versions.
+* The `mapbox::util` namespace is deprecated and will be removed in a future
+  version. See https://github.com/mapbox/variant/issues/104.
 
 
 ## Benchmarks

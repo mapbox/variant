@@ -16,6 +16,8 @@
 #include <utility>
 
 namespace mapbox {
+
+inline
 namespace util {
 
 template <typename T>
