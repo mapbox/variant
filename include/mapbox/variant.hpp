@@ -637,6 +637,9 @@ private:
 
 public:
     VARIANT_INLINE variant<Types...>& operator=(variant<Types...>&& other)
+        // note we check for nothrow-constructible, not nothrow-assignable, since
+        // move_assign uses move-construction via placement new.
+        noexcept(detail::conjunction<std::is_nothrow_move_constructible<Types>...>::value)
     {
         move_assign(std::move(other));
         return *this;
@@ -650,8 +653,13 @@ public:
 
     // conversions
     // move-assign
-    template <typename T>
-    VARIANT_INLINE variant<Types...>& operator=(T&& rhs) noexcept
+    template <typename T, typename Traits = detail::value_traits<T, Types...>,
+              typename Enable = typename std::enable_if<Traits::is_valid && !std::is_same<variant<Types...>, typename Traits::value_type>::value>::type >
+    VARIANT_INLINE variant<Types...>& operator=(T&& rhs)
+        // not that we check is_nothrow_constructible<T>, not is_nothrow_move_assignable<T>,
+        // since we construct a temporary
+        noexcept(std::is_nothrow_constructible<typename Traits::target_type, T&&>::value
+                 && std::is_nothrow_move_assignable<variant<Types...>>::value)
     {
         variant<Types...> temp(std::forward<T>(rhs));
         move_assign(std::move(temp));
