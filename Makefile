@@ -112,10 +112,10 @@ coverage:
 
 sizes: Makefile
 	mkdir -p ./out
-	@$(CXX) -o ./out/our_variant_hello_world.out include/mapbox/variant.hpp -I./include $(FINAL_CXXFLAGS) &&  du -h ./out/our_variant_hello_world.out
-	@$(CXX) -o ./out/boost_variant_hello_world.out $(BOOST_ROOT)/include/boost/variant.hpp -I./include $(FINAL_CXXFLAGS) $(BOOST_FLAGS) &&  du -h ./out/boost_variant_hello_world.out
-	@$(CXX) -o ./out/our_variant_hello_world ./test/our_variant_hello_world.cpp -I./include $(FINAL_CXXFLAGS) &&  du -h ./out/our_variant_hello_world
-	@$(CXX) -o ./out/boost_variant_hello_world ./test/boost_variant_hello_world.cpp -I./include $(FINAL_CXXFLAGS) $(BOOST_FLAGS) &&  du -h ./out/boost_variant_hello_world
+	@$(CXX) -o ./out/our_variant_hello_world.out include/mapbox/variant.hpp -I./include $(FINAL_CXXFLAGS) &&  du -h --apparent-size ./out/our_variant_hello_world.out
+	@$(CXX) -o ./out/boost_variant_hello_world.out $(BOOST_ROOT)/include/boost/variant.hpp -I./include $(FINAL_CXXFLAGS) $(BOOST_FLAGS) &&  du -h --apparent-size ./out/boost_variant_hello_world.out
+	@$(CXX) -o ./out/our_variant_hello_world ./test/our_variant_hello_world.cpp -I./include $(FINAL_CXXFLAGS) &&  du -h --apparent-size ./out/our_variant_hello_world
+	@$(CXX) -o ./out/boost_variant_hello_world ./test/boost_variant_hello_world.cpp -I./include $(FINAL_CXXFLAGS) $(BOOST_FLAGS) &&  du -h --apparent-size ./out/boost_variant_hello_world
 
 profile: out/bench-variant-debug
 	mkdir -p profiling/
