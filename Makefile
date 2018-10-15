@@ -2,7 +2,7 @@ MASON = .mason/mason
 BOOST_VERSION = 1.62.0
 
 CXX := $(CXX)
-CXX_STD ?= c++11
+CXX_STD ?= c++17
 
 BOOST_ROOT = $(shell $(MASON) prefix boost $(BOOST_VERSION))
 BOOST_FLAGS = -isystem $(BOOST_ROOT)/include/
@@ -112,10 +112,10 @@ coverage:
 
 sizes: Makefile
 	mkdir -p ./out
-	@$(CXX) -o ./out/our_variant_hello_world.out include/mapbox/variant.hpp -I./include $(FINAL_CXXFLAGS) &&  du -h --apparent-size ./out/our_variant_hello_world.out
-	@$(CXX) -o ./out/boost_variant_hello_world.out $(BOOST_ROOT)/include/boost/variant.hpp -I./include $(FINAL_CXXFLAGS) $(BOOST_FLAGS) &&  du -h --apparent-size ./out/boost_variant_hello_world.out
-	@$(CXX) -o ./out/our_variant_hello_world ./test/our_variant_hello_world.cpp -I./include $(FINAL_CXXFLAGS) &&  du -h --apparent-size ./out/our_variant_hello_world
-	@$(CXX) -o ./out/boost_variant_hello_world ./test/boost_variant_hello_world.cpp -I./include $(FINAL_CXXFLAGS) $(BOOST_FLAGS) &&  du -h --apparent-size ./out/boost_variant_hello_world
+	@$(CXX) -o ./out/our_variant_hello_world.out include/mapbox/variant.hpp -I./include $(FINAL_CXXFLAGS) &&  ls -lah ./out/our_variant_hello_world.out
+	@$(CXX) -o ./out/boost_variant_hello_world.out $(BOOST_ROOT)/include/boost/variant.hpp -I./include $(FINAL_CXXFLAGS) $(BOOST_FLAGS) &&  ls -lah ./out/boost_variant_hello_world.out
+	@$(CXX) -o ./out/our_variant_hello_world ./test/our_variant_hello_world.cpp -I./include $(FINAL_CXXFLAGS) &&  ls -lah ./out/our_variant_hello_world
+	@$(CXX) -o ./out/boost_variant_hello_world ./test/boost_variant_hello_world.cpp -I./include $(FINAL_CXXFLAGS) $(BOOST_FLAGS) &&  ls -lah ./out/boost_variant_hello_world
 
 profile: out/bench-variant-debug
 	mkdir -p profiling/
