@@ -14,8 +14,8 @@ matrix:
           packages: [ 'libstdc++-4.9-dev' ]
       before_install:
         - git submodule update --init
-        - ./.mason/mason install clang++ 4.0.0
-        - export PATH=$(./.mason/mason prefix clang++ 4.0.0)/bin:${PATH}
+        - ./.mason/mason install clang++ 4.0.1
+        - export PATH=$(./.mason/mason prefix clang++ 4.0.1)/bin:${PATH}
         - ./.mason/mason install binutils 2.27
         - export PATH=$(./.mason/mason prefix binutils 2.27)/bin:${PATH}
     # clang++ 3.9 via mason with -fsanitize=address
@@ -28,8 +28,8 @@ matrix:
           packages: [ 'libstdc++-4.9-dev' ]
       before_install:
         - git submodule update --init
-        - ./.mason/mason install clang++ 4.0.0
-        - export PATH=$(./.mason/mason prefix clang++ 4.0.0)/bin:${PATH}
+        - ./.mason/mason install clang++ 4.0.1
+        - export PATH=$(./.mason/mason prefix clang++ 4.0.1)/bin:${PATH}
     # clang++ 3.9 via mason with -fsanitize=undefined
     - os: linux
       compiler: "clang++-40-mason"
@@ -40,8 +40,8 @@ matrix:
           packages: [ 'libstdc++-4.9-dev' ]
       before_install:
         - git submodule update --init
-        - ./.mason/mason install clang++ 4.0.0
-        - export PATH=$(./.mason/mason prefix clang++ 4.0.0)/bin:${PATH}
+        - ./.mason/mason install clang++ 4.0.1
+        - export PATH=$(./.mason/mason prefix clang++ 4.0.1)/bin:${PATH}
     # clang++ 3.9 via mason with -fsanitize=integer
     - os: linux
       compiler: "clang++-40-mason"
@@ -52,8 +52,8 @@ matrix:
           packages: [ 'libstdc++-4.9-dev' ]
       before_install:
         - git submodule update --init
-        - ./.mason/mason install clang++ 4.0.0
-        - export PATH=$(./.mason/mason prefix clang++ 4.0.0)/bin:${PATH}
+        - ./.mason/mason install clang++ 4.0.1
+        - export PATH=$(./.mason/mason prefix clang++ 4.0.1)/bin:${PATH}
     # clang++ 3.9 via mason with -fsanitize=safe-stack
     - os: linux
       compiler: "clang++-40-mason"
@@ -64,8 +64,8 @@ matrix:
           packages: [ 'libstdc++-4.9-dev' ]
       before_install:
         - git submodule update --init
-        - ./.mason/mason install clang++ 4.0.0
-        - export PATH=$(./.mason/mason prefix clang++ 4.0.0)/bin:${PATH}
+        - ./.mason/mason install clang++ 4.0.1
+        - export PATH=$(./.mason/mason prefix clang++ 4.0.1)/bin:${PATH}
     - os: osx
       osx_image: xcode8
       env: OSX_OLDEST_SUPPORTED=10.7 TEST_GYP_BUILD=True
