@@ -4,7 +4,7 @@ sudo: false
 
 matrix:
   include:
-    # clang++ 3.9 via mason with -flto and -fsanitize=cfi
+    # clang++ 4.0 via mason with -flto and -fsanitize=cfi
     - os: linux
       compiler: "clang++-40-mason"
       env: CXX=clang++-4.0 CXXFLAGS="-flto -fsanitize=cfi -fvisibility=hidden" LDFLAGS="-flto -fsanitize=cfi -fvisibility=hidden"
@@ -18,10 +18,11 @@ matrix:
         - export PATH=$(./.mason/mason prefix clang++ 4.0.1)/bin:${PATH}
         - ./.mason/mason install binutils 2.27
         - export PATH=$(./.mason/mason prefix binutils 2.27)/bin:${PATH}
-    # clang++ 3.9 via mason with -fsanitize=address
+    # clang++ 4.0 via mason with -fsanitize=address
     - os: linux
       compiler: "clang++-40-mason"
       env: CXX=clang++-4.0 CXXFLAGS="-fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer -fno-common" LDFLAGS="-fsanitize=address" ASAN_OPTIONS=check_initialization_order=1:detect_stack_use_after_return=1
+      sudo: required
       addons:
         apt:
           sources: [ 'ubuntu-toolchain-r-test' ]
@@ -30,7 +31,7 @@ matrix:
         - git submodule update --init
         - ./.mason/mason install clang++ 4.0.1
         - export PATH=$(./.mason/mason prefix clang++ 4.0.1)/bin:${PATH}
-    # clang++ 3.9 via mason with -fsanitize=undefined
+    # clang++ 4.0 via mason with -fsanitize=undefined
     - os: linux
       compiler: "clang++-40-mason"
       env: CXX=clang++-4.0 CXXFLAGS="-fsanitize=undefined" LDFLAGS="-fsanitize=undefined"
@@ -42,7 +43,7 @@ matrix:
         - git submodule update --init
         - ./.mason/mason install clang++ 4.0.1
         - export PATH=$(./.mason/mason prefix clang++ 4.0.1)/bin:${PATH}
-    # clang++ 3.9 via mason with -fsanitize=integer
+    # clang++ 4.0 via mason with -fsanitize=integer
     - os: linux
       compiler: "clang++-40-mason"
       env: CXX=clang++-4.0 CXXFLAGS="-fsanitize=integer" LDFLAGS="-fsanitize=integer"
@@ -54,7 +55,7 @@ matrix:
         - git submodule update --init
         - ./.mason/mason install clang++ 4.0.1
         - export PATH=$(./.mason/mason prefix clang++ 4.0.1)/bin:${PATH}
-    # clang++ 3.9 via mason with -fsanitize=safe-stack
+    # clang++ 4.0 via mason with -fsanitize=safe-stack
     - os: linux
       compiler: "clang++-40-mason"
       env: CXX=clang++-4.0 CXXFLAGS="-fsanitize=safe-stack" LDFLAGS="-fsanitize=safe-stack"
