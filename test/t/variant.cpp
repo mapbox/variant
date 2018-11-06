@@ -362,12 +362,12 @@ TEST_CASE("variant default constructor", "[variant][default constructor]")
 
 TEST_CASE("variant printer", "[visitor][unary visitor][printer]")
 {
-    using variant_type = mapbox::util::variant<int, double, std::string>;
-    std::vector<variant_type> var = {2.1, 123, "foo", 456};
+    using variant_type = mapbox::util::variant<int, double, std::string, dummy>;
+    std::vector<variant_type> var = {2.1, 123, "foo", 456, dummy()};
     std::stringstream out;
     std::copy(var.begin(), var.end(), std::ostream_iterator<variant_type>(out, ","));
     out << var[2];
-    REQUIRE(out.str() == "2.1,123,foo,456,foo");
+    REQUIRE(out.str() == "2.1,123,foo,456,[],foo");
 }
 
 TEST_CASE("swapping variants should do the right thing", "[variant]")

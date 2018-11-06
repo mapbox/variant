@@ -2,6 +2,7 @@
 #define MAPBOX_UTIL_VARIANT_IO_HPP
 
 #include <iosfwd>
+#include <type_traits>
 
 #include <mapbox/variant.hpp>
 
@@ -20,7 +21,14 @@ public:
 
     // visitor
     template <typename T>
-    void operator()(T const& operand) const
+    typename std::enable_if<std::is_empty<T>::value, void>::type operator()(T const&) const
+    {
+        out_ << "[]";
+    }
+
+    // visitor
+    template <typename T>
+    typename std::enable_if<!std::is_empty<T>::value, void>::type operator()(T const& operand) const
     {
         out_ << operand;
     }
