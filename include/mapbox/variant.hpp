@@ -571,32 +571,32 @@ private:
 
 public:
     VARIANT_INLINE variant() noexcept(std::is_nothrow_default_constructible<first_type>::value)
-        : type_index(sizeof...(Types)-1)
+        : type_index(sizeof...(Types)-1), data()
     {
         static_assert(std::is_default_constructible<first_type>::value, "First type in variant must be default constructible to allow default construction of variant");
         new (&data) first_type();
     }
 
     VARIANT_INLINE variant(no_init) noexcept
-        : type_index(detail::invalid_value) {}
+        : type_index(detail::invalid_value), data() {}
 
     // http://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
     template <typename T, typename Traits = detail::value_traits<T, Types...>,
               typename Enable = typename std::enable_if<Traits::is_valid && !std::is_same<variant<Types...>, typename Traits::value_type>::value>::type >
     VARIANT_INLINE variant(T&& val) noexcept(std::is_nothrow_constructible<typename Traits::target_type, T&&>::value)
-        : type_index(Traits::index)
+        : type_index(Traits::index), data()
     {
         new (&data) typename Traits::target_type(std::forward<T>(val));
     }
 
     VARIANT_INLINE variant(variant<Types...> const& old)
-        : type_index(old.type_index)
+        : type_index(old.type_index), data()
     {
         helper_type::copy(old.type_index, &old.data, &data);
     }
 
     VARIANT_INLINE variant(variant<Types...>&& old) noexcept(std::is_nothrow_move_constructible<types>::value)
-        : type_index(old.type_index)
+        : type_index(old.type_index), data()
     {
         helper_type::move(old.type_index, &old.data, &data);
     }
