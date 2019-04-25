@@ -1,5 +1,68 @@
 # Variant changelog
 
+## 1.1.6
+
+Released: April xx, 2019
+
+(xxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
+
+* make type used for `type_index` configurable via `type_index_t` typdef + use `unsigned int` by default. This addresses `sizeof` discrepancies between boost/std/mapbox variants (ref #19) [view commit](http://github.com/mapbox/variant/commit/9eec1fd48947d81af3debb82686c593b15f79aad)
+* use `mapbox::util::type_index_t` (#19) [view commit](http://github.com/mapbox/variant/commit/05ee9aca16c3968e34db3b241c44eecb981344e0)
+* Ensure internal index type is capable of holding all alternatives (ref #138) [view commit](http://github.com/mapbox/variant/commit/fa8e124a2367abc9c06f7e83926691085eed45c0)
+* Add compile time check to disallow array types as alternatives. [view commit](http://github.com/mapbox/variant/commit/3f6fd131ef07a091338cec81ec8d23d6ca44528d)
+* Make `type_index_t` configurable at compile time via `MAPBOX_VARIANT_MINIMIZE_SIZE` and `MAPBOX_VARIANT_OPTIMIZE_FOR_SPEED`. Default is `unsigned int`. (ref #138) [view commit](http://github.com/mapbox/variant/commit/35487cd39400b9a4bd30a18e6dfbf9cb1aaa80cd)
+* add missing <limits> [view commit](http://github.com/mapbox/variant/commit/c839c666c324306a252b0fbcadd31e80e02e2898)
+* Adds a test for polymorphic lambdas in match, resolves #140 [view commit](http://github.com/mapbox/variant/commit/9ac8978f5125182ac1bd9a1b68533bf9695f7289)
+* Merge pull request #138 from mapbox/sizeof [view commit](http://github.com/mapbox/variant/commit/3d807d31621d52a8b27494c8f80aa50f6464f17d)
+* Merge pull request #141 from mapbox/match-otherwise [view commit](http://github.com/mapbox/variant/commit/916139a2e51e125816efce6e19d428385601273f)
+* Update bundled Catch to v1.9.0 [view commit](http://github.com/mapbox/variant/commit/f9c265d7e7a188aa4437f534d4c0648af0118b51)
+* REQUIRE_THROWS etc take an expression not a block [view commit](http://github.com/mapbox/variant/commit/a064940e2ce7e40ef5e4db5710b399c68a71be4b)
+* Merge pull request #143 from tomhughes/catch [view commit](http://github.com/mapbox/variant/commit/550ac2f159ca883d360c196149b466955c77a573)
+* Add static_variant_cast, dynamic_variant_cast [view commit](http://github.com/mapbox/variant/commit/51fccd755b05ee9d3dec9da239acd15d0823c381)
+* Merge pull request #144 from narizhny/Casts [view commit](http://github.com/mapbox/variant/commit/291121f6ac682c6cc5a7a69f253492f03ca7324f)
+* recursive_wrapper fail to compile when used with 2 classes which are base and derived #146 [view commit](http://github.com/mapbox/variant/commit/7a541ba10d2eb9a9da0f11bb27319cd125d43a3d)
+* recursive_wrapper test - avoid constructing new functor in recursive calls, call itself via `this` pointer. [view commit](http://github.com/mapbox/variant/commit/ea106db54b167b8dce7c0b3b9b59bb06b209db33)
+* Merge branch 'master' of https://github.com/BlueSolei/variant into BlueSolei-master [view commit](http://github.com/mapbox/variant/commit/195367cfc19e1e08933487fa7cc56cb7f6d25cc8)
+* Merge branch 'BlueSolei-master' [view commit](http://github.com/mapbox/variant/commit/e01b7bf3334e788fb99f4a510d5bc87a4a581342)
+* add test for ref #147 + https://github.com/mapbox/variant/pull/147 [view commit](http://github.com/mapbox/variant/commit/6247207595902dbf898a430346335af2a3485c74)
+* - Add a project mapbox_variant. - Use of the 'os' module to capture CXX_STD. - Common configs moved to project. - Built targets moved to 'out' directory. [view commit](http://github.com/mapbox/variant/commit/b2471ffc74c163194943b17b2b2c5758c59655ca)
+* - Remove the use of boost libraries. - Add default build. [view commit](http://github.com/mapbox/variant/commit/561a09dd005468f9cdef651030471a1215f1885f)
+* - Use of the module 'os' to get BOOST_DIR. - Add macro SINGLE_THREADED to single threading mode. - Define single threading mode as default. - Add lambda_overload_test and hashable_test. [view commit](http://github.com/mapbox/variant/commit/bd0a2d559724b8daa7d1ff33df90976e26a595aa)
+* - Add auxiliar rule exe-test. [view commit](http://github.com/mapbox/variant/commit/04a6797a6aa2a86dd3eb6517893255c010f6e524)
+* Merge pull request #153 from ricardocosme/boost-build [view commit](http://github.com/mapbox/variant/commit/266f68d9f1c3ad65e6d6c264f0130bc4c652618a)
+* Use forwarding reference in make_visitor and visitor [view commit](http://github.com/mapbox/variant/commit/9f991da78d3146d32be67695a89c2b1197c826b2)
+* Add copy assignment and move assignment operators. [view commit](http://github.com/mapbox/variant/commit/f0b50062b4fd2bf2b86aeada2efa8e36cfa6cb1c)
+* Merge pull request #154 from ricardocosme/forwarding_reference_make_visitor [view commit](http://github.com/mapbox/variant/commit/b78b51548743737357e5b3bbe296f465d5f4fdae)
+* add CHANGELOG.md skeleton [view commit](http://github.com/mapbox/variant/commit/555436f715e5e0929a13664f0911ecc4931356d1)
+* add <sha1> to CHANGELOG entries. [view commit](http://github.com/mapbox/variant/commit/6497bce683e6e8edf80f80bc4fed65235690b335)
+* update CHANGELOG (git log <tag1>...<tag2> --pretty=format:'* %s [view commit](http://github.com/mapbox/variant/commit/%H)' --reverse) [view commit](http://github.com/mapbox/variant/commit/75bb549d233eb94c74d2730dc3a8d8ed35c87f3d)
+* use full sha1 [view commit](http://github.com/mapbox/variant/commit/ba3085a5eb6e874d43432dc75f3392092e1e7214)
+* add intial `variant_alternative` implementation (#161 http://en.cppreference.com/w/cpp/utility/variant/variant_alternative) [view commit](http://github.com/mapbox/variant/commit/43357808cc93e69d2975e31e68986137ac5e88c9)
+* add lost test check + remove stderr [view commit](http://github.com/mapbox/variant/commit/4b98c485cf7d74691f7921145054641daa66936e)
+* alternative implementation of `variant_alternative` [view commit](http://github.com/mapbox/variant/commit/3449d00cf525d8ef98cee0f4a276e2928398a8f9)
+* add `variant_alternative_t` [view commit](http://github.com/mapbox/variant/commit/3ffef950b005f31961f167242911b2f97d2634c3)
+* add optimized 'variant_alternative' implementation usinh built-in `__type_pack_element` when available (clang++) [view commit](http://github.com/mapbox/variant/commit/ae193141379c1706e17098c67c5b4e4f48b19c48)
+* add compile index in range check for __type_pack_element branch. [view commit](http://github.com/mapbox/variant/commit/8b1de314711bff2f9f3c748ac0ed7cd7d6400331)
+* fix preprocessor logic [view commit](http://github.com/mapbox/variant/commit/30560e19e60c23227b29bc3434a163d2343333d3)
+* add `variant_size` helper [view commit](http://github.com/mapbox/variant/commit/835ebc19321c6a9696a2072b7fbd5ca3de818860)
+* Merge pull request #162 from mapbox/variant_alternative [view commit](http://github.com/mapbox/variant/commit/237f83cad2c76b1717ba4076c30aca32339336a8)
+* Removes deprecated static_visitor to avoid msvc C4996 compiler warning [view commit](http://github.com/mapbox/variant/commit/215d64585ef92e16f18f5da81195b0279f53f599)
+* Merge pull request #163 from MaxRis/master [view commit](http://github.com/mapbox/variant/commit/859a8c933a0c2ab18941acb9dcf834799c0de46c)
+* Fix README.md issues [view commit](http://github.com/mapbox/variant/commit/0888a8e92df4c1cfd85419b05910355b2d78013b)
+* Merge pull request #165 from nick70/master [view commit](http://github.com/mapbox/variant/commit/5eee328d69aaa805bd0b43bdaede12a8eb4632eb)
+* Fix the noexcept specifications for move assignment and conversion. [view commit](http://github.com/mapbox/variant/commit/9c81bef8cf285d9fb45f1eaf9b29eba4fee08d1b)
+* Merge pull request #160 from mlogan/master [view commit](http://github.com/mapbox/variant/commit/256ddd55582bb7c06c342315dbacc6a42fee4b34)
+* report actual file size not allocated size. [view commit](http://github.com/mapbox/variant/commit/ef3856c85f389d4be7feb6555336168c4adcfa0e)
+* use `ls -lah` as `du -h --apparent-size` is not universally supported. [view commit](http://github.com/mapbox/variant/commit/a64062576d9af09469183a94b9770c8e7f877a93)
+* fix Makefile [view commit](http://github.com/mapbox/variant/commit/502e32b8bade6e19d7fe511f4634e7033f61235f)
+* try fixing travis via upgrading clang++ from 3.9.1 -> 4.0.1 [view commit](http://github.com/mapbox/variant/commit/f31bcfb4bc97cf4c5e89b01bbfa7df4cd553f576)
+* steady .. downgrade clang++ to 4.0.0 [view commit](http://github.com/mapbox/variant/commit/11a36a9f12adc30ac47afc9681ec8aa1a2d68c28)
+* update mason [view commit](http://github.com/mapbox/variant/commit/fe0a0666fc734033f6a9cd2256226eec5943138a)
+* update mason + update clang++ to 4.0.1 [view commit](http://github.com/mapbox/variant/commit/c1a14e7d9e9a10ea7d793d83043d9a18b974ca8e)
+* Run ASAN builda in isolated VM via `sudo : required` [view commit](http://github.com/mapbox/variant/commit/5a5ecca5bef02072109a714bab840a36ea772f01)
+* Merge pull request #167 from mapbox/clang++4 [view commit](http://github.com/mapbox/variant/commit/0f734f01e685a298e3756d30044a4164786c58c5)
+
+
 ## 1.1.5
 
 Released: January 7, 2017
