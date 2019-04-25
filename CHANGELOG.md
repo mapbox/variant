@@ -2,9 +2,9 @@
 
 ## 1.1.6
 
-Released: April xx, 2019
+Released: April 25, 2019
 
-(xxxxxxxxxxxxxxxxxxxxxxxxxxxxx)
+(a4f87dc)
 
 * make type used for `type_index` configurable via `type_index_t` typdef + use `unsigned int` by default. This addresses `sizeof` discrepancies between boost/std/mapbox variants (ref #19) [view commit](http://github.com/mapbox/variant/commit/9eec1fd48947d81af3debb82686c593b15f79aad)
 * use `mapbox::util::type_index_t` (#19) [view commit](http://github.com/mapbox/variant/commit/05ee9aca16c3968e34db3b241c44eecb981344e0)
