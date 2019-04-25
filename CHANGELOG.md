@@ -61,7 +61,8 @@ Released: April xx, 2019
 * update mason + update clang++ to 4.0.1 [view commit](http://github.com/mapbox/variant/commit/c1a14e7d9e9a10ea7d793d83043d9a18b974ca8e)
 * Run ASAN builda in isolated VM via `sudo : required` [view commit](http://github.com/mapbox/variant/commit/5a5ecca5bef02072109a714bab840a36ea772f01)
 * Merge pull request #167 from mapbox/clang++4 [view commit](http://github.com/mapbox/variant/commit/0f734f01e685a298e3756d30044a4164786c58c5)
-
+* Moved to in-class initialization [view commit](http://github.com/mapbox/variant/commit/2fef61f08e44bcc99b1acc21ea78554b08d8f6e7)
+* Merge pull request #171 from mapbox/jrex-mute-clang-analyzer [view commit](http://github.com/mapbox/variant/commit/0305fdb2a462ca39db7b8cce189561bed17b48
 
 ## 1.1.5
 
