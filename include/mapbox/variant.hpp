@@ -583,43 +583,34 @@ private:
     using helper_type = detail::variant_helper<Types...>;
 
     type_index_t type_index;
+#ifdef __clang_analyzer__
+    data_type data {};
+#else
     data_type data;
-
+#endif
+    
 public:
     VARIANT_INLINE variant() noexcept(std::is_nothrow_default_constructible<first_type>::value)
         : type_index(sizeof...(Types)-1)
-#ifdef __clang_analyzer__
-        , data{}
-#endif
     {
         static_assert(std::is_default_constructible<first_type>::value, "First type in variant must be default constructible to allow default construction of variant.");
         new (&data) first_type();
     }
 
     VARIANT_INLINE variant(no_init) noexcept
-        : type_index(detail::invalid_value)
-#ifdef __clang_analyzer__
-    , data{}
-#endif
-    {}
+        : type_index(detail::invalid_value) {}
 
     // http://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers
     template <typename T, typename Traits = detail::value_traits<T, Types...>,
               typename Enable = typename std::enable_if<Traits::is_valid && !std::is_same<variant<Types...>, typename Traits::value_type>::value>::type >
     VARIANT_INLINE variant(T&& val) noexcept(std::is_nothrow_constructible<typename Traits::target_type, T&&>::value)
         : type_index(Traits::index)
-#ifdef __clang_analyzer__
-    , data{}
-#endif
     {
         new (&data) typename Traits::target_type(std::forward<T>(val));
     }
 
     VARIANT_INLINE variant(variant<Types...> const& old)
         : type_index(old.type_index)
-#ifdef __clang_analyzer__
-    , data{}
-#endif
     {
         helper_type::copy(old.type_index, &old.data, &data);
     }
@@ -627,9 +618,6 @@ public:
     VARIANT_INLINE variant(variant<Types...>&& old)
         noexcept(detail::conjunction<std::is_nothrow_move_constructible<Types>...>::value)
         : type_index(old.type_index)
-#ifdef __clang_analyzer__
-    , data{}
-#endif
     {
         helper_type::move(old.type_index, &old.data, &data);
     }
