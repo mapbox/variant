@@ -583,8 +583,12 @@ private:
     using helper_type = detail::variant_helper<Types...>;
 
     type_index_t type_index;
+#ifdef __clang_analyzer__
+    data_type data {};
+#else
     data_type data;
-
+#endif
+    
 public:
     VARIANT_INLINE variant() noexcept(std::is_nothrow_default_constructible<first_type>::value)
         : type_index(sizeof...(Types)-1)
