@@ -90,17 +90,16 @@ TEST_CASE("assignment", "[optional]")
     REQUIRE(b.get() == 1);
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wself-assign-overloaded"
 
 TEST_CASE("self assignment", "[optional]")
 {
     mapbox::util::optional<int> a;
-
     a = 1;
     REQUIRE(a.get() == 1);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-warning-option"
+#pragma clang diagnostic ignored "-Wself-assign-overloaded"
     a = a;
+#pragma clang diagnostic pop
     REQUIRE(a.get() == 1);
 }
-
-#pragma clang diagnostic pop
