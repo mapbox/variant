@@ -1,3 +1,4 @@
+
 #include "catch.hpp"
 
 #include <mapbox/optional.hpp>
@@ -90,9 +91,6 @@ TEST_CASE("assignment", "[optional]")
     REQUIRE(b.get() == 1);
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wself-assign-overloaded"
-
 TEST_CASE("self assignment", "[optional]")
 {
     mapbox::util::optional<int> a;
@@ -102,5 +100,3 @@ TEST_CASE("self assignment", "[optional]")
     a = a;
     REQUIRE(a.get() == 1);
 }
-
-#pragma clang diagnostic pop
