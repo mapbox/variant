@@ -588,7 +588,7 @@ private:
 #else
     data_type data;
 #endif
-    
+
 public:
     VARIANT_INLINE variant() noexcept(std::is_nothrow_default_constructible<first_type>::value)
         : type_index(sizeof...(Types)-1)
