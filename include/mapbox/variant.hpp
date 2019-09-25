@@ -588,7 +588,7 @@ private:
 #else
     data_type data;
 #endif
-    
+
 public:
     VARIANT_INLINE variant() noexcept(std::is_nothrow_default_constructible<first_type>::value)
         : type_index(sizeof...(Types)-1)
@@ -645,13 +645,18 @@ public:
         // move_assign uses move-construction via placement new.
         noexcept(detail::conjunction<std::is_nothrow_move_constructible<Types>...>::value)
     {
+        if (this == &other) { // playing safe in release mode, hit assertion in debug.
+            assert(false);
+            return *this;
+        }
         move_assign(std::move(other));
         return *this;
     }
 
     VARIANT_INLINE variant<Types...>& operator=(variant<Types...> const& other)
     {
-        copy_assign(other);
+        if (this != &other)
+            copy_assign(other);
         return *this;
     }
 
