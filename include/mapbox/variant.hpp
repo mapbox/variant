@@ -645,15 +645,15 @@ public:
         // move_assign uses move-construction via placement new.
         noexcept(detail::conjunction<std::is_nothrow_move_constructible<Types>...>::value)
     {
-        if (this == &other) return *this; // check for self-assignment
-        move_assign(std::move(other));
+        if (this != &other)
+            move_assign(std::move(other));
         return *this;
     }
 
     VARIANT_INLINE variant<Types...>& operator=(variant<Types...> const& other)
     {
-        if (this == &other) return *this; // check for self-assignment
-        copy_assign(other);
+        if (this != &other)
+            copy_assign(other);
         return *this;
     }
 
