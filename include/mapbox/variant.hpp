@@ -645,8 +645,8 @@ public:
         // move_assign uses move-construction via placement new.
         noexcept(detail::conjunction<std::is_nothrow_move_constructible<Types>...>::value)
     {
-        if (this != &other)
-            move_assign(std::move(other));
+        assert(this != &other);
+        move_assign(std::move(other));
         return *this;
     }
 
