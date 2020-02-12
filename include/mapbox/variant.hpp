@@ -1,35 +1,7 @@
 #ifndef MAPBOX_UTIL_VARIANT_HPP
 #define MAPBOX_UTIL_VARIANT_HPP
 
-#include <cassert>
-#include <cstddef>   // size_t
-#include <new>       // operator new
-#include <stdexcept> // runtime_error
-#include <string>
-#include <tuple>
-#include <type_traits>
-#include <typeinfo>
-#include <utility>
-#include <functional>
-#include <limits>
-
 #include <mapbox/recursive_wrapper.hpp>
-#include <mapbox/variant_visitor.hpp>
-
-// clang-format off
-// [[deprecated]] is only available in C++14, use this for the time being
-#if __cplusplus <= 201103L
-# ifdef __GNUC__
-#  define MAPBOX_VARIANT_DEPRECATED __attribute__((deprecated))
-# elif defined(_MSC_VER)
-#  define MAPBOX_VARIANT_DEPRECATED __declspec(deprecated)
-# else
-#  define MAPBOX_VARIANT_DEPRECATED
-# endif
-#else
-#  define MAPBOX_VARIANT_DEPRECATED [[deprecated]]
-#endif
-
 
 #ifdef _MSC_VER
 // https://msdn.microsoft.com/en-us/library/bw1hbe6y.aspx
@@ -44,6 +16,71 @@
 # else
 #  define VARIANT_INLINE __attribute__((noinline))
 # endif
+#endif
+
+#if __has_include(<optional>) && __cplusplus >= 201703L
+
+#include <variant>
+
+namespace mapbox {
+namespace util {
+
+template<typename _Variant>
+inline constexpr size_t variant_size_v = std::variant_size<_Variant>::value;
+
+template <class First, typename ... Types>
+struct variant : std::variant<First, Types...> {
+  using BaseVariant = std::variant<First, Types...>;
+  using BaseVariant::BaseVariant;
+
+  constexpr variant() noexcept(std::is_nothrow_default_constructible<First>::value) : BaseVariant(First{}) {}
+};
+
+template <typename Visitor, typename ...Variants>
+auto apply_visitor(Visitor&& vis, Variants&&... vars) -> decltype(std::visit(std::forward<Visitor>(vis), std::forward<Variants>(vars)...)) {
+    return std::visit(std::forward<Visitor>(vis), std::forward<Variants>(vars)...);
+}
+
+} // namespace util
+} // namespace mapbox
+
+namespace std {
+// https://cplusplus.github.io/LWG/issue3052
+template<typename...Types>
+struct variant_size<mapbox::util::variant<Types...>> : variant_size<std::variant<Types...>> {};
+
+template<std::size_t Index, typename ... Types>
+struct variant_alternative<Index, mapbox::util::variant<Types...>> :  variant_alternative<Index, std::variant<Types...>> {};
+}
+
+#else
+
+#include <cassert>
+#include <cstddef>   // size_t
+#include <new>       // operator new
+#include <stdexcept> // runtime_error
+#include <string>
+#include <tuple>
+#include <type_traits>
+#include <typeinfo>
+#include <utility>
+#include <functional>
+#include <limits>
+
+#include <mapbox/variant_visitor.hpp>
+
+// clang-format off
+// [[deprecated]] is only available in C++14, use this for the time being
+#if __cplusplus <= 201103L
+# ifdef __GNUC__
+#  define MAPBOX_VARIANT_DEPRECATED __attribute__((deprecated))
+# elif defined(_MSC_VER)
+#  define MAPBOX_VARIANT_DEPRECATED __declspec(deprecated)
+# else
+#  define MAPBOX_VARIANT_DEPRECATED
+# endif
+#else
+#  define MAPBOX_VARIANT_DEPRECATED [[deprecated]]
 #endif
 // clang-format on
 
@@ -1117,4 +1154,5 @@ struct hash< ::mapbox::util::variant<Types...>> {
 
 }
 
+#endif // __has_include(<optional>) && __cplusplus >= 201703L
 #endif // MAPBOX_UTIL_VARIANT_HPP
