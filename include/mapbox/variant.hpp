@@ -106,7 +106,7 @@ struct direct_type<T>
     static constexpr type_index_t index = invalid_value;
 };
 
-#if __cpp_lib_logical_traits >= 201510L
+#if defined(__cpp_lib_logical_traits) && __cpp_lib_logical_traits >= 201510L
 
 using std::conjunction;
 using std::disjunction;
