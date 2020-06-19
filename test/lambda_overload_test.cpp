@@ -210,10 +210,16 @@ void test_match_move_out_of_variant()
     // Distinguishable at type level
     using T1 = Moveable<struct Tag1>;
     using T2 = Moveable<struct Tag2>;
+    using T3 = mapbox::util::recursive_wrapper<int>;
 
     mapbox::util::variant<T1, T2> v = T1{};
 
     std::move(v).match([](T1&&) {},  // Consume T1 by value
+                       [](T2&&) {}); // Consume T2 by value
+
+    mapbox::util::variant<T3, T2> w = T2{};
+
+    std::move(w).match([](int&&) {}, // Consume unwrapped int
                        [](T2&&) {}); // Consume T2 by value
 }
 
