@@ -77,11 +77,11 @@ matrix:
       compiler: clang
     - os: linux
       compiler: "clang36"
-      env: CXX=clang++-3.5 COVERAGE=True
+      env: CXX=clang++-3.6 COVERAGE=True
       addons:
         apt:
-          sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5' ]
-          packages: [ 'clang-3.5', 'libstdc++-4.9-dev' ]
+          sources: [ 'ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.6' ]
+          packages: [ 'clang-3.6', 'libstdc++-4.9-dev' ]
     - os: linux
       compiler: "gcc49"
       env: CXX=g++-4.9
