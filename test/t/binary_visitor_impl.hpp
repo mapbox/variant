@@ -155,7 +155,7 @@ struct swap_visitor
     swap_visitor(){};
 
     template <typename A, typename B>
-    void operator()(A && a, B && b) const
+    void operator()(A & a, B & b) const
     {
         using T = typename std::common_type<A, B>::type;
         T tmp = a;

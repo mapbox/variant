@@ -2,7 +2,7 @@ MASON = .mason/mason
 BOOST_VERSION = 1.62.0
 
 CXX := $(CXX)
-CXX_STD ?= c++11
+CXX_STD ?= c++14
 
 BOOST_ROOT = $(shell $(MASON) prefix boost $(BOOST_VERSION))
 BOOST_FLAGS = -isystem $(BOOST_ROOT)/include/
