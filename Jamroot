@@ -14,7 +14,7 @@ if ! $(boost_dir)
 local cxx_std = [ os.environ CXX_STD ] ;
 if ! $(cxx_std)
 {
-    cxx_std = c++11 ;
+    cxx_std = c++14 ;
 }
 
 project mapbox_variant
@@ -59,4 +59,4 @@ install out
       reference_wrapper_test
       lambda_overload_test
       hashable_test
-    ;   
+    ;
