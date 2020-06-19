@@ -1,4 +1,4 @@
-// @EXPECTED: no matching member function for call to 'get'
+// @EXPECTED: no matching
 
 #include <mapbox/variant.hpp>
 
