@@ -193,6 +193,30 @@ void test_match_overloads_otherwise()
 }
 #endif
 
+template <typename>
+struct Moveable
+{
+    Moveable() = default; // Default constructible
+
+    Moveable(const Moveable&) = delete;            // Disable copy ctor
+    Moveable& operator=(const Moveable&) = delete; // Disable copy assign op
+
+    Moveable(Moveable&&) = default;            // Enable move ctor
+    Moveable& operator=(Moveable&&) = default; // Enable move assign op
+};
+
+void test_match_move_out_of_variant()
+{
+    // Distinguishable at type level
+    using T1 = Moveable<struct Tag1>;
+    using T2 = Moveable<struct Tag2>;
+
+    mapbox::util::variant<T1, T2> v = T1{};
+
+    std::move(v).match([](T1&&) {},  // Consume T1 by value
+                       [](T2&&) {}); // Consume T2 by value
+}
+
 int main()
 {
     test_lambda_overloads();
@@ -205,6 +229,7 @@ int main()
     test_match_overloads_capture();
     test_match_overloads_init_capture();
     test_match_overloads_otherwise();
+    test_match_move_out_of_variant();
 }
 
 #undef HAS_CPP14_SUPPORT
