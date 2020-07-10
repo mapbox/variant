@@ -10,6 +10,15 @@
 
 using namespace mapbox::util;
 
+template <typename T>
+struct tag
+{
+    static void dump(const char* prefix)
+    {
+        std::cout << prefix << ": " << typeid(tag<T>).name() << std::endl;
+    }
+};
+
 template <typename Left, typename Right>
 using Either = mapbox::util::variant<Left, Right>;
 
@@ -53,6 +62,37 @@ void test_singleton_variant()
 
     variant<int> singleton;
     apply_visitor(make_visitor([](int) {}), singleton);
+}
+
+// See #180
+struct test_call_nonconst_member_visitor
+{
+    template <typename T>
+    void operator() (T & obj) const
+    {
+        tag<decltype(obj)>::dump("test_call_nonconst_member: visitor");
+        obj.foo();
+    }
+};
+
+void test_call_nonconst_member()
+{
+    struct object
+    {
+        void foo() { val = 42;}
+        int val = 0;
+    };
+
+    variant<object> v = object{};
+    apply_visitor(test_call_nonconst_member_visitor{}, v);
+
+#ifdef HAS_CPP14_SUPPORT
+    apply_visitor([](auto& obj)
+                  {
+                      tag<decltype(obj)>::dump("test_call_nonconst_member: lambda");
+                      obj.foo();
+                  }, v);
+#endif
 }
 
 void test_lambda_overloads_sfinae()
@@ -227,6 +267,7 @@ int main()
 {
     test_lambda_overloads();
     test_singleton_variant();
+    test_call_nonconst_member();
     test_lambda_overloads_capture();
     test_lambda_overloads_sfinae();
 
