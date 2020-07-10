@@ -171,6 +171,30 @@ struct value_traits
     using target_type = typename std::tuple_element<tindex, std::tuple<void, Types...>>::type;
 };
 
+template <typename Src, typename Dest>
+struct copy_cvref
+{
+    using type = Dest;
+};
+
+template <typename Src, typename Dest>
+struct copy_cvref<Src const&, Dest>
+{
+    using type = Dest const&;
+};
+
+template <typename Src, typename Dest>
+struct copy_cvref<Src&, Dest>
+{
+    using type = Dest&;
+};
+
+template <typename Src, typename Dest>
+struct copy_cvref<Src&&, Dest>
+{
+    using type = Dest&&;
+};
+
 template <typename F, typename T>
 using result_of_unary_visit = decltype(std::declval<F>()(std::declval<T>()));
 
@@ -488,6 +512,9 @@ private:
     using data_type = typename std::aligned_storage<data_size, data_align>::type;
     using helper_type = detail::variant_helper<Types...>;
 
+    template <typename V, typename T = unwrap_first_type>
+        using alternative_ref = typename detail::copy_cvref<V, T>::type;
+
     type_index_t type_index;
 #ifdef __clang_analyzer__
     data_type data {};
@@ -783,38 +810,20 @@ public:
 
     // visitor
     // unary
-    template <typename F, typename R = detail::result_of_unary_visit<F, unwrap_first_type const&>>
-    VARIANT_INLINE static R visit(variant const& v, F&& f)
+    template <typename F, typename V, typename T0 = alternative_ref<V>,
+              typename R = detail::result_of_unary_visit<F, T0>>
+    VARIANT_INLINE static R visit(V&& v, F&& f)
     {
-        return detail::dispatcher<R, Types...>::apply(v, std::forward<F>(f));
-    }
-    template <typename F, typename R = detail::result_of_unary_visit<F, unwrap_first_type&>>
-    VARIANT_INLINE static R visit(variant& v, F&& f)
-    {
-        return detail::dispatcher<R, Types...>::apply(v, std::forward<F>(f));
-    }
-    template <typename F, typename R = detail::result_of_unary_visit<F, unwrap_first_type&&>>
-    VARIANT_INLINE static R visit(variant&& v, F&& f)
-    {
-        return detail::dispatcher<R, Types...>::apply(std::move(v), std::forward<F>(f));
+        return detail::dispatcher<R, Types...>::apply(std::forward<V>(v), std::forward<F>(f));
     }
 
     // binary
-    template <typename F, typename R = detail::result_of_binary_visit<F, unwrap_first_type const&>>
-    VARIANT_INLINE static R binary_visit(variant const& v0, variant const& v1, F&& f)
+    template <typename F, typename V, typename T0 = alternative_ref<V>,
+              typename R = detail::result_of_binary_visit<F, T0>>
+    VARIANT_INLINE static R binary_visit(V&& v0, V&& v1, F&& f)
     {
-        return detail::binary_dispatcher<R, Types...>::apply(v0, v1, std::forward<F>(f));
-    }
-    template <typename F, typename R = detail::result_of_binary_visit<F, unwrap_first_type&>>
-    VARIANT_INLINE static R binary_visit(variant& v0, variant& v1, F&& f)
-    {
-        return detail::binary_dispatcher<R, Types...>::apply(v0, v1, std::forward<F>(f));
-    }
-    template <typename F, typename R = detail::result_of_binary_visit<F, unwrap_first_type&&>>
-    VARIANT_INLINE static R binary_visit(variant&& v0, variant&& v1, F&& f)
-    {
-        return detail::binary_dispatcher<R, Types...>::apply(std::move(v0),
-                                                             std::move(v1),
+        return detail::binary_dispatcher<R, Types...>::apply(std::forward<V>(v0),
+                                                             std::forward<V>(v1),
                                                              std::forward<F>(f));
     }
 
