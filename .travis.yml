@@ -131,6 +131,7 @@ install:
 
 script:
  # Build in Release
+ - make
  - make test
  - make bench
  - make sizes
@@ -138,6 +139,7 @@ script:
  - make clean;
  # Build in Debug
  - export BUILDTYPE=Debug
+ - make
  - make test
  - make bench
  - make sizes
