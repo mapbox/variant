@@ -99,7 +99,25 @@ out/%.o: test/t/%.cpp Makefile $(ALL_HEADERS)
 	mkdir -p ./out
 	$(CXX) -c -o $@ $< -Iinclude -isystem test/include $(FINAL_CXXFLAGS)
 
-out/unit: out/unit.o out/binary_visitor_1.o out/binary_visitor_2.o out/binary_visitor_3.o out/binary_visitor_4.o out/binary_visitor_5.o out/binary_visitor_6.o out/issue21.o out/issue122.o out/mutating_visitor.o out/optional.o out/recursive_wrapper.o out/sizeof.o out/unary_visitor.o out/variant.o out/variant_alternative.o out/nothrow_move.o
+out/unit: out/unit.o \
+          out/binary_visitor_1.o \
+          out/binary_visitor_2.o \
+          out/binary_visitor_3.o \
+          out/binary_visitor_4.o \
+          out/binary_visitor_5.o \
+          out/binary_visitor_6.o \
+          out/issue21.o \
+          out/issue122.o \
+          out/mutating_visitor.o \
+          out/optional.o \
+          out/recursive_wrapper.o \
+          out/sizeof.o \
+          out/unary_visitor.o \
+          out/variant.o \
+          out/variant_alternative.o \
+          out/nothrow_move.o \
+          out/visitor_result_type.o \
+
 	mkdir -p ./out
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
