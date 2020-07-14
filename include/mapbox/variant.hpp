@@ -195,11 +195,35 @@ struct copy_cvref<Src&&, Dest>
     using type = Dest&&;
 };
 
-template <typename F, typename T>
-using result_of_unary_visit = decltype(std::declval<F>()(std::declval<T>()));
+template <typename T, typename R = void>
+struct enable_if_type
+{
+    using type = R;
+};
+
+template <typename F, typename Enable = void>
+struct return_type_fun
+{
+    using type = void;
+    static constexpr bool value = false;
+};
+
+template <typename F>
+struct return_type_fun<F, typename enable_if_type<typename F::result_type>::type>
+{
+    using type = typename F::result_type;
+    static constexpr bool value = true;
+};
 
 template <typename F, typename T>
-using result_of_binary_visit = decltype(std::declval<F>()(std::declval<T>(), std::declval<T>()));
+using result_of_unary_visit = typename std::conditional<return_type_fun<F>::value,
+                                                        typename return_type_fun<F>::type,
+                                                        decltype(std::declval<F>()(std::declval<T>()))>::type;
+
+template <typename F, typename T>
+using result_of_binary_visit = typename std::conditional<return_type_fun<F>::value,
+                                                         typename return_type_fun<F>::type,
+                                                         decltype(std::declval<F>()(std::declval<T>(), std::declval<T>()))>::type;
 
 template <type_index_t arg1, type_index_t... others>
 struct static_max;
@@ -805,7 +829,7 @@ public:
                           (detail::direct_type<T, Types...>::index != detail::invalid_value)>::type* = nullptr>
     VARIANT_INLINE static constexpr int which() noexcept
     {
-        return static_cast<int>(sizeof...(Types)-detail::direct_type<T, Types...>::index - 1);
+        return static_cast<int>(sizeof...(Types) - detail::direct_type<T, Types...>::index - 1);
     }
 
     // visitor
