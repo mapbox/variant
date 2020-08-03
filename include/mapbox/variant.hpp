@@ -195,11 +195,32 @@ struct copy_cvref<Src&&, Dest>
     using type = Dest&&;
 };
 
-template <typename F, typename T>
-using result_of_unary_visit = decltype(std::declval<F>()(std::declval<T>()));
+template <typename F, typename = void>
+struct deduced_result_type
+{};
+
+template <typename F, typename... Args>
+struct deduced_result_type<F(Args...), decltype((void)std::declval<F>()(std::declval<Args>()...))>
+{
+    using type = decltype(std::declval<F>()(std::declval<Args>()...));
+};
+
+template <typename F, typename = void>
+struct visitor_result_type : deduced_result_type<F>
+{};
+
+// specialization for explicit result_type member in visitor class
+template <typename F, typename... Args>
+struct visitor_result_type<F(Args...), decltype((void)std::declval<typename std::decay<F>::type::result_type>())>
+{
+    using type = typename std::decay<F>::type::result_type;
+};
 
 template <typename F, typename T>
-using result_of_binary_visit = decltype(std::declval<F>()(std::declval<T>(), std::declval<T>()));
+using result_of_unary_visit = typename visitor_result_type<F&&(T&&)>::type;
+
+template <typename F, typename T>
+using result_of_binary_visit = typename visitor_result_type<F&&(T&&, T&&)>::type;
 
 template <type_index_t arg1, type_index_t... others>
 struct static_max;
