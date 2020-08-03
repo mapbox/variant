@@ -1,5 +1,17 @@
 # Variant changelog
 
+## 1.2.0
+
+Released: July 3, 2020
+
+(82f9561)
+
+* Use perfect forwarding for internal value types deductions (#178) (#180)
+* Implement support for "moving" values out (#142) (#178) (#180)
+* Preserve ability to specify explicit `return_type` in visitors (#181)
+* Add self-assignment checks in copy and move assignment operator= (#164)
+* Add relevant tests
+
 ## 1.1.6
 
 Released: April 25, 2019
