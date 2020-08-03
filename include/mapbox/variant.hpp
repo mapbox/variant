@@ -171,35 +171,56 @@ struct value_traits
     using target_type = typename std::tuple_element<tindex, std::tuple<void, Types...>>::type;
 };
 
-template <typename T, typename R = void>
-struct enable_if_type
+template <typename Src, typename Dest>
+struct copy_cvref
 {
-    using type = R;
+    using type = Dest;
 };
 
-template <typename F, typename V, typename Enable = void>
-struct result_of_unary_visit
+template <typename Src, typename Dest>
+struct copy_cvref<Src const&, Dest>
 {
-    using type = typename std::result_of<F(V&)>::type;
+    using type = Dest const&;
 };
 
-template <typename F, typename V>
-struct result_of_unary_visit<F, V, typename enable_if_type<typename F::result_type>::type>
+template <typename Src, typename Dest>
+struct copy_cvref<Src&, Dest>
 {
-    using type = typename F::result_type;
+    using type = Dest&;
 };
 
-template <typename F, typename V, typename Enable = void>
-struct result_of_binary_visit
+template <typename Src, typename Dest>
+struct copy_cvref<Src&&, Dest>
 {
-    using type = typename std::result_of<F(V&, V&)>::type;
+    using type = Dest&&;
 };
 
-template <typename F, typename V>
-struct result_of_binary_visit<F, V, typename enable_if_type<typename F::result_type>::type>
+template <typename F, typename = void>
+struct deduced_result_type
+{};
+
+template <typename F, typename... Args>
+struct deduced_result_type<F(Args...), decltype((void)std::declval<F>()(std::declval<Args>()...))>
 {
-    using type = typename F::result_type;
+    using type = decltype(std::declval<F>()(std::declval<Args>()...));
 };
+
+template <typename F, typename = void>
+struct visitor_result_type : deduced_result_type<F>
+{};
+
+// specialization for explicit result_type member in visitor class
+template <typename F, typename... Args>
+struct visitor_result_type<F(Args...), decltype((void)std::declval<typename std::decay<F>::type::result_type>())>
+{
+    using type = typename std::decay<F>::type::result_type;
+};
+
+template <typename F, typename T>
+using result_of_unary_visit = typename visitor_result_type<F&&(T&&)>::type;
+
+template <typename F, typename T>
+using result_of_binary_visit = typename visitor_result_type<F&&(T&&, T&&)>::type;
 
 template <type_index_t arg1, type_index_t... others>
 struct static_max;
@@ -270,245 +291,174 @@ struct variant_helper<>
 template <typename T>
 struct unwrapper
 {
-    static T const& apply_const(T const& obj) { return obj; }
-    static T& apply(T& obj) { return obj; }
+    using value_type = T;
+
+    template <typename V>
+    static auto apply(typename std::remove_reference<V>::type& var)
+        -> typename std::enable_if<std::is_lvalue_reference<V>::value,
+                    decltype(var.template get_unchecked<T>())>::type
+    {
+        return var.template get_unchecked<T>();
+    }
+
+    template <typename V>
+    static auto apply(typename std::remove_reference<V>::type& var)
+        -> typename std::enable_if<!std::is_lvalue_reference<V>::value,
+                    decltype(std::move(var.template get_unchecked<T>()))>::type
+    {
+        return std::move(var.template get_unchecked<T>());
+    }
 };
 
 template <typename T>
-struct unwrapper<recursive_wrapper<T>>
-{
-    static auto apply_const(recursive_wrapper<T> const& obj)
-        -> typename recursive_wrapper<T>::type const&
-    {
-        return obj.get();
-    }
-    static auto apply(recursive_wrapper<T>& obj)
-        -> typename recursive_wrapper<T>::type&
-    {
-        return obj.get();
-    }
-};
+struct unwrapper<recursive_wrapper<T>> : unwrapper<T>
+{};
 
 template <typename T>
-struct unwrapper<std::reference_wrapper<T>>
-{
-    static auto apply_const(std::reference_wrapper<T> const& obj)
-        -> typename std::reference_wrapper<T>::type const&
-    {
-        return obj.get();
-    }
-    static auto apply(std::reference_wrapper<T>& obj)
-        -> typename std::reference_wrapper<T>::type&
-    {
-        return obj.get();
-    }
-};
+struct unwrapper<std::reference_wrapper<T>> : unwrapper<T>
+{};
 
-template <typename F, typename V, typename R, typename... Types>
+template <typename R, typename... Types>
 struct dispatcher;
 
-template <typename F, typename V, typename R, typename T, typename... Types>
-struct dispatcher<F, V, R, T, Types...>
+template <typename R, typename T, typename... Types>
+struct dispatcher<R, T, Types...>
 {
-    VARIANT_INLINE static R apply_const(V const& v, F&& f)
+    template <typename V, typename F>
+    VARIANT_INLINE static R apply(V&& v, F&& f)
     {
         if (v.template is<T>())
         {
-            return f(unwrapper<T>::apply_const(v.template get_unchecked<T>()));
+            return std::forward<F>(f)(unwrapper<T>::template apply<V>(v));
         }
         else
         {
-            return dispatcher<F, V, R, Types...>::apply_const(v, std::forward<F>(f));
-        }
-    }
-
-    VARIANT_INLINE static R apply(V& v, F&& f)
-    {
-        if (v.template is<T>())
-        {
-            return f(unwrapper<T>::apply(v.template get_unchecked<T>()));
-        }
-        else
-        {
-            return dispatcher<F, V, R, Types...>::apply(v, std::forward<F>(f));
+            return dispatcher<R, Types...>::apply(std::forward<V>(v), std::forward<F>(f));
         }
     }
 };
 
-template <typename F, typename V, typename R, typename T>
-struct dispatcher<F, V, R, T>
+template <typename R, typename T>
+struct dispatcher<R, T>
 {
-    VARIANT_INLINE static R apply_const(V const& v, F&& f)
+    template <typename V, typename F>
+    VARIANT_INLINE static R apply(V&& v, F&& f)
     {
-        return f(unwrapper<T>::apply_const(v.template get_unchecked<T>()));
-    }
-
-    VARIANT_INLINE static R apply(V& v, F&& f)
-    {
-        return f(unwrapper<T>::apply(v.template get_unchecked<T>()));
+        return std::forward<F>(f)(unwrapper<T>::template apply<V>(v));
     }
 };
 
-template <typename F, typename V, typename R, typename T, typename... Types>
+template <typename R, typename T, typename... Types>
 struct binary_dispatcher_rhs;
 
-template <typename F, typename V, typename R, typename T0, typename T1, typename... Types>
-struct binary_dispatcher_rhs<F, V, R, T0, T1, Types...>
+template <typename R, typename T0, typename T1, typename... Types>
+struct binary_dispatcher_rhs<R, T0, T1, Types...>
 {
-    VARIANT_INLINE static R apply_const(V const& lhs, V const& rhs, F&& f)
+    template <typename V, typename F>
+    VARIANT_INLINE static R apply(V&& lhs, V&& rhs, F&& f)
     {
         if (rhs.template is<T1>()) // call binary functor
         {
-            return f(unwrapper<T0>::apply_const(lhs.template get_unchecked<T0>()),
-                     unwrapper<T1>::apply_const(rhs.template get_unchecked<T1>()));
+            return std::forward<F>(f)(unwrapper<T0>::template apply<V>(lhs),
+                                      unwrapper<T1>::template apply<V>(rhs));
         }
         else
         {
-            return binary_dispatcher_rhs<F, V, R, T0, Types...>::apply_const(lhs, rhs, std::forward<F>(f));
-        }
-    }
-
-    VARIANT_INLINE static R apply(V& lhs, V& rhs, F&& f)
-    {
-        if (rhs.template is<T1>()) // call binary functor
-        {
-            return f(unwrapper<T0>::apply(lhs.template get_unchecked<T0>()),
-                     unwrapper<T1>::apply(rhs.template get_unchecked<T1>()));
-        }
-        else
-        {
-            return binary_dispatcher_rhs<F, V, R, T0, Types...>::apply(lhs, rhs, std::forward<F>(f));
+            return binary_dispatcher_rhs<R, T0, Types...>::apply(std::forward<V>(lhs),
+                                                                 std::forward<V>(rhs),
+                                                                 std::forward<F>(f));
         }
     }
 };
 
-template <typename F, typename V, typename R, typename T0, typename T1>
-struct binary_dispatcher_rhs<F, V, R, T0, T1>
+template <typename R, typename T0, typename T1>
+struct binary_dispatcher_rhs<R, T0, T1>
 {
-    VARIANT_INLINE static R apply_const(V const& lhs, V const& rhs, F&& f)
+    template <typename V, typename F>
+    VARIANT_INLINE static R apply(V&& lhs, V&& rhs, F&& f)
     {
-        return f(unwrapper<T0>::apply_const(lhs.template get_unchecked<T0>()),
-                 unwrapper<T1>::apply_const(rhs.template get_unchecked<T1>()));
-    }
-
-    VARIANT_INLINE static R apply(V& lhs, V& rhs, F&& f)
-    {
-        return f(unwrapper<T0>::apply(lhs.template get_unchecked<T0>()),
-                 unwrapper<T1>::apply(rhs.template get_unchecked<T1>()));
+        return std::forward<F>(f)(unwrapper<T0>::template apply<V>(lhs),
+                                  unwrapper<T1>::template apply<V>(rhs));
     }
 };
 
-template <typename F, typename V, typename R, typename T, typename... Types>
+template <typename R, typename T, typename... Types>
 struct binary_dispatcher_lhs;
 
-template <typename F, typename V, typename R, typename T0, typename T1, typename... Types>
-struct binary_dispatcher_lhs<F, V, R, T0, T1, Types...>
+template <typename R, typename T0, typename T1, typename... Types>
+struct binary_dispatcher_lhs<R, T0, T1, Types...>
 {
-    VARIANT_INLINE static R apply_const(V const& lhs, V const& rhs, F&& f)
+    template <typename V, typename F>
+    VARIANT_INLINE static R apply(V&& lhs, V&& rhs, F&& f)
     {
         if (lhs.template is<T1>()) // call binary functor
         {
-            return f(unwrapper<T1>::apply_const(lhs.template get_unchecked<T1>()),
-                     unwrapper<T0>::apply_const(rhs.template get_unchecked<T0>()));
+            return std::forward<F>(f)(unwrapper<T1>::template apply<V>(lhs),
+                                      unwrapper<T0>::template apply<V>(rhs));
         }
         else
         {
-            return binary_dispatcher_lhs<F, V, R, T0, Types...>::apply_const(lhs, rhs, std::forward<F>(f));
-        }
-    }
-
-    VARIANT_INLINE static R apply(V& lhs, V& rhs, F&& f)
-    {
-        if (lhs.template is<T1>()) // call binary functor
-        {
-            return f(unwrapper<T1>::apply(lhs.template get_unchecked<T1>()),
-                     unwrapper<T0>::apply(rhs.template get_unchecked<T0>()));
-        }
-        else
-        {
-            return binary_dispatcher_lhs<F, V, R, T0, Types...>::apply(lhs, rhs, std::forward<F>(f));
+            return binary_dispatcher_lhs<R, T0, Types...>::apply(std::forward<V>(lhs),
+                                                                 std::forward<V>(rhs),
+                                                                 std::forward<F>(f));
         }
     }
 };
 
-template <typename F, typename V, typename R, typename T0, typename T1>
-struct binary_dispatcher_lhs<F, V, R, T0, T1>
+template <typename R, typename T0, typename T1>
+struct binary_dispatcher_lhs<R, T0, T1>
 {
-    VARIANT_INLINE static R apply_const(V const& lhs, V const& rhs, F&& f)
+    template <typename V, typename F>
+    VARIANT_INLINE static R apply(V&& lhs, V&& rhs, F&& f)
     {
-        return f(unwrapper<T1>::apply_const(lhs.template get_unchecked<T1>()),
-                 unwrapper<T0>::apply_const(rhs.template get_unchecked<T0>()));
-    }
-
-    VARIANT_INLINE static R apply(V& lhs, V& rhs, F&& f)
-    {
-        return f(unwrapper<T1>::apply(lhs.template get_unchecked<T1>()),
-                 unwrapper<T0>::apply(rhs.template get_unchecked<T0>()));
+        return std::forward<F>(f)(unwrapper<T1>::template apply<V>(lhs),
+                                  unwrapper<T0>::template apply<V>(rhs));
     }
 };
 
-template <typename F, typename V, typename R, typename... Types>
+template <typename R, typename... Types>
 struct binary_dispatcher;
 
-template <typename F, typename V, typename R, typename T, typename... Types>
-struct binary_dispatcher<F, V, R, T, Types...>
+template <typename R, typename T, typename... Types>
+struct binary_dispatcher<R, T, Types...>
 {
-    VARIANT_INLINE static R apply_const(V const& v0, V const& v1, F&& f)
+    template <typename V, typename F>
+    VARIANT_INLINE static R apply(V&& v0, V&& v1, F&& f)
     {
         if (v0.template is<T>())
         {
             if (v1.template is<T>())
             {
-                return f(unwrapper<T>::apply_const(v0.template get_unchecked<T>()),
-                         unwrapper<T>::apply_const(v1.template get_unchecked<T>())); // call binary functor
+                return std::forward<F>(f)(unwrapper<T>::template apply<V>(v0),
+                                          unwrapper<T>::template apply<V>(v1)); // call binary functor
             }
             else
             {
-                return binary_dispatcher_rhs<F, V, R, T, Types...>::apply_const(v0, v1, std::forward<F>(f));
+                return binary_dispatcher_rhs<R, T, Types...>::apply(std::forward<V>(v0),
+                                                                    std::forward<V>(v1),
+                                                                    std::forward<F>(f));
             }
         }
         else if (v1.template is<T>())
         {
-            return binary_dispatcher_lhs<F, V, R, T, Types...>::apply_const(v0, v1, std::forward<F>(f));
+            return binary_dispatcher_lhs<R, T, Types...>::apply(std::forward<V>(v0),
+                                                                std::forward<V>(v1),
+                                                                std::forward<F>(f));
         }
-        return binary_dispatcher<F, V, R, Types...>::apply_const(v0, v1, std::forward<F>(f));
-    }
-
-    VARIANT_INLINE static R apply(V& v0, V& v1, F&& f)
-    {
-        if (v0.template is<T>())
-        {
-            if (v1.template is<T>())
-            {
-                return f(unwrapper<T>::apply(v0.template get_unchecked<T>()),
-                         unwrapper<T>::apply(v1.template get_unchecked<T>())); // call binary functor
-            }
-            else
-            {
-                return binary_dispatcher_rhs<F, V, R, T, Types...>::apply(v0, v1, std::forward<F>(f));
-            }
-        }
-        else if (v1.template is<T>())
-        {
-            return binary_dispatcher_lhs<F, V, R, T, Types...>::apply(v0, v1, std::forward<F>(f));
-        }
-        return binary_dispatcher<F, V, R, Types...>::apply(v0, v1, std::forward<F>(f));
+        return binary_dispatcher<R, Types...>::apply(std::forward<V>(v0),
+                                                     std::forward<V>(v1),
+                                                     std::forward<F>(f));
     }
 };
 
-template <typename F, typename V, typename R, typename T>
-struct binary_dispatcher<F, V, R, T>
+template <typename R, typename T>
+struct binary_dispatcher<R, T>
 {
-    VARIANT_INLINE static R apply_const(V const& v0, V const& v1, F&& f)
+    template <typename V, typename F>
+    VARIANT_INLINE static R apply(V&& v0, V&& v1, F&& f)
     {
-        return f(unwrapper<T>::apply_const(v0.template get_unchecked<T>()),
-                 unwrapper<T>::apply_const(v1.template get_unchecked<T>())); // call binary functor
-    }
-
-    VARIANT_INLINE static R apply(V& v0, V& v1, F&& f)
-    {
-        return f(unwrapper<T>::apply(v0.template get_unchecked<T>()),
-                 unwrapper<T>::apply(v1.template get_unchecked<T>())); // call binary functor
+        return std::forward<F>(f)(unwrapper<T>::template apply<V>(v0),
+                                  unwrapper<T>::template apply<V>(v1)); // call binary functor
     }
 };
 
@@ -579,8 +529,12 @@ public:
     using types = std::tuple<Types...>;
 private:
     using first_type = typename std::tuple_element<0, types>::type;
+    using unwrap_first_type = typename detail::unwrapper<first_type>::value_type;
     using data_type = typename std::aligned_storage<data_size, data_align>::type;
     using helper_type = detail::variant_helper<Types...>;
+
+    template <typename V, typename T = unwrap_first_type>
+        using alternative_ref = typename detail::copy_cvref<V, T>::type;
 
     type_index_t type_index;
 #ifdef __clang_analyzer__
@@ -877,50 +831,43 @@ public:
 
     // visitor
     // unary
-    template <typename F, typename V, typename R = typename detail::result_of_unary_visit<F, first_type>::type>
-    auto VARIANT_INLINE static visit(V const& v, F&& f)
-        -> decltype(detail::dispatcher<F, V, R, Types...>::apply_const(v, std::forward<F>(f)))
+    template <typename F, typename V, typename T0 = alternative_ref<V>,
+              typename R = detail::result_of_unary_visit<F, T0>>
+    VARIANT_INLINE static R visit(V&& v, F&& f)
     {
-        return detail::dispatcher<F, V, R, Types...>::apply_const(v, std::forward<F>(f));
-    }
-    // non-const
-    template <typename F, typename V, typename R = typename detail::result_of_unary_visit<F, first_type>::type>
-    auto VARIANT_INLINE static visit(V& v, F&& f)
-        -> decltype(detail::dispatcher<F, V, R, Types...>::apply(v, std::forward<F>(f)))
-    {
-        return detail::dispatcher<F, V, R, Types...>::apply(v, std::forward<F>(f));
+        return detail::dispatcher<R, Types...>::apply(std::forward<V>(v), std::forward<F>(f));
     }
 
     // binary
-    // const
-    template <typename F, typename V, typename R = typename detail::result_of_binary_visit<F, first_type>::type>
-    auto VARIANT_INLINE static binary_visit(V const& v0, V const& v1, F&& f)
-        -> decltype(detail::binary_dispatcher<F, V, R, Types...>::apply_const(v0, v1, std::forward<F>(f)))
+    template <typename F, typename V, typename T0 = alternative_ref<V>,
+              typename R = detail::result_of_binary_visit<F, T0>>
+    VARIANT_INLINE static R binary_visit(V&& v0, V&& v1, F&& f)
     {
-        return detail::binary_dispatcher<F, V, R, Types...>::apply_const(v0, v1, std::forward<F>(f));
-    }
-    // non-const
-    template <typename F, typename V, typename R = typename detail::result_of_binary_visit<F, first_type>::type>
-    auto VARIANT_INLINE static binary_visit(V& v0, V& v1, F&& f)
-        -> decltype(detail::binary_dispatcher<F, V, R, Types...>::apply(v0, v1, std::forward<F>(f)))
-    {
-        return detail::binary_dispatcher<F, V, R, Types...>::apply(v0, v1, std::forward<F>(f));
+        return detail::binary_dispatcher<R, Types...>::apply(std::forward<V>(v0),
+                                                             std::forward<V>(v1),
+                                                             std::forward<F>(f));
     }
 
     // match
     // unary
     template <typename... Fs>
-    auto VARIANT_INLINE match(Fs&&... fs) const
+    auto VARIANT_INLINE match(Fs&&... fs) const&
         -> decltype(variant::visit(*this, ::mapbox::util::make_visitor(std::forward<Fs>(fs)...)))
     {
         return variant::visit(*this, ::mapbox::util::make_visitor(std::forward<Fs>(fs)...));
     }
     // non-const
     template <typename... Fs>
-    auto VARIANT_INLINE match(Fs&&... fs)
+    auto VARIANT_INLINE match(Fs&&... fs) &
         -> decltype(variant::visit(*this, ::mapbox::util::make_visitor(std::forward<Fs>(fs)...)))
     {
         return variant::visit(*this, ::mapbox::util::make_visitor(std::forward<Fs>(fs)...));
+    }
+    template <typename... Fs>
+    auto VARIANT_INLINE match(Fs&&... fs) &&
+        -> decltype(variant::visit(std::move(*this), ::mapbox::util::make_visitor(std::forward<Fs>(fs)...)))
+    {
+        return variant::visit(std::move(*this), ::mapbox::util::make_visitor(std::forward<Fs>(fs)...));
     }
 
     ~variant() noexcept // no-throw destructor
@@ -972,33 +919,19 @@ public:
 };
 
 // unary visitor interface
-// const
 template <typename F, typename V>
-auto VARIANT_INLINE apply_visitor(F&& f, V const& v) -> decltype(V::visit(v, std::forward<F>(f)))
+auto VARIANT_INLINE apply_visitor(F&& f, V&& v)
+    -> decltype(v.visit(std::forward<V>(v), std::forward<F>(f)))
 {
-    return V::visit(v, std::forward<F>(f));
-}
-
-// non-const
-template <typename F, typename V>
-auto VARIANT_INLINE apply_visitor(F&& f, V& v) -> decltype(V::visit(v, std::forward<F>(f)))
-{
-    return V::visit(v, std::forward<F>(f));
+    return v.visit(std::forward<V>(v), std::forward<F>(f));
 }
 
 // binary visitor interface
-// const
 template <typename F, typename V>
-auto VARIANT_INLINE apply_visitor(F&& f, V const& v0, V const& v1) -> decltype(V::binary_visit(v0, v1, std::forward<F>(f)))
+auto VARIANT_INLINE apply_visitor(F&& f, V&& v0, V&& v1)
+    -> decltype(v0.binary_visit(std::forward<V>(v0), std::forward<V>(v1), std::forward<F>(f)))
 {
-    return V::binary_visit(v0, v1, std::forward<F>(f));
-}
-
-// non-const
-template <typename F, typename V>
-auto VARIANT_INLINE apply_visitor(F&& f, V& v0, V& v1) -> decltype(V::binary_visit(v0, v1, std::forward<F>(f)))
-{
-    return V::binary_visit(v0, v1, std::forward<F>(f));
+    return v0.binary_visit(std::forward<V>(v0), std::forward<V>(v1), std::forward<F>(f));
 }
 
 // getter interface
