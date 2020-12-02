@@ -125,7 +125,7 @@ void test_match_singleton()
 {
     variant<int> singleton = 5;
     singleton.match([](int) {});
-    
+
     auto lambda = [](int) {};
     singleton.match(lambda);
 }
@@ -158,7 +158,7 @@ void test_match_overloads_capture()
 struct MovableOnly
 {
     MovableOnly() = default;
-    
+
     MovableOnly(MovableOnly&&) = default;
     MovableOnly& operator=(MovableOnly&&) = default;
 };
@@ -166,13 +166,16 @@ struct MovableOnly
 struct MovableCopyable
 {
     MovableCopyable() = default;
-    
+
     MovableCopyable(MovableCopyable&&) = default;
     MovableCopyable& operator=(MovableCopyable&&) = default;
-    
+
     MovableCopyable(const MovableCopyable&) = default;
     MovableCopyable& operator=(const MovableCopyable&) = default;
 };
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-lambda-capture"
 
 void test_match_overloads_init_capture()
 #ifdef HAS_CPP14_SUPPORT
@@ -185,10 +188,10 @@ void test_match_overloads_init_capture()
     {
         auto lambda = [p = MovableCopyable{}](auto&&) {};
         rv.match(lambda);
-    
+
         rv.match([p = MovableOnly{}](Response) { std::cout << "Response\n"; },
                  [p = MovableOnly{}](Error) { std::cout << "Error\n"; });
-    }    
+    }
     {
         auto lambda = [](Error) { std::cout << "Error\n"; };
         rv.match([p = MovableOnly{}](Response) { std::cout << "Response\n"; },
@@ -202,6 +205,7 @@ void test_match_overloads_init_capture()
 }
 #endif
 
+#pragma clang diagnostic pop
 // See #140
 void test_match_overloads_otherwise()
 #ifdef HAS_CPP14_SUPPORT
