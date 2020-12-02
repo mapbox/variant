@@ -91,6 +91,30 @@ struct to_string
     }
 };
 
+void bench_large_expression(std::size_t num)
+{
+    std::cerr << "----- sum of " << num << " ones -----" << std::endl;
+    expression sum = 0;
+    {
+        std::cerr << "construction ";
+        auto_cpu_timer t;
+        for (std::size_t i = 0; i < num; ++i)
+        {
+            sum = binary_op<add>(std::move(sum), 1);
+        }
+    }
+    int total = 0;
+    {
+        std::cerr << "calculation ";
+        auto_cpu_timer t;
+        for (std::size_t i = 0; i < num; ++i)
+        {
+            total += util::apply_visitor(calculator(), sum);
+        }
+    }
+    std::cerr << "total=" << total << std::endl;
+}
+
 } // namespace test
 
 int main(int argc, char** argv)
@@ -119,6 +143,9 @@ int main(int argc, char** argv)
     std::cerr << "total=" << total << std::endl;
 
     std::cerr << util::apply_visitor(test::to_string(), result) << "=" << util::apply_visitor(test::calculator(), result) << std::endl;
+
+    test::bench_large_expression(1000);
+    test::bench_large_expression(5000);
 
     return EXIT_SUCCESS;
 }

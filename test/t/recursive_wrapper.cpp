@@ -27,7 +27,7 @@ TEST_CASE("recursive wrapper of int")
         rwi b{a};
         REQUIRE(b.get() == 8);
 
-        rwi c;
+        rwi c{-1};
         c = b;
         REQUIRE(b.get() == 8);
         REQUIRE(c.get() == 8);
@@ -114,13 +114,6 @@ TEST_CASE("swap")
 TEST_CASE("recursive wrapper of pair<int, int>")
 {
 
-    SECTION("default constructed")
-    {
-        rwp a;
-        REQUIRE(a.get().first == 0);
-        REQUIRE(a.get().second == 0);
-    }
-
     SECTION("construct with value")
     {
         rwp a{std::make_pair(1, 2)};
@@ -139,7 +132,7 @@ TEST_CASE("recursive wrapper of pair<int, int>")
         REQUIRE(b.get().first == 3);
         REQUIRE(b.get().second == 4);
 
-        rwp c;
+        rwp c{{-1, -2}};
         c = b;
         REQUIRE(b.get().first == 3);
         REQUIRE(b.get().second == 4);

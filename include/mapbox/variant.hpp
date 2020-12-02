@@ -260,6 +260,7 @@ struct variant_helper<T, Types...>
         if (old_type_index == sizeof...(Types))
         {
             new (new_value) T(std::move(*reinterpret_cast<T*>(old_value)));
+            reinterpret_cast<T*>(old_value)->~T();
         }
         else
         {
@@ -574,6 +575,7 @@ public:
         : type_index(old.type_index)
     {
         helper_type::move(old.type_index, &old.data, &data);
+        old.type_index = detail::invalid_value;
     }
 
 private:
@@ -591,6 +593,7 @@ private:
         type_index = detail::invalid_value;
         helper_type::move(rhs.type_index, &rhs.data, &data);
         type_index = rhs.type_index;
+        rhs.type_index = detail::invalid_value;
     }
 
 public:
