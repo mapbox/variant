@@ -59,4 +59,4 @@ install out
       reference_wrapper_test
       lambda_overload_test
       hashable_test
-    ;   
+    ;
