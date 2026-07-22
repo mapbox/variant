@@ -32,18 +32,6 @@ class recursive_wrapper
 public:
     using type = T;
 
-    /**
-     * Default constructor default initializes the internally stored value.
-     * For POD types this means nothing is done and the storage is
-     * uninitialized.
-     *
-     * @throws std::bad_alloc if there is insufficient memory for an object
-     *         of type T.
-     * @throws any exception thrown by the default constructur of T.
-     */
-    recursive_wrapper()
-        : p_(new T){}
-
     ~recursive_wrapper() noexcept { delete p_; }
 
     recursive_wrapper(recursive_wrapper const& operand)
@@ -52,8 +40,11 @@ public:
     recursive_wrapper(T const& operand)
         : p_(new T(operand)) {}
 
-    recursive_wrapper(recursive_wrapper&& operand)
-        : p_(new T(std::move(operand.get()))) {}
+    recursive_wrapper(recursive_wrapper&& operand) noexcept
+        : p_(operand.p_)
+    {
+        operand.p_ = nullptr;
+    }
 
     recursive_wrapper(T&& operand)
         : p_(new T(std::move(operand))) {}

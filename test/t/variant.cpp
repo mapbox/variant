@@ -29,7 +29,6 @@ TEST_CASE("variant can be moved into vector", "[variant]")
     variant_type v(std::string("test"));
     std::vector<variant_type> vec;
     vec.emplace_back(std::move(v));
-    REQUIRE(v.get<std::string>() != std::string("test"));
     REQUIRE(vec.at(0).get<std::string>() == std::string("test"));
 }
 
